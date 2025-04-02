@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".View.WelcomeActivity">
+
+    <!-- ViewPager2 (3/4 Screen) -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"/>
+
+    <!-- Bottom Section (1/4 Screen) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Get Started Button -->
+        <Button
+            android:id="@+id/btnGetStarted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/purpleLight"
+            android:text="Get Started"
+            android:textColor="@android:color/white"
+            android:layout_margin="10dp"/>
+
+        <!-- Login Button -->
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:text="Login"
+            android:textColor="@color/purpleLight"
+            android:layout_margin="10dp"/>
+
+        <!-- Terms & Privacy Policy -->
+        <TextView
+            android:id="@+id/txtTermsPrivacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="By proceeding, you agree to our Terms and that you have read our Privacy Policy"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:padding="5dp"/>
+
+    </LinearLayout>
+</LinearLayout>

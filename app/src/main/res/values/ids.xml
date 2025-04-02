@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="userInfoText" type="id" />
+    <item name="newPassword" type="id" />
+    <item name="confirmNewPassword" type="id" />
+    <item name="nextButton" type="id" />
+    <item name="cancelButton" type="id" />
+</resources>

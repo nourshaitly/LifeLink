@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="20dp">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- App Name -->
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LifeLink"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="40dp"/>
+
+    <!-- Email EditText -->
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your email"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="20dp"
+        android:padding="10dp"
+        />
+
+    <!-- Password EditText -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter your password"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:layout_marginEnd="10dp"/>
+
+        <!-- Eye icon to show/hide password -->
+        <ImageView
+            android:id="@+id/eyeIcon"
+            android:layout_width="24dp"
+            android:layout_height="18dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/baseline_add_24"
+            />
+
+    </LinearLayout>
+
+    <!-- Remember Me Checkbox -->
+    <CheckBox
+        android:id="@+id/rememberMeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remember me"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:backgroundTint="@color/purpleLight"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Forgot Password -->
+    <TextView
+        android:id="@+id/forgotPasswordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password?"
+        android:textColor="@android:color/holo_blue_light"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- Don't have an account? Sign up -->
+    <TextView
+        android:id="@+id/signUpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't have an account? Sign up"
+        android:textColor="@android:color/holo_blue_light"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>
