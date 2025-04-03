@@ -1,7 +1,10 @@
 package com.example.lifelink.View;
+import static android.content.ContentValues.TAG;
 
+import com.example.lifelink.Model.User;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,12 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.lifelink.Model.User;
 import com.example.lifelink.R;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,18 +21,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText firstName, middleName, lastName, phoneNumber, email, password, confirmPassword;
-    private Button registerButton, googleSignInButton;
+    private Button registerButton;
+    private Button signInButton;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
-    private GoogleSignInClient mGoogleSignInClient;
-
-    private static final int RC_SIGN_IN = 9001; // Request code for Google Sign-In
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +50,13 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         confirmPassword = findViewById(R.id.confirmPassword);
         registerButton = findViewById(R.id.registerButton);
-        googleSignInButton = findViewById(R.id.googleSignInButton);
 
-        // Initialize Google Sign-In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)) // Your web client ID from Firebase Console
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+
+
+
+
+
 
         // Set listener for the Register button
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -70,65 +65,119 @@ public class RegisterActivity extends AppCompatActivity {
                 handleRegistration();
             }
         });
-
-        // Set listener for the Google Sign-In button
-        googleSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signInWithGoogle();
-            }
-        });
     }
 
-    // Handle Registration with Firebase Authentication
+    // Registration method with email/password authentication
     private void handleRegistration() {
-        // Your existing registration logic goes here...
-    }
+        String firstNameText = firstName.getText().toString().trim();
+        String middleNameText = middleName.getText().toString().trim();
+        String lastNameText = lastName.getText().toString().trim();
+        String phoneNumberText = phoneNumber.getText().toString().trim();
+        String emailText = email.getText().toString().trim();
+        String passwordText = password.getText().toString().trim();
+        String confirmPasswordText = confirmPassword.getText().toString().trim();
 
-    // Google Sign-In method
-    private void signInWithGoogle() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleGoogleSignInResult(task);
+        // 1. Validate that all fields are filled
+        if (firstNameText.isEmpty() || middleNameText.isEmpty() || lastNameText.isEmpty() || phoneNumberText.isEmpty() ||
+                emailText.isEmpty() || passwordText.isEmpty() || confirmPasswordText.isEmpty()) {
+            Toast.makeText(RegisterActivity.this, "Please fill all fields.", Toast.LENGTH_SHORT).show();
+            return;
         }
-    }
 
-    // Handle the result of Google Sign-In
-    private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            // Google Sign-In was successful, authenticate with Firebase
-            firebaseAuthWithGoogle(account);
-        } catch (ApiException e) {
-            // Google Sign-In failed, handle failure and display message
-            Toast.makeText(RegisterActivity.this, "Google sign-in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        // 2. Validate email format
+        if (!emailText.contains("@") || !emailText.contains(".")) {
+            Toast.makeText(RegisterActivity.this, "Please enter a valid email address.", Toast.LENGTH_SHORT).show();
+            return;
         }
-    }
 
-    // Authenticate with Firebase using Google account
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        auth.signInWithCredential(credential)
+        // 3. Validate password length and strength
+        if (passwordText.length() < 8) {
+            Toast.makeText(RegisterActivity.this, "Password must be at least 8 characters long.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!passwordText.matches(".*[A-Z].*") || !passwordText.matches(".*[a-z].*") || !passwordText.matches(".*[0-9].*")) {
+            Toast.makeText(RegisterActivity.this, "Password must contain at least one uppercase letter, one lowercase letter, and one number.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Optional: Validate password for special characters (e.g., !@#$%^&*)
+        if (!passwordText.matches(".*[!@#$%^&*].*")) {
+            Toast.makeText(RegisterActivity.this, "Password must contain at least one special character (e.g., !@#$%^&*).", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 4. Validate that password and confirm password match
+        if (!passwordText.equals(confirmPasswordText)) {
+            Toast.makeText(RegisterActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 5. Validate Lebanese phone number format
+        String phoneRegex = "^\\+961(70|71|76|78|79|81)\\d{6}$";
+        if (!phoneNumberText.matches(phoneRegex)) {
+            Toast.makeText(RegisterActivity.this, "Please enter a valid Lebanese phone number (+961 70 123 456).", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Optional: Validate name fields to prevent special characters
+        if (!firstNameText.matches("[a-zA-Z ]+")) {
+            Toast.makeText(RegisterActivity.this, "First name should only contain letters and spaces.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!middleNameText.matches("[a-zA-Z ]*")) {
+            Toast.makeText(RegisterActivity.this, "Middle name should only contain letters and spaces.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!lastNameText.matches("[a-zA-Z ]+")) {
+            Toast.makeText(RegisterActivity.this, "Last name should only contain letters and spaces.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        signInButton = findViewById(R.id.googleSignUpButton);
+
+        if (signInButton == null) {
+            Log.e(TAG, "Button not found!");
+            Toast.makeText(RegisterActivity.this, "yes", Toast.LENGTH_SHORT);
+        } else {
+            Log.d(TAG, "Button found!");
+            signInButton.setOnClickListener(v -> {
+                Log.d(TAG, "Button clicked");
+                Toast.makeText(RegisterActivity.this, "Not", Toast.LENGTH_SHORT).show();
+
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // If all validations pass, proceed with Firebase Authentication
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.createUserWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign-in success, update UI with the signed-in user's information
-                            FirebaseUser user = auth.getCurrentUser();
+                            // If registration is successful, save user data to Firestore
+                            FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null) {
                                 // Create a User object with the data
-                                User newUser = new User(user.getDisplayName(), "", "", "", user.getEmail());
+                                User newUser = new User(firstNameText, middleNameText, lastNameText, phoneNumberText, emailText);
 
                                 // Save the user data to Firestore
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 db.collection("users")
                                         .document(user.getUid()) // Use the user ID as the document ID
                                         .set(newUser) // Store the User object
@@ -136,7 +185,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 // Data was saved successfully
-                                                Toast.makeText(RegisterActivity.this, "Google Sign-In successful!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                                                 // Navigate to the Home page
                                                 startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
                                                 finish();  // Close the RegisterActivity
@@ -151,10 +200,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         });
                             }
                         } else {
-                            // If sign-in fails, display a message to the user
+                            // If registration fails, show a message to the user
                             Toast.makeText(RegisterActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-    }
-}
+    }}

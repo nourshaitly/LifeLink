@@ -93,6 +93,7 @@
         android:clickable="true"
         android:focusable="true"/>
 
+
     <!-- Don't have an account? Sign up -->
     <TextView
         android:id="@+id/signUpText"

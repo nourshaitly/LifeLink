@@ -49,6 +49,10 @@
         <activity
             android:name=".View.HomeActivity"
             android:exported="true" />
+        <activity android:name=".View.SignIn"
+            android:exported="true"
+       />
+
 
     </application>
 

@@ -154,14 +154,11 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Google Sign-In Button -->
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/googleSignUpButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign Up with Google"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@color/primaryDark"
-        android:layout_marginTop="16dp" />
+        android:text="Sign Up with Google" />
 
     <!-- Register Button -->
     <Button

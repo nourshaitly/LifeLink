@@ -12,7 +12,20 @@
           "package_name": "com.example.lifelink"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "844389462237-867papskpcuk1rt9jh4cblff449le7af.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lifelink",
+            "certificate_hash": "83ec70b14f6576c388972a8bf4db78299fca5787"
+          }
+        },
+        {
+          "client_id": "844389462237-lq5c843qjr3opc8vaoj9768251dv58ma.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAHks_j1syy02V9Dq7JK3OucKRIyOp3EKg"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844389462237-lq5c843qjr3opc8vaoj9768251dv58ma.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
