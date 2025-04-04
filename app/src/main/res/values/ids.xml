@@ -5,4 +5,13 @@
     <item name="confirmNewPassword" type="id" />
     <item name="nextButton" type="id" />
     <item name="cancelButton" type="id" />
+    <item name="greetingTextView" type="id" />
+    <item name="birthdateEditText" type="id" />
+    <item name="genderRadioGroup" type="id" />
+    <item name="maleRadioButton" type="id" />
+    <item name="femaleRadioButton" type="id" />
+    <item name="bloodTypeSpinner" type="id" />
+    <item name="weightEditText" type="id" />
+    <item name="heightEditText" type="id" />
+    <item name="submitButton" type="id" />
 </resources>

@@ -187,7 +187,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                 // Data was saved successfully
                                                 Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                                                 // Navigate to the Home page
-                                                startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
+                                                startActivity(new Intent(RegisterActivity.this, HealthInfoActivity1.class));
                                                 finish();  // Close the RegisterActivity
                                             }
                                         })

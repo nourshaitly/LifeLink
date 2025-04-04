@@ -52,6 +52,10 @@
         <activity android:name=".View.SignIn"
             android:exported="true"
        />
+        <activity
+            android:name=".View.HealthInfoActivity1"
+            android:exported="true" />
+
 
 
     </application>
