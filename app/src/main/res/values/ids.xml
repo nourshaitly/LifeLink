@@ -14,4 +14,12 @@
     <item name="weightEditText" type="id" />
     <item name="heightEditText" type="id" />
     <item name="submitButton" type="id" />
+    <item name="otherConditionEditText" type="id" />
+    <item name="cardOther" type="id" />
+    <item name="cardHypotension" type="id" />
+    <item name="cardDiabetes" type="id" />
+    <item name="cardHeartDisease" type="id" />
+    <item name="cardAsthma" type="id" />
+    <item name="cardHypertension" type="id" />
+    <item name="welcomeTextView" type="id" />
 </resources>

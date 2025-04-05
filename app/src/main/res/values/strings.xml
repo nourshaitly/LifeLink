@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">LifeLink</string>
+    <string name="height_weight"><![CDATA[Height & Weight:]]></string>
+    <string name="height_amp_weight"><![CDATA[Height & Weight:]]></string>
     <string-array name="blood_groups">
         <item>Select Blood Group</item>
         <item>A</item>
