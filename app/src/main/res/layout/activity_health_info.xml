@@ -1,65 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#FAFAFA"
+    android:fillViewport="true">
 
-    <!-- Welcome Layout -->
     <LinearLayout
-        android:id="@+id/welcomeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="visible"
         android:padding="24dp">
 
-        <TextView
-            android:id="@+id/welcomeMessageText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="👋 Welcome to LifeLink!\n\nLet's build your medical profile."
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="32dp" />
-
-        <Button
-            android:id="@+id/imReadyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="I'm Ready" />
-    </LinearLayout>
-
-    <!-- Health Info Layout -->
-    <ScrollView
-        android:id="@+id/healthInfoLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
+        <!-- Welcome Layout -->
         <LinearLayout
+            android:id="@+id/welcomeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp">
 
             <TextView
-                android:id="@+id/welcomeTextView"
+                android:id="@+id/welcomeMessageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome to LifeLink!"
+                android:text="👋 Welcome to LifeLink!\nLet's build your health profile."
                 android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="#333333"
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Birthdate -->
+            <Button
+                android:id="@+id/imReadyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I'm Ready!"
+                android:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <!-- Birth Info Layout -->
+        <LinearLayout
+            android:id="@+id/birthLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date of Birth:"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
+                android:text="Date of Birth"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
 
             <EditText
                 android:id="@+id/birthdateEditText"
@@ -68,26 +62,21 @@
                 android:hint="DD/MM/YYYY"
                 android:focusable="false"
                 android:clickable="true"
-                android:inputType="none"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp" />
+                android:background="@android:drawable/edit_text"
+                android:padding="12dp" />
 
-
-            <!-- Gender -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gender:"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
+                android:text="Gender"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
 
             <RadioGroup
                 android:id="@+id/genderRadioGroup"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/maleRadioButton"
@@ -100,116 +89,179 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Female"
-                    android:layout_marginStart="24dp" />
+                    android:layout_marginStart="16dp" />
             </RadioGroup>
 
-            <!-- Blood Type -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Blood Type:"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
+                android:text="Blood Type"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp"
-                android:weightSum="2">
+                android:orientation="horizontal">
 
                 <Spinner
                     android:id="@+id/bloodGroupSpinner"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_height="wrap_content" />
 
                 <Spinner
                     android:id="@+id/rhFactorSpinner"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="8dp" />
-            </LinearLayout> <!-- Height and Weight -->
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/height_weight"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
+                android:text="Height (cm) / Weight (kg)"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="24dp">
+                android:orientation="horizontal">
 
-                <LinearLayout
+                <NumberPicker
+                    android:id="@+id/heightPicker"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:layout_height="wrap_content" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Height (cm)" />
-
-                    <NumberPicker
-                        android:id="@+id/heightPicker"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
+                <NumberPicker
+                    android:id="@+id/weightPicker"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Weight (kg)" />
-
-                    <NumberPicker
-                        android:id="@+id/weightPicker"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/nextButton"
+                android:id="@+id/birthNextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Next" />
+                android:text="Next"
+                android:backgroundTint="#2196F3"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="end"
+                android:layout_marginTop="24dp" />
         </LinearLayout>
 
-        <!-- Existing content remains unchanged -->
-
-    </ScrollView>
-
-    <!-- Chronic Conditions Layout -->
-    <ScrollView
-        android:id="@+id/chronicConditionsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:padding="16dp">
-
+        <!-- Lifestyle Question Layout -->
         <LinearLayout
+            android:id="@+id/lifestyleQuestionLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="24dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/lifestyleQuestionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="32dp" />
+
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="2">
+
+                <LinearLayout
+                    android:id="@+id/option1"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/lifestyle_option_box"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <TextView android:id="@+id/optionEmoji1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="32sp" />
+                    <TextView android:id="@+id/optionText1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="16sp" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option2"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/lifestyle_option_box"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <TextView android:id="@+id/optionEmoji2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="32sp" />
+                    <TextView android:id="@+id/optionText2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="16sp" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option3"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/lifestyle_option_box"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <TextView android:id="@+id/optionEmoji3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="32sp" />
+                    <TextView android:id="@+id/optionText3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="16sp" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option4"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/lifestyle_option_box"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <TextView android:id="@+id/optionEmoji4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="32sp" />
+                    <TextView android:id="@+id/optionText4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="16sp" android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </GridLayout>
+        </LinearLayout>
+
+        <!-- Health Info Placeholder Layout -->
+        <LinearLayout
+            android:id="@+id/healthInfoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="16dp" />
+
+        <!-- Chronic Conditions Layout -->
+        <LinearLayout
+            android:id="@+id/chronicConditionsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select your conditions:"
+                android:text="Select any chronic conditions you have:"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp" />
@@ -222,199 +274,100 @@
                 android:useDefaultMargins="true">
 
                 <!-- Hypertension -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardHypertension"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp">
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/lifestyle_option_box">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_hypertension" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hypertension"
-                            android:textSize="14sp"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Hypotension -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardHypotension"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hypotension"
-                            android:textSize="14sp"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                        android:text="Hypertension"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
                 <!-- Diabetes -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardDiabetes"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp">
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/lifestyle_option_box">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_diabetes" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Diabetes"
-                            android:textSize="14sp"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Heart Disease -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardHeartDisease"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Heart Disease"
-                            android:textSize="14sp"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                        android:text="Diabetes"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
                 <!-- Asthma -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardAsthma"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp">
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/lifestyle_option_box">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_asthma" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
+                        android:text="Asthma"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Asthma"
-                            android:textSize="14sp"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Other -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardOther"
+                <!-- Heart Disease -->
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp">
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/lifestyle_option_box">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_heart" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
+                        android:text="Heart Disease"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Other"
-                            android:textSize="14sp"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
             </GridLayout>
 
-            <EditText
-                android:id="@+id/otherConditionEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter condition"
-                android:visibility="gone"
-                android:layout_marginTop="16dp" />
         </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+
+    </LinearLayout>
+</ScrollView>
