@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="24dp"
+    android:background="@android:color/white"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="10dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- Close button -->
+        <ImageView
+            android:id="@+id/closeButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_close"
+            app:tint="@android:color/darker_gray"
+            android:contentDescription="Close" />
+
+        <!-- Progress Indicator -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/detailProgressIndicator"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                app:indicatorColor="@color/blue"
+                app:trackColor="@color/light_blue"
+                app:trackThickness="12dp"
+                app:indicatorSize="160dp"
+                android:layout_gravity="center" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/detailValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="67"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blue" />
+
+                <TextView
+                    android:id="@+id/detailUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="bpm"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray"
+                    android:layout_marginStart="4dp"
+                    android:layout_gravity="bottom" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Chart -->
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/detailChart"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="24dp" />
+
+        <!-- Status -->
+        <TextView
+            android:id="@+id/detailStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Heart Rate is Normal"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/blue"
+            android:layout_marginTop="24dp" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/detailDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your heart rate indicates how many times your heart beats per minute..."
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:layout_marginTop="12dp"
+            android:lineSpacingExtra="4dp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

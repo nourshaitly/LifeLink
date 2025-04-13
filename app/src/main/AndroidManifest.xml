@@ -49,33 +49,23 @@
             android:name=".View.HealthProfileActivity"
             android:exported="true" />
 
+
+
+
+
+
         <activity
             android:name=".View.HeartConditionOptionsActivity"
             android:exported="true" />
 
         <activity
             android:name=".View.HealthTrackerActivity"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity
-            android:name=".View.HeartRateActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".View.BloodPressureActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".View.MedicationActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".View.ExerciseActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".View.DietActivity"
-            android:exported="true" />
+            android:name=".View.HealthDetailBottomSheet"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity android:name=".View.ResetPasswordActivity"
             android:exported="false"
@@ -91,6 +81,11 @@
         <activity android:name=".View.SignIn"
             android:exported="true"
             />
+
+        <activity
+            android:name=".View.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
     </application>
 

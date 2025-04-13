@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:background="@drawable/bottom_sheet_background">
+
+    <!-- Circular Progress Indicator with Value -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/detailProgressIndicator"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            app:indicatorColor="@color/blue"
+            app:trackColor="@color/light_blue"
+            app:trackThickness="12dp"
+            app:indicatorSize="160dp"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/detailValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="67"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:textColor="@color/blue" />
+
+            <TextView
+                android:id="@+id/detailUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bpm"
+                android:textSize="16sp"
+                android:textColor="@color/gray"
+                android:layout_marginStart="4dp"
+                android:layout_gravity="bottom" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Chart View -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/detailChart"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginTop="24dp" />
+
+    <!-- Status Text -->
+    <TextView
+        android:id="@+id/detailStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Heart Rate is Normal"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/blue"
+        android:layout_marginTop="24dp" />
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/detailDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your heart rate indicates how many times your heart beats per minute..."
+        android:textSize="14sp"
+        android:textColor="@color/gray"
+        android:layout_marginTop="12dp"
+        android:lineSpacingExtra="4dp" />
+
+</LinearLayout>

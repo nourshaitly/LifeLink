@@ -1,206 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/background">
 
-    <!-- Header Section -->
-    <LinearLayout
-        android:id="@+id/headerLayout"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Health Tracker"
-            android:textSize="24sp"
-            android:textColor="@color/purpleDark"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Track your vital signs in real-time"
-            android:textSize="16sp"
-            android:textColor="@color/purpleLight"/>
-    </LinearLayout>
-
-    <!-- Stats Cards -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/statsCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <!-- SPO2 Card -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="16dp"
-                android:background="@drawable/rounded_corner_background">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_oxygen"
-                    android:tint="@color/purpleDark"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SPO2"
-                    android:textSize="16sp"
-                    android:textColor="@color/purpleDark"
-                    android:layout_marginTop="8dp"/>
-
-                <TextView
-                    android:id="@+id/spo2Value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--%"
-                    android:textSize="24sp"
-                    android:textColor="@color/purpleDark"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Oxygen Saturation"
-                    android:textSize="12sp"
-                    android:textColor="@color/purpleLight"/>
-            </LinearLayout>
-
-            <!-- Heart Rate Card -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="16dp"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/rounded_corner_background">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_heart"
-                    android:tint="@color/purpleDark"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Heart Rate"
-                    android:textSize="16sp"
-                    android:textColor="@color/purpleDark"
-                    android:layout_marginTop="8dp"/>
-
-                <TextView
-                    android:id="@+id/heartRateValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-- BPM"
-                    android:textSize="24sp"
-                    android:textColor="@color/purpleDark"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Beats per Minute"
-                    android:textSize="12sp"
-                    android:textColor="@color/purpleLight"/>
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Charts Section -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/statsCard"
-        app:layout_constraintBottom_toTopOf="@id/controlLayout">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:paddingBottom="100dp">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Health Dashboard"
+                    android:textAppearance="@style/TextAppearance.App.Headline6"
+                    android:layout_centerVertical="true"/>
+
+                <ImageButton
+                    android:id="@+id/profileButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_profile"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:contentDescription="Profile"/>
+            </RelativeLayout>
+
+            <!-- Wellness Score Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/wellnessScoreCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_wellness"
+                        app:tint="@color/blue" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Wellness Score"
+                            android:textAppearance="@style/TextAppearance.App.Headline6" />
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/wellnessScoreIndicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="16dp"
+                            android:progress="85"
+                            app:indicatorSize="120dp"
+                            app:trackColor="@color/light_blue" />
+
+                        <TextView
+                            android:id="@+id/wellnessScoreValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="8dp"
+                            android:text="85"
+                            android:textAppearance="@style/TextAppearance.App.Headline4"
+                            android:textColor="@color/blue" />
+
+                        <TextView
+                            android:id="@+id/lastMeasuredTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="Last measured: 5 mins ago"
+                            android:textAppearance="@style/TextAppearance.App.Caption" />
+
+                        <TextView
+                            android:id="@+id/wellnessDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="8dp"
+                            android:text="Your health is in excellent condition"
+                            android:textAppearance="@style/TextAppearance.App.Body2" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Vital Signs Title -->
             <TextView
+                android:id="@+id/vitalSignsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Real-time Monitoring"
-                android:textSize="18sp"
-                android:textColor="@color/purpleDark"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="24dp"
+                android:text="Vital Signs"
+                android:textAppearance="@style/TextAppearance.App.Headline6" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/spo2Chart"
+            <!-- Heart Rate Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/heartRateCardMaterial"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:layout_constraintTop_toBottomOf="@id/wellnessScoreCard">
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/heartRateChart"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/ic_heart_rate"
+                            app:tint="@color/red" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Heart Rate"
+                            android:textAppearance="@style/TextAppearance.App.Subtitle1" />
+
+                        <TextView
+                            android:id="@+id/heartRateValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="75 BPM"
+                            android:textAppearance="@style/TextAppearance.App.Headline6"
+                            android:textColor="@color/red" />
+                    </LinearLayout>
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/heartRateChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="16dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SPO2 Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/spo2CardMaterial"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:layout_constraintTop_toBottomOf="@id/heartRateCardMaterial">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/ic_spo2"
+                            app:tint="@color/green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SPO2"
+                            android:textAppearance="@style/TextAppearance.App.Subtitle1" />
+
+                        <TextView
+                            android:id="@+id/spo2Value"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="98%"
+                            android:textAppearance="@style/TextAppearance.App.Headline6"
+                            android:textColor="@color/green" />
+                    </LinearLayout>
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/spo2Chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="16dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Include Health Details -->
+            <include
+                android:id="@+id/healthDetails"
+                layout="@layout/bottom_sheet_health_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/spo2CardMaterial"/>
+
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Control Section -->
-    <LinearLayout
-        android:id="@+id/controlLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/toggleButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start Measurement"
-            android:textSize="16sp"
-            android:padding="12dp"
-            app:cornerRadius="12dp"
-            app:backgroundTint="@color/purpleDark"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Place your finger on the sensor"
-            android:textSize="14sp"
-            android:textColor="@color/purpleLight"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"/>
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout> 
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
