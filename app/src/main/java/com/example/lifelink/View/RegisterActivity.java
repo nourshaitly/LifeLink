@@ -40,6 +40,14 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
 
         registerButton.setOnClickListener(v -> handleRegistration());
+
+        // Login Text
+        TextView loginText = findViewById(R.id.loginText);
+        loginText.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void handleRegistration() {
@@ -80,13 +88,17 @@ public class RegisterActivity extends AppCompatActivity {
                                     .addOnSuccessListener(aVoid -> {
                                         Toast.makeText(this, "Registered Successfully", Toast.LENGTH_SHORT).show();
 
-                                        // ✅ Add delay before moving to next activity
+                                        // Show welcome message with user's name
+                                        String welcomeMessage = "Welcome, " + first + "!";
+                                        Toast.makeText(this, welcomeMessage, Toast.LENGTH_LONG).show();
+
+                                        // Add delay before moving to next activity
                                         new Handler().postDelayed(() -> {
                                             Intent intent = new Intent(RegisterActivity.this, HealthInfoActivity.class);
+                                            intent.putExtra("userName", first); // Pass the user's name
                                             startActivity(intent);
                                             finish();
-                                        }, 300); // 300ms delay
-
+                                        }, 1500); // 1.5 second delay to show the welcome message
                                     })
                                     .addOnFailureListener(e -> {
                                         Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show();

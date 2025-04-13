@@ -1,4 +1,4 @@
-package com.example.lifelink.Controller;
+  /* package com.example.lifelink.Controller;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -169,3 +169,4 @@ public class Bluetooth extends AppCompatActivity {
         Log.d(TAG, "Data sent to Firebase - Heart Rate: " + heartRate + ", SpO2: " + spO2 + ", Timestamp: " + timestamp);
     }
 }
+*/

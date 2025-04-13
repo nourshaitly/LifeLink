@@ -64,6 +64,13 @@ public class HealthInfoActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        // Get user's name from intent
+        String userName = getIntent().getStringExtra("userName");
+        if (userName != null) {
+            TextView welcomeMessageText = findViewById(R.id.welcomeMessageText);
+            welcomeMessageText.setText("👋 Welcome, " + userName + "!\nLet's build your health profile.");
+        }
+
         // UI References
         welcomeLayout = findViewById(R.id.welcomeLayout);
         birthLayout = findViewById(R.id.birthLayout);

@@ -1,58 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    tools:context=".View.WelcomeActivity">
+    android:background="@color/white">
 
-    <!-- ViewPager2 (3/4 Screen) -->
+    <!-- ViewPager2 for Welcome Slides -->
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+        android:id="@+id/welcomeViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"/>
 
-    <!-- Bottom Section (1/4 Screen) -->
+    <!-- Button Container -->
     <LinearLayout
+        android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
-
-        <!-- Get Started Button -->
-        <Button
-            android:id="@+id/btnGetStarted"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/purpleLight"
-            android:text="Get Started"
-            android:textColor="@android:color/white"
-            android:layout_margin="10dp"/>
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <!-- Login Button -->
-        <Button
-            android:id="@+id/btnLogin"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
             android:text="Login"
-            android:textColor="@color/purpleLight"
-            android:layout_margin="10dp"/>
+            android:textColor="@color/white"
+            android:backgroundTint="@color/purpleLight"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Terms & Privacy Policy -->
-        <TextView
-            android:id="@+id/txtTermsPrivacy"
-            android:layout_width="wrap_content"
+        <!-- Register Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/registerButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="By proceeding, you agree to our Terms and that you have read our Privacy Policy"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:padding="5dp"/>
+            android:text="Register"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/purpleLight"
+            android:padding="12dp"/>
 
     </LinearLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

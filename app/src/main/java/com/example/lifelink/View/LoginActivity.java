@@ -34,38 +34,45 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        try {
+            setContentView(R.layout.login);
+            
+            // Initialize Firebase
+            mAuth = FirebaseAuth.getInstance();
+            db = FirebaseFirestore.getInstance();
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+            // Initialize views
+            emailEditText = findViewById(R.id.emailEditText);
+            passwordEditText = findViewById(R.id.passwordEditText);
+            eyeIcon = findViewById(R.id.eyeIcon);
+            loginButton = findViewById(R.id.loginButton);
+            rememberMeCheckBox = findViewById(R.id.rememberMeCheckBox);
+            forgotPasswordText = findViewById(R.id.forgotPasswordText);
+            signUpText = findViewById(R.id.signUpText);
 
-        emailEditText = findViewById(R.id.emailEditText);
-        passwordEditText = findViewById(R.id.passwordEditText);
-        eyeIcon = findViewById(R.id.eyeIcon);
-        loginButton = findViewById(R.id.loginButton);
-        rememberMeCheckBox = findViewById(R.id.rememberMeCheckBox);
-        forgotPasswordText = findViewById(R.id.forgotPasswordText);
-        signUpText = findViewById(R.id.signUpText);
+            // Set up click listeners
+            eyeIcon.setOnClickListener(v -> togglePasswordVisibility());
+            loginButton.setOnClickListener(v -> handleLogin());
+            forgotPasswordText.setOnClickListener(v -> showVerificationChoiceDialog());
+            signUpText.setOnClickListener(v -> {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            });
 
-        eyeIcon.setOnClickListener(v -> togglePasswordVisibility());
-
-        loginButton.setOnClickListener(v -> handleLogin());
-
-        forgotPasswordText.setOnClickListener(v -> showVerificationChoiceDialog());
-
-        signUpText.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error loading login screen: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            eyeIcon.setImageResource(R.drawable.baseline_add_24);
+            eyeIcon.setImageResource(R.drawable.baseline_visibility_24);
         } else {
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            eyeIcon.setImageResource(R.drawable.baseline_add_box_24);
+            eyeIcon.setImageResource(R.drawable.baseline_visibility_off_24);
         }
         passwordEditText.setSelection(passwordEditText.getText().length());
         isPasswordVisible = !isPasswordVisible;
