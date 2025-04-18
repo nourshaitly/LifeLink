@@ -6,19 +6,23 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.lifelink.R;
 import com.google.android.material.button.MaterialButton;
 
 public class HeartConditionOptionsActivity extends AppCompatActivity {
     private static final String TAG = "HeartConditionOptions";
+
     private MaterialButton healthTrackerButton;
-    private MaterialButton heartRateButton;
+    private MaterialButton nearbyHospitalButton; // Used to open NearbyHospitalsActivity
     private MaterialButton bloodPressureButton;
     private MaterialButton medicationButton;
     private MaterialButton exerciseButton;
     private MaterialButton dietButton;
     private MaterialButton backButton;
+
     private Handler handler;
     private boolean isFinishing = false;
     private Toast currentToast;
@@ -42,7 +46,7 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
     private void initializeButtons() {
         try {
             healthTrackerButton = findViewById(R.id.healthTrackerButton);
-            heartRateButton = findViewById(R.id.heartRateButton);
+            nearbyHospitalButton = findViewById(R.id.nearbyHospitalButton); // will be used for nearby centers
             bloodPressureButton = findViewById(R.id.bloodPressureButton);
             medicationButton = findViewById(R.id.medicationButton);
             exerciseButton = findViewById(R.id.exerciseButton);
@@ -56,41 +60,43 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
     private void setupButtonListeners() {
         healthTrackerButton.setOnClickListener(v -> {
             if (isFinishing) return;
-            
+
             try {
                 cancelCurrentToast();
                 Log.d(TAG, "Starting HealthTrackerActivity");
-                
-                // Create intent with proper flags
+
                 Intent intent = new Intent(HeartConditionOptionsActivity.this, HealthTrackerActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                
-                // Start activity
+
                 startActivity(intent);
                 Log.d(TAG, "HealthTrackerActivity started successfully");
-                
-                // Mark that we're finishing
+
                 isFinishing = true;
-                
-                // Post the finish call with a delay
                 handler.postDelayed(() -> {
-                    try {
-                        if (!isFinishing) return;
-                        Log.d(TAG, "Finishing HeartConditionOptionsActivity");
-                        finish();
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error finishing activity: " + e.getMessage(), e);
-                    }
-                }, 1000); // Increased delay to 1000ms
-                
+                    if (!isFinishing) return;
+                    Log.d(TAG, "Finishing HeartConditionOptionsActivity");
+                    finish();
+                }, 1000);
+
             } catch (Exception e) {
                 Log.e(TAG, "Error starting HealthTrackerActivity: " + e.getMessage(), e);
                 showToast("Error opening Health Tracker: " + e.getMessage());
             }
         });
 
-        heartRateButton.setOnClickListener(v -> showToast("Heart Rate Monitor coming soon!"));
+        // ✅ Updated: Open NearbyHospitalsActivity
+        nearbyHospitalButton.setOnClickListener(v -> {
+            try {
+                Log.d(TAG, "Launching NearbyHospitalsActivity");
+                Intent intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "Error launching NearbyHospitalsActivity: " + e.getMessage(), e);
+                showToast("Unable to open Nearby Medical Centers");
+            }
+        });
+
         bloodPressureButton.setOnClickListener(v -> showToast("Blood Pressure Tracker coming soon!"));
         medicationButton.setOnClickListener(v -> showToast("Medication Reminder coming soon!"));
         exerciseButton.setOnClickListener(v -> showToast("Exercise Guide coming soon!"));
@@ -147,4 +153,4 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
         }
         Log.d(TAG, "onDestroy called");
     }
-} 
+}

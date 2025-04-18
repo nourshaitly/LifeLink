@@ -2,6 +2,7 @@
     <string name="app_name">LifeLink</string>
     <string name="height_weight"><![CDATA[Height & Weight:]]></string>
     <string name="height_amp_weight"><![CDATA[Height & Weight:]]></string>
+    <string name="nearby_medical_centers">Nearby Medical Centers</string>
     <string-array name="blood_groups">
         <item>Select Blood Group</item>
         <item>A</item>
@@ -15,6 +16,10 @@
         <item>+</item>
         <item>-</item>
     </string-array>
+    
+    <string name="MY_MAP_API_KEY">
+        AIzaSyDGkTori7s092HchmI4Nyc48RARecxjHDo
+    </string>
 
 
 

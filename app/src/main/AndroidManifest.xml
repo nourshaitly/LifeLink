@@ -11,9 +11,16 @@
     <!-- Location permissions required for Bluetooth scanning -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
 
 
     <uses-permission android:name="android.permission.INTERNET"/>
+
+
+
+
+
 
     <application
         android:allowBackup="true"
@@ -50,10 +57,6 @@
             android:exported="true" />
 
 
-
-
-
-
         <activity
             android:name=".View.HeartConditionOptionsActivity"
             android:exported="true" />
@@ -62,31 +65,41 @@
             android:name=".View.HealthTrackerActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".View.HealthDetailBottomSheet"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!--<activity
+             android:name=".View.HealthDetailBottomSheet"
+             android:exported="false"
+             android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> -->
 
-        <activity android:name=".View.ResetPasswordActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".View.RegisterActivity"
-            android:exported="true" />
+         <activity android:name=".View.ResetPasswordActivity"
+             android:exported="false"
+             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+         <activity
+             android:name=".View.RegisterActivity"
+             android:exported="true" />
 
 
-        <activity
-            android:name=".View.HomeActivity"
-            android:exported="true" />
-        <activity android:name=".View.SignIn"
-            android:exported="true"
-            />
+         <activity
+             android:name=".View.HomeActivity"
+             android:exported="true" />
+         <activity android:name=".View.SignIn"
+             android:exported="true"
+             />
 
-        <activity
-            android:name=".View.ProfileActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+         <activity
+             android:name=".View.ProfileActivity"
+             android:exported="false"
+             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-    </application>
+         <activity
+             android:name=".View.MapsActivity"
+             android:exported="true" />
 
-</manifest>
+
+
+         <meta-data
+             android:name="com.google.android.geo.API_KEY"
+             android:value="@string/MY_MAP_API_KEY" />
+
+     </application>
+
+ </manifest>
