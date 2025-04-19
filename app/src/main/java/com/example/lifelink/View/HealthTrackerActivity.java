@@ -1,36 +1,38 @@
+// ============================
+// HealthTrackerActivity.java
+// ============================
+
 package com.example.lifelink.View;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
-import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.lifelink.Controller.Bluetooth;
 import com.example.lifelink.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.card.MaterialCardView;
-//import android.graphics.ColorStateList;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 public class HealthTrackerActivity extends AppCompatActivity {
-
-    private static final String TAG = "HealthTracker";
 
     private CircularProgressIndicator wellnessScoreIndicator;
     private TextView wellnessScoreValue, lastMeasuredTime;
@@ -38,26 +40,22 @@ public class HealthTrackerActivity extends AppCompatActivity {
     private MaterialCardView heartRateCardMaterial, spo2CardMaterial;
     private TextView heartRateValue, spo2Value;
 
-    private Handler handler;
-    private Random random = new Random();
     private ArrayList<Entry> heartRateEntries = new ArrayList<>();
     private ArrayList<Entry> spo2Entries = new ArrayList<>();
     private int timeCounter = 0;
-    private boolean isDestroyed = false;
-    private Runnable dataUpdateRunnable;
+    private Bluetooth bluetoothController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.health_tracker);
-        Log.d(TAG, "onCreate called");
 
         initializeViews();
         setupCharts();
-        setupClickListeners();
-        startDataSimulation();
+        requestBluetoothPermissions();
         updateLastMeasuredTime();
-        animateWellnessScore();
+
+        setupClickListeners();
     }
 
     private void initializeViews() {
@@ -73,22 +71,24 @@ public class HealthTrackerActivity extends AppCompatActivity {
 
         heartRateValue = findViewById(R.id.heartRateValue);
         spo2Value = findViewById(R.id.spo2Value);
-
-        handler = new Handler(Looper.getMainLooper());
-
-        // Initialize profile button
-        ImageButton profileButton = findViewById(R.id.profileButton);
-        if (profileButton != null) {
-            profileButton.setOnClickListener(v -> openProfile());
-        }
     }
 
     private void setupCharts() {
-        setupMiniChart(heartRateChart, "Heart Rate");
-        setupMiniChart(spo2Chart, "SPO2");
+        setupMiniChart(heartRateChart, heartRateEntries, "Heart Rate");
+        setupMiniChart(spo2Chart, spo2Entries, "SPO2");
     }
 
-    private void setupMiniChart(LineChart chart, String label) {
+    private void setupMiniChart(LineChart chart, ArrayList<Entry> entries, String label) {
+        LineDataSet set = new LineDataSet(entries, label);
+        set.setColor(getResources().getColor(R.color.teal_200));
+        set.setLineWidth(2f);
+        set.setDrawCircles(false);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setDrawFilled(true);
+        set.setFillColor(getResources().getColor(R.color.teal_200));
+        set.setFillAlpha(50);
+
         chart.getDescription().setEnabled(false);
         chart.setTouchEnabled(false);
         chart.setDrawGridBackground(false);
@@ -102,18 +102,85 @@ public class HealthTrackerActivity extends AppCompatActivity {
         chart.getAxisLeft().setEnabled(false);
         chart.getAxisRight().setEnabled(false);
 
-        LineDataSet dataSet = new LineDataSet(new ArrayList<>(), label);
-        dataSet.setColor(getResources().getColor(R.color.teal_200));
-        dataSet.setLineWidth(2f);
-        dataSet.setDrawCircles(false);
-        dataSet.setDrawValues(false);
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        dataSet.setDrawFilled(true);
-        dataSet.setFillColor(getResources().getColor(R.color.teal_200));
-        dataSet.setFillAlpha(50);
-
-        chart.setData(new LineData(dataSet));
+        chart.setData(new LineData(set));
+        chart.invalidate();
     }
+
+    private void requestBluetoothPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[]{
+                        Manifest.permission.BLUETOOTH_CONNECT,
+                        Manifest.permission.BLUETOOTH_SCAN
+                }, 101);
+            } else {
+                setupBluetooth();
+            }
+        } else {
+            setupBluetooth();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            setupBluetooth();
+        } else {
+            Toast.makeText(this, "Bluetooth permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setupBluetooth() {
+        bluetoothController = new Bluetooth(this);
+        bluetoothController.setBluetoothDataListener((hr, sp) -> runOnUiThread(() -> updateVitals(hr, sp)));
+        bluetoothController.connect();
+    }
+
+    private void updateVitals(String hr, String sp) {
+        try {
+            if (hr == null || sp == null || hr.trim().isEmpty() || sp.trim().isEmpty()) return;
+
+            float heartRate = Float.parseFloat(hr.trim());
+            float spo2 = Float.parseFloat(sp.trim());
+
+            heartRateEntries.add(new Entry(timeCounter, heartRate));
+            spo2Entries.add(new Entry(timeCounter, spo2));
+
+            if (heartRateEntries.size() > 10) {
+                heartRateEntries.remove(0);
+                spo2Entries.remove(0);
+            }
+
+            heartRateValue.setText(String.format(Locale.getDefault(), "%.0f BPM", heartRate));
+            spo2Value.setText(String.format(Locale.getDefault(), "%.0f %%", spo2));
+
+            setupMiniChart(heartRateChart, heartRateEntries, "Heart Rate");
+            setupMiniChart(spo2Chart, spo2Entries, "SPO2");
+
+            updateWellnessScore(heartRate, spo2);
+            updateLastMeasuredTime();
+
+            timeCounter++;
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (Exception ex) {
+            Toast.makeText(this, "Crash: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateWellnessScore(float heartRate, float spo2) {
+        int score = 0;
+        if (heartRate >= 60 && heartRate <= 100) score += 50;
+        if (spo2 >= 95 && spo2 <= 100) score += 50;
+        wellnessScoreIndicator.setProgress(score);
+        wellnessScoreValue.setText(String.valueOf(score));
+        animateWellnessScore(score);
+    }
+
 
     private void setupClickListeners() {
         heartRateCardMaterial.setOnClickListener(v -> {
@@ -131,87 +198,41 @@ public class HealthTrackerActivity extends AppCompatActivity {
 
 
 
-    private void startDataSimulation() {
-        dataUpdateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isDestroyed) return;
-                updateData();
-                handler.postDelayed(this, 1000);
-            }
-        };
-        handler.post(dataUpdateRunnable);
-    }
 
-    private void updateData() {
-        float heartRate = 60 + random.nextFloat() * 40;
-        float spo2 = 95 + random.nextFloat() * 5;
 
-        heartRateEntries.add(new Entry(timeCounter, heartRate));
-        spo2Entries.add(new Entry(timeCounter, spo2));
 
-        if (heartRateEntries.size() > 10) {
-            heartRateEntries.remove(0);
-            spo2Entries.remove(0);
-        }
 
-        heartRateValue.setText(String.format(Locale.getDefault(), "%.0f", heartRate));
-        spo2Value.setText(String.format(Locale.getDefault(), "%.0f", spo2));
 
-        updateChart(heartRateChart, heartRateEntries);
-        updateChart(spo2Chart, spo2Entries);
 
-        timeCounter++;
-    }
 
-    private void updateChart(LineChart chart, ArrayList<Entry> entries) {
-        LineDataSet set = (LineDataSet) chart.getData().getDataSetByIndex(0);
-        set.setValues(entries);
-        chart.getData().notifyDataChanged();
-        chart.notifyDataSetChanged();
-        chart.invalidate();
-    }
+
+
+
+
 
     private void updateLastMeasuredTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy | h:mm a", Locale.getDefault());
         lastMeasuredTime.setText(sdf.format(new Date()));
     }
 
-    private void animateWellnessScore() {
-        ObjectAnimator animation = ObjectAnimator.ofInt(wellnessScoreIndicator, "progress", 0, 71);
+    private void animateWellnessScore(int score) {
+        int currentProgress = wellnessScoreIndicator.getProgress();
+
+        ObjectAnimator animation = ObjectAnimator.ofInt(
+                wellnessScoreIndicator,
+                "progress",
+                currentProgress,
+                score
+        );
+
         animation.setDuration(1000);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
     }
 
-    private void openProfile() {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isDestroyed = false;
-        if (handler != null && dataUpdateRunnable != null) {
-            handler.post(dataUpdateRunnable);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (handler != null && dataUpdateRunnable != null) {
-            handler.removeCallbacks(dataUpdateRunnable);
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isDestroyed = true;
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-        }
+        if (bluetoothController != null) bluetoothController.disconnect();
     }
 }

@@ -1,172 +1,137 @@
-  /* package com.example.lifelink.Controller;
+// =======================
+// Bluetooth.java
+// =======================
 
-import android.Manifest;
+package com.example.lifelink.Controller;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-public class Bluetooth extends AppCompatActivity {
+public class Bluetooth {
 
-    private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1;
-    private static final String TAG = "BluetoothApp";
-
-    // Bluetooth constants
-    private static final String DEVICE_ADDRESS = "D0:EF:76:34:54:36"; // Replace with ESP32 MAC Address
+    private static final String TAG = "Bluetooth";
+    private static final String DEVICE_ADDRESS = "D0:EF:76:34:54:36"; // Replace with your ESP32 MAC address
     private static final UUID SERIAL_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    // Bluetooth components
+    private final Context context;
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket bluetoothSocket;
     private InputStream inputStream;
+    private boolean isReading = false;
 
-    // Data variables for heart rate and SpO2
-    public String heartRate = "N/A"; // Default values
-    public String spO2 = "N/A";
+    private String lastHeartRate = null;
+    private String lastSpO2 = null;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+    public interface BluetoothDataListener {
+        void onDataReceived(String heartRate, String spo2);
+    }
 
-        // Initialize Bluetooth adapter
+    private BluetoothDataListener dataListener;
+
+    public void setBluetoothDataListener(BluetoothDataListener listener) {
+        this.dataListener = listener;
+    }
+
+    public Bluetooth(Context context) {
+        this.context = context;
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        // Request permissions if required
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            requestBluetoothPermissions();
-        } else {
-            connectToBluetoothDevice();
-        }
     }
 
-    // Request Bluetooth permissions for Android 12+ (API 31+)
-    private void requestBluetoothPermissions() {
-        if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this, new String[] {
-                    Manifest.permission.BLUETOOTH_CONNECT,
-                    Manifest.permission.BLUETOOTH_SCAN
-            }, REQUEST_BLUETOOTH_PERMISSIONS);
-        } else {
-            connectToBluetoothDevice();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                connectToBluetoothDevice();
-            } else {
-                Log.e(TAG, "Bluetooth permissions denied. Cannot connect to device.");
-            }
-        }
-    }
-
-    private void connectToBluetoothDevice() {
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
-            Log.e(TAG, "Bluetooth is not enabled!");
+    public void connect() {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(context, "Bluetooth connect permission not granted", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(DEVICE_ADDRESS);
         try {
-            BluetoothDevice device = bluetoothAdapter.getRemoteDevice(DEVICE_ADDRESS);
-
-            // 🔹 Check permissions before attempting Bluetooth operations
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                    checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                Log.e(TAG, "Missing Bluetooth permissions.");
-                requestBluetoothPermissions(); // Request permissions
-                return;
-            }
-
-            // Create and connect to Bluetooth socket
             bluetoothSocket = device.createRfcommSocketToServiceRecord(SERIAL_UUID);
-            bluetoothSocket.connect(); // Connect to the socket
-            Log.d(TAG, "Connected to ESP32 successfully!");
+            bluetoothSocket.connect();
             inputStream = bluetoothSocket.getInputStream();
-
-            startReadingData(); // Begin data reading and processing
-
+            startReading();
         } catch (IOException e) {
-            Log.e(TAG, "Failed to connect: " + e.getMessage());
+            Log.e(TAG, "Connection failed", e);
         }
     }
 
-    private void startReadingData() {
+    public void disconnect() {
+        isReading = false;
+        try {
+            if (inputStream != null) inputStream.close();
+            if (bluetoothSocket != null) bluetoothSocket.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Disconnection failed", e);
+        }
+    }
+
+    private void startReading() {
+        isReading = true;
         new Thread(() -> {
-            try {
-                byte[] buffer = new byte[1024];
-                StringBuilder messageBuffer = new StringBuilder();
+            byte[] buffer = new byte[1024];
+            int bytes;
+            StringBuilder sb = new StringBuilder();
 
-                int bytes;
-                while ((bytes = inputStream.read(buffer)) > 0) {
-                    // Accumulate incoming data
-                    messageBuffer.append(new String(buffer, 0, bytes).trim());
+            while (isReading) {
+                try {
+                    bytes = inputStream.read(buffer);
+                    String readMessage = new String(buffer, 0, bytes);
+                    sb.append(readMessage);
 
-                    String accumulatedData = messageBuffer.toString();
-                    if (accumulatedData.contains("Heart Rate") && accumulatedData.contains("SpO2")) {
-                        Log.d(TAG, "Complete Data: " + accumulatedData);
+                    int endIndex;
+                    while ((endIndex = sb.indexOf("\n")) >= 0) {
+                        String line = sb.substring(0, endIndex).trim();
+                        sb.delete(0, endIndex + 1);
 
-                        // Parse the data
-                        String[] lines = accumulatedData.split("\\r?\\n");
+                        Log.d(TAG, "Received line: " + line);
 
-                        for (String line : lines) {
-                            if (line.contains("Heart Rate")) {
-                                heartRate = line.split(":")[1].replace("BPM", "").trim(); // Extract numerical Heart Rate
-                            }
-                            if (line.contains("SpO2")) {
-                                spO2 = line.split(":")[1].replace("%", "").trim(); // Extract numerical SpO2
+                        if (line.contains("Heart Rate")) {
+                            if (line.contains("Invalid")) {
+                                lastHeartRate = "0";
+                            } else {
+                                try {
+                                    lastHeartRate = line.split(":")[1].replace("BPM", "").trim();
+                                } catch (Exception e) {
+                                    lastHeartRate = "0";
+                                }
                             }
                         }
 
-                        // Log data for verification
-                        Log.d("test", "Heart Rate: " + heartRate + " BPM, SpO2: " + spO2 + " %");
+                        if (line.contains("SpO2")) {
+                            if (line.contains("Invalid")) {
+                                lastSpO2 = "0";
+                            } else {
+                                try {
+                                    lastSpO2 = line.split(":")[1].replace("%", "").trim();
+                                } catch (Exception e) {
+                                    lastSpO2 = "0";
+                                }
+                            }
+                        }
 
-                        // Send data to Firebase (Example)
-                        sendDataToFirebase(heartRate, spO2);
-
-                        // Clear the buffer after processing
-                        messageBuffer.setLength(0);
+                        if (lastHeartRate != null && lastSpO2 != null) {
+                            if (dataListener != null) {
+                                dataListener.onDataReceived(lastHeartRate, lastSpO2);
+                            }
+                            lastHeartRate = null;
+                            lastSpO2 = null;
+                        }
                     }
+                } catch (IOException e) {
+                    Log.e(TAG, "Error reading from InputStream", e);
+                    break;
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Error reading data: " + e.getMessage());
             }
         }).start();
     }
-
-    private void sendDataToFirebase(String heartRate, String spO2) {
-        // Code to send data to Firebase
-        // Assuming you have Firebase setup in your project
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("LiveHealthData");
-
-        // Using current timestamp for updating
-        long timestamp = System.currentTimeMillis();
-
-        ref.child("heartRate").setValue(heartRate);
-        ref.child("oxygenLevel").setValue(spO2);
-        ref.child("timestamp").setValue(timestamp);
-
-        Log.d(TAG, "Data sent to Firebase - Heart Rate: " + heartRate + ", SpO2: " + spO2 + ", Timestamp: " + timestamp);
-    }
 }
-*/

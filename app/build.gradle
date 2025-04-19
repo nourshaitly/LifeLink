@@ -55,6 +55,7 @@ dependencies {
     // MPAndroidChart (latest stable version)
     implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
     implementation libs.play.services.maps
+    implementation libs.play.services.location
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
