@@ -22,4 +22,14 @@
     <item name="cardAsthma" type="id" />
     <item name="cardHypertension" type="id" />
     <item name="welcomeTextView" type="id" />
+    <item name="btnHydration" type="id" />
+    <item name="btnMental" type="id" />
+    <item name="btnMotivation" type="id" />
+    <item name="btnMovement" type="id" />
+    <item name="btnSleep" type="id" />
+    <item name="btnNutrition" type="id" />
+    <item name="tvWelcomeTitle" type="id" />
+    <item name="tvWelcomeDesc" type="id" />
+    <item name="wellnessScrollView" type="id" />
+
 </resources>

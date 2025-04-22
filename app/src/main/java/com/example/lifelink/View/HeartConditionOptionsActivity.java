@@ -97,7 +97,50 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
             }
         });
 
-        bloodPressureButton.setOnClickListener(v -> showToast("Blood Pressure Tracker coming soon!"));
+        bloodPressureButton.setOnClickListener(v -> {
+            try {
+                Log.d(TAG, "Launching Reminder Activity");
+                Intent intent = new Intent(this, RemindersWelcomeActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "Error launching ReminderActivity: " + e.getMessage(), e);
+                showToast("Unable to open Reminder ");
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         medicationButton.setOnClickListener(v -> showToast("Medication Reminder coming soon!"));
         exerciseButton.setOnClickListener(v -> showToast("Exercise Guide coming soon!"));
         dietButton.setOnClickListener(v -> showToast("Diet Recommendations coming soon!"));

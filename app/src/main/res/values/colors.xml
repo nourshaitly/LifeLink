@@ -35,6 +35,19 @@
     <color name="dark_gray">#616161</color>
 
 
+            <!-- Indigo -->
+        <color name="primaryVariant">#303F9F</color>
+        <color name="secondary">#FF4081</color>      <!-- Pink -->
+        <color name="secondaryVariant">#C2185B</color>
+
+
+
+        <color name="success_green">#4CAF50</color>
+
+
+
+
+
 
 
     <color name="colorPrimary">#6200EE</color>

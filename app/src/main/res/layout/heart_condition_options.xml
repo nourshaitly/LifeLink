@@ -36,7 +36,7 @@
         android:id="@+id/bloodPressureButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Blood Pressure Tracker"
+        android:text="Reminder"
         android:textColor="@color/white"
         android:backgroundTint="@color/purpleLight"
         android:padding="12dp"

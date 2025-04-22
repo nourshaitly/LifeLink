@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wellnessScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/wellness_background"
+    android:fillViewport="true"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- 🌿 Welcome Section -->
+        <LinearLayout
+            android:id="@+id/introSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/tvWelcomeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome to your Wellness Coach 🌿"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/tvWelcomeDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get personalized wellness tips throughout your day."
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btnStartSetup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GET STARTED"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+
+        <!-- 🧠 Setup Section (hidden initially) -->
+        <LinearLayout
+            android:id="@+id/setupSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose your wellness areas:"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Category Buttons -->
+            <Button
+                android:id="@+id/btnHydration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💧 Hydration"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnNutrition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍎 Nutrition"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnMental"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🧘 Mental Health"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnSleep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🌙 Sleep"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnMovement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🚶 Movement"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnMotivation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💬 Motivation"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Frequency Selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="How often would you like to receive tips?"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="24dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/editFrequencyNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="e.g. 2"
+                    android:inputType="number"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@android:color/white"
+                    android:padding="12dp"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/spinnerFrequencyUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:backgroundTint="@android:color/white" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnStartTips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start Tips"
+                android:layout_marginTop="16dp" />
+            <Button
+                android:id="@+id/btnStopTips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stop Tips"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

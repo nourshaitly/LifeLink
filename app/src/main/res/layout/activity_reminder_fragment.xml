@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA">
+
+    <!-- Greeting Text -->
+    <TextView
+        android:id="@+id/greetingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hey, Nour 👋"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#212121"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp" />
+
+    <!-- Horizontal Date Selector -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dateSelectorRecycler"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:paddingHorizontal="12dp"
+        android:contentDescription="Select a date to view reminders"
+        app:layout_constraintTop_toBottomOf="@id/greetingText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never" />
+
+    <!-- "To take today" Header -->
+    <TextView
+        android:id="@+id/todayMedsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To take today"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        app:layout_constraintTop_toBottomOf="@id/dateSelectorRecycler"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="20dp" />
+
+    <!-- RecyclerView for medication cards -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reminderListRecycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="12dp"
+        android:contentDescription="List of today's medication reminders"
+        app:layout_constraintTop_toBottomOf="@id/todayMedsLabel"
+        app:layout_constraintBottom_toTopOf="@id/addReminderFab"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clipToPadding="false"
+        android:overScrollMode="never" />
+
+    <!-- Floating Action Button (Add Reminder) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addReminderFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="Add new medication reminder"
+        android:tint="@android:color/white"
+        android:backgroundTint="#FF4081"
+        app:srcCompat="@drawable/ic_add" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

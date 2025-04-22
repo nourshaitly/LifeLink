@@ -44,6 +44,15 @@
     </style>
 
 
+    <style name="WellnessCard" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="backgroundTint">#4444AA</item> <!-- Change for each category dynamically -->
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 
 
 

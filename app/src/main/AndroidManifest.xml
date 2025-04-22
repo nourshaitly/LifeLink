@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
 
 
@@ -33,14 +34,25 @@
         android:theme="@style/Theme.LifeLink"
         tools:targetApi="31">
 
+
+
+
+
+            <!-- Other configurations -->
+
+
+
+
+
+
+
+
+
+
         <activity
             android:name=".View.WelcomeActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <!-- Add LoginActivity declaration -->
@@ -59,7 +71,21 @@
 
         <activity
             android:name=".View.HeartConditionOptionsActivity"
-            android:exported="true" />
+            android:exported="true" >
+
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+
+
+
+
+
+
+
 
         <activity
             android:name=".View.HealthTrackerActivity"
@@ -96,7 +122,41 @@
 
 
 
-         <meta-data
+
+        <activity android:name=".View.RemindersWelcomeActivity"
+            android:exported="true">
+
+
+        </activity>
+
+
+        <activity
+            android:name=".View.AddReminderActivity"
+            android:theme="@style/Theme.LifeLink.Reminder" />
+
+
+
+
+
+
+        <activity android:name=".View.DashboardActivity"
+            android:exported="true"
+            />
+
+
+
+
+        <receiver android:name=".View.ReminderAlarmReceiver" />
+
+        <activity
+            android:name=".View.AddAppointmentActivity"
+            android:theme="@style/Theme.LifeLink" />
+
+        <receiver android:name=".View.AppointmentNotificationReceiver"
+            android:exported="true" />
+
+
+        <meta-data
              android:name="com.google.android.geo.API_KEY"
              android:value="@string/MY_MAP_API_KEY" />
 

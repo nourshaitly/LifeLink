@@ -6,27 +6,31 @@
         <item name="colorPrimary">@color/purpleLight</item>
         <item name="colorPrimaryVariant">@color/purpleDark</item>
         <item name="colorOnPrimary">@color/white</item>
-        
+
         <!-- Secondary brand color -->
         <item name="colorSecondary">@color/accentColor</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
-        
+
         <!-- Status bar color -->
         <item name="android:statusBarColor">@color/purpleDark</item>
-        
+
         <!-- Text colors -->
         <item name="android:textColorPrimary">@color/textPrimary</item>
         <item name="android:textColorSecondary">@color/textSecondary</item>
-        
+
         <!-- Background colors -->
         <item name="android:windowBackground">@color/backgroundLight</item>
         <item name="colorSurface">@color/surfaceColor</item>
-        
+
         <!-- Shape appearance -->
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.LifeLink.SmallComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.LifeLink.MediumComponent</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.LifeLink.LargeComponent</item>
+
+        <!-- Required for date/time pickers -->
+        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar</item>
+        <item name="materialTimePickerTheme">@style/ThemeOverlay.MaterialComponents.TimePicker</item>
     </style>
 
     <!-- Shape Appearances -->

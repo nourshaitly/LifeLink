@@ -23,5 +23,31 @@
 
 
 
+    <string-array name="med_types">
+        <item>Pill</item>
+        <item>Capsule</item>
+        <item>Drop</item>
+        <item>Injection</item>
+    </string-array>
+
+
+    <string-array name="reminder_repeat_options">
+        <item>Donot repeat</item>
+        <item>1 time</item>
+        <item>2 times</item>
+        <item>3 times</item>
+        <item>4 times</item>
+        <item>5 times</item>
+    </string-array>
+
+    <string-array name="frequency_units">
+        <item>Minutes</item>
+        <item>Hours</item>
+        <item>Days</item>
+    </string-array>
+
+
+
+
 
 </resources>
