@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Top Section -->
+    <LinearLayout
+        android:id="@+id/topSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Emergency Status -->
+        <TextView
+            android:id="@+id/emergencyStatusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Emergency Status"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/emergencyStatusValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Low-Level Emergency"
+            android:textColor="#00FF00"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp" />
+
+        <!-- Vital Signs -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <!-- Heart Rate -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Heart Rate"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/heartRateValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="72 bpm"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- SpO₂ -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SpO₂"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/spo2Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="98%"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Middle Section -->
+    <LinearLayout
+        android:id="@+id/middleSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/topSection"
+        app:layout_constraintBottom_toTopOf="@id/bottomSection">
+
+        <!-- SOS Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sosButton"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:text="SOS"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:cornerRadius="100dp"
+            android:backgroundTint="#FF0000" />
+
+        <!-- Voice Recommendations Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/voiceRecommendationsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hear Recommendations"
+            android:layout_marginTop="16dp"
+            app:icon="@drawable/ic_speaker"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <!-- Emergency Contact Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/emergencyContactButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Emergency Contact"
+            android:layout_marginTop="8dp"
+            app:icon="@drawable/ic_phone"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/shareLocationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share Location"
+            app:icon="@drawable/ic_location"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        <Button
+            android:id="@+id/testSmsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test SMS"
+            android:layout_marginTop="20dp" />
+
+    </LinearLayout>
+
+
+
+    <!-- Bottom Section: Recommendation -->
+    <LinearLayout
+        android:id="@+id/bottomSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Recommendation Text -->
+        <TextView
+            android:id="@+id/recommendationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stay calm and rest. Drink water."
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

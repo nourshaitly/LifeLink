@@ -18,7 +18,7 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
     private MaterialButton healthTrackerButton;
     private MaterialButton nearbyHospitalButton; // Used to open NearbyHospitalsActivity
     private MaterialButton bloodPressureButton;
-    private MaterialButton medicationButton;
+    private MaterialButton emergencyPageButton;
     private MaterialButton exerciseButton;
     private MaterialButton dietButton;
     private MaterialButton backButton;
@@ -48,7 +48,7 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
             healthTrackerButton = findViewById(R.id.healthTrackerButton);
             nearbyHospitalButton = findViewById(R.id.nearbyHospitalButton); // will be used for nearby centers
             bloodPressureButton = findViewById(R.id.bloodPressureButton);
-            medicationButton = findViewById(R.id.medicationButton);
+            emergencyPageButton = findViewById(R.id.emergencyPageButton);
             exerciseButton = findViewById(R.id.exerciseButton);
             dietButton = findViewById(R.id.dietButton);
             backButton = findViewById(R.id.backButton);
@@ -108,6 +108,16 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
             }
         });
 
+        emergencyPageButton.setOnClickListener(v -> {
+            try {
+                Log.d(TAG, "Launching Reminder Activity");
+                Intent intent = new Intent(this, EmergencyActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "Error launching ReminderActivity: " + e.getMessage(), e);
+                showToast("Unable to open Emergency Page ");
+            }
+        });
 
 
 
@@ -141,7 +151,8 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
 
 
 
-        medicationButton.setOnClickListener(v -> showToast("Medication Reminder coming soon!"));
+
+
         exerciseButton.setOnClickListener(v -> showToast("Exercise Guide coming soon!"));
         dietButton.setOnClickListener(v -> showToast("Diet Recommendations coming soon!"));
         backButton.setOnClickListener(v -> {
