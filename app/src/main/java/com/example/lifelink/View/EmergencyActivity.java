@@ -1,8 +1,13 @@
 package com.example.lifelink.View;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsManager;
@@ -14,6 +19,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import android.content.pm.PackageManager;
 
 import com.example.lifelink.R;
@@ -27,6 +35,7 @@ public class EmergencyActivity extends AppCompatActivity {
 
     private static final int CALL_PERMISSION_REQUEST = 100;
     private static final int SMS_PERMISSION_REQUEST = 101;
+    private static final String CHANNEL_ID = "emergency_channel";
 
     private String emergencyLevel;
     private TextView statusText, heartRateText, spo2Text, recommendationText;
@@ -46,7 +55,8 @@ public class EmergencyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency);
 
-        // Initialize views
+        createEmergencyNotificationChannel();
+
         statusText = findViewById(R.id.emergencyStatusValue);
         heartRateText = findViewById(R.id.heartRateValue);
         spo2Text = findViewById(R.id.spo2Value);
@@ -56,7 +66,6 @@ public class EmergencyActivity extends AppCompatActivity {
         emergencyContactButton = findViewById(R.id.emergencyContactButton);
         shareLocationButton = findViewById(R.id.shareLocationButton);
 
-        // Text-to-Speech
         textToSpeech = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeech.setLanguage(Locale.US);
@@ -68,12 +77,41 @@ public class EmergencyActivity extends AppCompatActivity {
         emergencyContactButton.setOnClickListener(v -> handleEmergencyContactButton());
         shareLocationButton.setOnClickListener(v -> shareLocation());
 
-        // Get emergency level
         emergencyLevel = getIntent().getStringExtra("emergency_level");
         if (emergencyLevel == null) emergencyLevel = "Low";
 
-        // Start location + emergency process
         checkLocationSettingsThenFetch();
+    }
+
+    private void createEmergencyNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Emergency Alerts",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Triggered when emergency condition is detected");
+            channel.enableVibration(true);
+            channel.enableLights(true);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void showEmergencyNotification(String recommendation) {
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_announcement)
+                .setContentTitle("🚨 Emergency Recommendation")
+                .setContentText(recommendation)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(true)
+                .build();
+
+        manager.notify(2001, notification);
     }
 
     private void checkLocationSettingsThenFetch() {
@@ -128,6 +166,10 @@ public class EmergencyActivity extends AppCompatActivity {
         } else if (level == 2) {
             requestSmsPermissionIfNeeded();
         }
+
+        if (level >= 2) {
+            showEmergencyNotification(recommendationText.getText().toString());
+        }
     }
 
     private void triggerCall() {
@@ -140,28 +182,22 @@ public class EmergencyActivity extends AppCompatActivity {
         }
     }
 
-    // Function to send SMS to emergency contact (Medium and High-level)
     private void sendSmsToEmergencyContact() {
         String message = "Test emergency SMS\nCondition: " + getConditionMessage() +
                 "\nHR: " + heartRate + "\nSpO₂: " + spo2 + "\nLocation: " + userLocation;
 
-        String phone = emergencyContact.replace(" ", ""); // remove spaces just in case
+        String phone = emergencyContact.replace(" ", "");
 
         try {
             SmsManager smsManager = SmsManager.getDefault();
-
-            // If message is long, divide it into parts
             ArrayList<String> parts = smsManager.divideMessage(message);
             smsManager.sendMultipartTextMessage(phone, null, parts, null, null);
-
             Toast.makeText(this, "SMS sent successfully", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, "Failed to send SMS: " + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
-
-
 
     private void requestSmsPermissionIfNeeded() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
