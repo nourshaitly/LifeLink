@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Friendly Illustration or Icon (optional) -->
+            <ImageView
+                android:id="@+id/mapIllustration"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@drawable/ic_map_intro"
+                android:contentDescription="@string/map_intro_image"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Title Text -->
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nearby Medical Finder"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Subtitle Text -->
+            <TextView
+                android:id="@+id/subtitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📍 Instantly discover hospitals and pharmacies nearby\n🔀 Swipe or tap tabs to easily switch between categories\n📋 View important details: addresses, contacts, and directions\n🚨 Always ready to assist you in urgent moments"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+
+                android:layout_marginBottom="32dp" />
+
+            <!-- Mini MapView inside CardView (clickable) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/miniMapCard"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- MapView -->
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/miniMapView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <!-- Transparent Overlay (this will capture taps) -->
+                    <View
+                        android:id="@+id/overlayView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent" />
+
+                </FrameLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+
+
+            <!-- Hint Text -->
+            <TextView
+                android:id="@+id/tapHintText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap the map to start exploring"
+                android:textSize="14sp"
+                android:textColor="@color/LogoBlue"
+                android:gravity="center"
+                android:layout_marginBottom="32dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

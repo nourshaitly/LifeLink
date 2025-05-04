@@ -78,10 +78,13 @@
         <activity
             android:name=".View.MedicalProfileActivity"
             android:exported="true" />
+        <activity
+            android:name=".View.GeoMapsActivity"
+            android:exported="true" />
 
 
         <activity
-            android:name=".View.GeoMapsActivity"
+            android:name=".View.MapIntroActivity"
             android:exported="true" >
 
         <intent-filter>
