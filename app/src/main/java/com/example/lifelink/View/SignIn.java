@@ -52,7 +52,7 @@ public class SignIn extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         // Configure Google Sign-In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+      /*  GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))  // Correct Web Client ID
                 .requestEmail()
                 .build();
@@ -69,7 +69,7 @@ public class SignIn extends AppCompatActivity {
                 showToast("Button clicked");  // Custom toast
                 signInWithGoogle();
             });
-        }
+        }*/
     }
 
     private void showToast(String message) {

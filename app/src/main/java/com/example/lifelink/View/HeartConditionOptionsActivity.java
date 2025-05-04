@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.lifelink.R;
+import com.example.lifelink.Service.BluetoothMonitorService;
 import com.google.android.material.button.MaterialButton;
 
 public class HeartConditionOptionsActivity extends AppCompatActivity {
@@ -33,6 +34,10 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
         setContentView(R.layout.heart_condition_options);
         handler = new Handler(Looper.getMainLooper());
         Log.d(TAG, "onCreate called");
+
+
+
+
 
         try {
             initializeButtons();
@@ -153,7 +158,29 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
 
 
 
-        exerciseButton.setOnClickListener(v -> showToast("Exercise Guide coming soon!"));
+        exerciseButton.setOnClickListener(v -> {
+            try {
+                Log.d(TAG, "Launching AI ");
+                Intent intent = new Intent(this, AIChatActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "Error launching ReminderActivity: " + e.getMessage(), e);
+                showToast("Unable to open Emergency Page ");
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
         dietButton.setOnClickListener(v -> showToast("Diet Recommendations coming soon!"));
         backButton.setOnClickListener(v -> {
             cancelCurrentToast();

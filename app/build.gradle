@@ -7,6 +7,16 @@ android {
     namespace 'com.example.lifelink'
     compileSdk 34
 
+
+    buildFeatures {
+        buildConfig true
+    }
+
+
+
+
+
+
     defaultConfig {
         applicationId "com.example.lifelink"
         minSdk 24
@@ -15,6 +25,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+
+        def apiKey = project.findProperty("API_KEY") ?: ""
+        buildConfigField "String", "API_KEY", "\"${apiKey}\""
+
+
     }
 
     buildTypes {
@@ -80,6 +96,21 @@ dependencies {
 //json
 
     implementation 'com.google.code.gson:gson:2.10'
+
+
+    //ai
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
+
+
+
+
+
+
+
 
 
 

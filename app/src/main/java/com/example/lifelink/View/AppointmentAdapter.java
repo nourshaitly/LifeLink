@@ -16,10 +16,18 @@ import java.util.List;
 
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.AppointmentViewHolder> {
 
-    private final List<Appointment> appointmentList;
+    public interface OnAppointmentClickListener {
+        void onMarkDoneClick(Appointment appointment);  // ✅ Mark as Done
+        void onEditClick(Appointment appointment);      // ✏️ Edit
+        void onDeleteClick(Appointment appointment);    // 🗑️ Delete
+    }
 
-    public AppointmentAdapter(List<Appointment> appointmentList) {
+    private final List<Appointment> appointmentList;
+    private final OnAppointmentClickListener listener;
+
+    public AppointmentAdapter(List<Appointment> appointmentList, OnAppointmentClickListener listener) {
         this.appointmentList = appointmentList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -39,11 +47,25 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         holder.appointmentTime.setText(appointment.getTime());
         holder.appointmentLocation.setText(appointment.getLocation());
 
-        // Optional: Handle "Mark as Done" button
+        // Handle Mark Done button click
         holder.markDoneBtn.setOnClickListener(v -> {
-            // Remove item or show confirmation
-            appointmentList.remove(position);
-            notifyItemRemoved(position);
+            if (listener != null) {
+                listener.onMarkDoneClick(appointment);
+            }
+        });
+
+        // Handle Edit button click
+        holder.editBtn.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEditClick(appointment);
+            }
+        });
+
+        // Handle Delete button click
+        holder.deleteBtn.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDeleteClick(appointment);
+            }
         });
     }
 
@@ -54,7 +76,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     public static class AppointmentViewHolder extends RecyclerView.ViewHolder {
         TextView doctorName, appointmentDate, appointmentTime, appointmentLocation;
-        ImageButton markDoneBtn;
+        ImageButton markDoneBtn, editBtn, deleteBtn;
 
         public AppointmentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +85,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             appointmentTime = itemView.findViewById(R.id.appointmentTime);
             appointmentLocation = itemView.findViewById(R.id.appointmentLocation);
             markDoneBtn = itemView.findViewById(R.id.markDoneBtn);
+            editBtn = itemView.findViewById(R.id.editBtn);
+            deleteBtn = itemView.findViewById(R.id.deleteBtn);
         }
     }
 }
