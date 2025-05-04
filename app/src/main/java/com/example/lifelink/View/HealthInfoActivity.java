@@ -26,30 +26,27 @@ public class HealthInfoActivity extends AppCompatActivity {
     Spinner bloodGroupSpinner, rhFactorSpinner;
     NumberPicker heightPicker, weightPicker;
 
-    TextView lifestyleQuestionText;
-    LinearLayout option1, option2, option3, option4;
-    TextView optionEmoji1, optionEmoji2, optionEmoji3, optionEmoji4;
-    TextView optionText1, optionText2, optionText3, optionText4;
+    TextView lifestyleQuestionText1, lifestyleQuestionText2, lifestyleQuestionText3;
+    LinearLayout option1, option2, option3, option4, option5, option6, option7, option8, option9, option10, option11, option12;
+    TextView optionEmoji1, optionEmoji2, optionEmoji3, optionEmoji4, optionEmoji5, optionEmoji6, optionEmoji7, optionEmoji8, optionEmoji9, optionEmoji10, optionEmoji11, optionEmoji12;
+    TextView optionText1, optionText2, optionText3, optionText4, optionText5, optionText6, optionText7, optionText8, optionText9, optionText10, optionText11, optionText12;
 
     String[] lifestyleQuestions = {
             "🍺 Do you drink alcohol?",
             "🚬 Do you smoke?",
-            "🏃‍♂️ How often do you exercise?",
-            "🛌 How many hours do you sleep?"
+            "🏃‍♂️ How often do you exercise?"
     };
 
     String[][] lifestyleOptions = {
             {"Never", "Rarely", "Sometimes", "Often"},
             {"No", "Used to", "Occasionally", "Frequently"},
-            {"None", "Occasionally", "Regularly", "Daily"},
-            {"<4 hrs", "5–6 hrs", "7–8 hrs", "9+ hrs"}
+            {"None", "Occasionally", "Regularly", "Daily"}
     };
 
     String[][] lifestyleEmojis = {
             {"🚫", "🍷", "🍺", "🍻"},
             {"🚫", "💨", "🚬", "🌫️"},
-            {"🛌", "🚶", "🏃", "🏋️"},
-            {"😴", "⏰", "💤", "🛏️"}
+            {"🛌", "🚶", "🏃", "🏋️"}
     };
 
     int currentQuestionIndex = 0;
@@ -68,7 +65,7 @@ public class HealthInfoActivity extends AppCompatActivity {
         String userName = getIntent().getStringExtra("userName");
         if (userName != null) {
             TextView welcomeMessageText = findViewById(R.id.welcomeMessageText);
-            welcomeMessageText.setText("👋 Welcome, " + userName + "!\nLet's build your health profile.");
+            welcomeMessageText.setText(" Welcome, " + userName + "!\nLet's build your health profile.");
         }
 
         // UI References
@@ -87,21 +84,49 @@ public class HealthInfoActivity extends AppCompatActivity {
         heightPicker = findViewById(R.id.heightPicker);
         weightPicker = findViewById(R.id.weightPicker);
 
-        lifestyleQuestionText = findViewById(R.id.lifestyleQuestionText);
+        // Lifestyle Questions and Options
+        lifestyleQuestionText1 = findViewById(R.id.lifestyleQuestionText1);
+        lifestyleQuestionText2 = findViewById(R.id.lifestyleQuestionText2);
+        lifestyleQuestionText3 = findViewById(R.id.lifestyleQuestionText3);
+
         option1 = findViewById(R.id.option1);
         option2 = findViewById(R.id.option2);
         option3 = findViewById(R.id.option3);
         option4 = findViewById(R.id.option4);
+        option5 = findViewById(R.id.option5);
+        option6 = findViewById(R.id.option6);
+        option7 = findViewById(R.id.option7);
+        option8 = findViewById(R.id.option8);
+        option9 = findViewById(R.id.option9);
+        option10 = findViewById(R.id.option10);
+        option11 = findViewById(R.id.option11);
+        option12 = findViewById(R.id.option12);
 
         optionEmoji1 = findViewById(R.id.optionEmoji1);
         optionEmoji2 = findViewById(R.id.optionEmoji2);
         optionEmoji3 = findViewById(R.id.optionEmoji3);
         optionEmoji4 = findViewById(R.id.optionEmoji4);
+        optionEmoji5 = findViewById(R.id.optionEmoji5);
+        optionEmoji6 = findViewById(R.id.optionEmoji6);
+        optionEmoji7 = findViewById(R.id.optionEmoji7);
+        optionEmoji8 = findViewById(R.id.optionEmoji8);
+        optionEmoji9 = findViewById(R.id.optionEmoji9);
+        optionEmoji10 = findViewById(R.id.optionEmoji10);
+        optionEmoji11 = findViewById(R.id.optionEmoji11);
+        optionEmoji12 = findViewById(R.id.optionEmoji12);
 
         optionText1 = findViewById(R.id.optionText1);
         optionText2 = findViewById(R.id.optionText2);
         optionText3 = findViewById(R.id.optionText3);
         optionText4 = findViewById(R.id.optionText4);
+        optionText5 = findViewById(R.id.optionText5);
+        optionText6 = findViewById(R.id.optionText6);
+        optionText7 = findViewById(R.id.optionText7);
+        optionText8 = findViewById(R.id.optionText8);
+        optionText9 = findViewById(R.id.optionText9);
+        optionText10 = findViewById(R.id.optionText10);
+        optionText11 = findViewById(R.id.optionText11);
+        optionText12 = findViewById(R.id.optionText12);
 
         imReadyButton.setOnClickListener(v -> {
             animateSlideOut(welcomeLayout);
@@ -115,7 +140,8 @@ public class HealthInfoActivity extends AppCompatActivity {
             animateSlideOut(birthLayout);
             birthLayout.setVisibility(View.GONE);
             lifestyleQuestionLayout.setVisibility(View.VISIBLE);
-            showNextLifestyleQuestion(true);
+            chronicConditionsLayout.setVisibility(View.VISIBLE); // Make both sections visible
+            showAllLifestyleQuestions(); // Populate all questions and options
             animateSlideIn(lifestyleQuestionLayout);
         });
 
@@ -124,7 +150,8 @@ public class HealthInfoActivity extends AppCompatActivity {
         setupSpinners();
         setupNumberPickers();
 
-        View[] options = {option1, option2, option3, option4};
+        // Click listeners for options
+        View[] options = {option1, option2, option3, option4, option5, option6, option7, option8, option9, option10, option11, option12};
         for (int i = 0; i < options.length; i++) {
             final int index = i;
             options[i].setOnClickListener(v -> {
@@ -137,9 +164,9 @@ public class HealthInfoActivity extends AppCompatActivity {
                 v.postDelayed(() -> {
                     currentQuestionIndex++;
                     if (currentQuestionIndex < lifestyleQuestions.length) {
-                        showNextLifestyleQuestion(false);
+                        showAllLifestyleQuestions();
                     } else {
-                        lifestyleQuestionLayout.setVisibility(View.GONE);
+                        lifestyleQuestionLayout.setVisibility(View.VISIBLE);
                         chronicConditionsLayout.setVisibility(View.VISIBLE);
                         saveToFirestore();
                     }
@@ -148,19 +175,39 @@ public class HealthInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void showNextLifestyleQuestion(boolean isFirst) {
-        lifestyleQuestionText.setText(lifestyleQuestions[currentQuestionIndex]);
-        optionEmoji1.setText(lifestyleEmojis[currentQuestionIndex][0]);
-        optionEmoji2.setText(lifestyleEmojis[currentQuestionIndex][1]);
-        optionEmoji3.setText(lifestyleEmojis[currentQuestionIndex][2]);
-        optionEmoji4.setText(lifestyleEmojis[currentQuestionIndex][3]);
+    private void showAllLifestyleQuestions() {
+        // Show the first question and options
+        lifestyleQuestionText1.setText(lifestyleQuestions[0]);
+        optionEmoji1.setText(lifestyleEmojis[0][0]);
+        optionText1.setText(lifestyleOptions[0][0]);
+        optionEmoji2.setText(lifestyleEmojis[0][1]);
+        optionText2.setText(lifestyleOptions[0][1]);
+        optionEmoji3.setText(lifestyleEmojis[0][2]);
+        optionText3.setText(lifestyleOptions[0][2]);
+        optionEmoji4.setText(lifestyleEmojis[0][3]);
+        optionText4.setText(lifestyleOptions[0][3]);
 
-        optionText1.setText(lifestyleOptions[currentQuestionIndex][0]);
-        optionText2.setText(lifestyleOptions[currentQuestionIndex][1]);
-        optionText3.setText(lifestyleOptions[currentQuestionIndex][2]);
-        optionText4.setText(lifestyleOptions[currentQuestionIndex][3]);
+        // Show the second question and options
+        lifestyleQuestionText2.setText(lifestyleQuestions[1]);
+        optionEmoji5.setText(lifestyleEmojis[1][0]);
+        optionText5.setText(lifestyleOptions[1][0]);
+        optionEmoji6.setText(lifestyleEmojis[1][1]);
+        optionText6.setText(lifestyleOptions[1][1]);
+        optionEmoji7.setText(lifestyleEmojis[1][2]);
+        optionText7.setText(lifestyleOptions[1][2]);
+        optionEmoji8.setText(lifestyleEmojis[1][3]);
+        optionText8.setText(lifestyleOptions[1][3]);
 
-        if (!isFirst) animateSlideIn(lifestyleQuestionLayout);
+        // Show the third question and options
+        lifestyleQuestionText3.setText(lifestyleQuestions[2]);
+        optionEmoji9.setText(lifestyleEmojis[2][0]);
+        optionText9.setText(lifestyleOptions[2][0]);
+        optionEmoji10.setText(lifestyleEmojis[2][1]);
+        optionText10.setText(lifestyleOptions[2][1]);
+        optionEmoji11.setText(lifestyleEmojis[2][2]);
+        optionText11.setText(lifestyleOptions[2][2]);
+        optionEmoji12.setText(lifestyleEmojis[2][3]);
+        optionText12.setText(lifestyleOptions[2][3]);
     }
 
     private void saveToFirestore() {

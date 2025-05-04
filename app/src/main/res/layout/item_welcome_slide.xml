@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/purpleLight"
+        android:textColor="@color/LogoBlue"
         android:layout_gravity="center"
         android:layout_marginBottom="16dp"/>
 

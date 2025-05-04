@@ -29,6 +29,11 @@
 
 
 
+    <meta-data
+        android:name="com.mapbox.maps.token"
+        android:value="@string/mapbox_access_token" />
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -61,7 +66,7 @@
 
         </activity>
 
-        <!-- Add LoginActivity declaration -->
+        <!-- Add LoginActivity declaration-->
         <activity
             android:name=".View.LoginActivity"
             android:exported="true" />
@@ -71,12 +76,12 @@
             android:exported="true" />
 
         <activity
-            android:name=".View.HealthProfileActivity"
+            android:name=".View.MedicalProfileActivity"
             android:exported="true" />
 
 
         <activity
-            android:name=".View.HeartConditionOptionsActivity"
+            android:name=".View.GeoMapsActivity"
             android:exported="true" >
 
         <intent-filter>
@@ -122,9 +127,7 @@
              android:exported="false"
              android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-         <activity
-             android:name=".View.MapsActivity"
-             android:exported="true" />
+
 
 
 

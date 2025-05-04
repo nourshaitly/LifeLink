@@ -89,7 +89,7 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
         nearbyHospitalButton.setOnClickListener(v -> {
             try {
                 Log.d(TAG, "Launching NearbyHospitalsActivity");
-                Intent intent = new Intent(this, MapsActivity.class);
+                Intent intent = new Intent(this, GeoMapsActivity.class);
                 startActivity(intent);
             } catch (Exception e) {
                 Log.e(TAG, "Error launching NearbyHospitalsActivity: " + e.getMessage(), e);

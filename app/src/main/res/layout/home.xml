@@ -14,7 +14,7 @@
         android:text="Welcome to Home"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/purpleLight"
+        android:textColor="@color/LogoBlue"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="Build Your Health Profile"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/logoutButton"/>
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:text="Logout"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

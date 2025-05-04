@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:text="Login"
             android:textColor="@color/white"
-            android:backgroundTint="@color/purpleLight"
+            android:backgroundTint="@color/LogoBlue"
             android:padding="12dp"
             android:layout_marginBottom="8dp"/>
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="Register"
             android:textColor="@color/white"
-            android:backgroundTint="@color/purpleLight"
+            android:backgroundTint="@color/LogoBlue"
             android:padding="12dp"/>
 
     </LinearLayout>
