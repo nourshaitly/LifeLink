@@ -1,23 +1,16 @@
-// ============================
-// HealthTrackerActivity.java
-// ============================
-
 package com.example.lifelink.View;
 
-import android.Manifest;
 import android.animation.ObjectAnimator;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.lifelink.Controller.Bluetooth;
+import com.example.lifelink.Controller.LiveHealthDataHolder;
+import com.example.lifelink.Model.HealthData;
 import com.example.lifelink.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -43,7 +36,9 @@ public class HealthTrackerActivity extends AppCompatActivity {
     private ArrayList<Entry> heartRateEntries = new ArrayList<>();
     private ArrayList<Entry> spo2Entries = new ArrayList<>();
     private int timeCounter = 0;
-    private Bluetooth bluetoothController;
+
+    private Handler handler;
+    private Runnable updateTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +47,10 @@ public class HealthTrackerActivity extends AppCompatActivity {
 
         initializeViews();
         setupCharts();
-        requestBluetoothPermissions();
+        setupClickListeners();
         updateLastMeasuredTime();
 
-        setupClickListeners();
+        startMonitoringHealthData();
     }
 
     private void initializeViews() {
@@ -71,6 +66,20 @@ public class HealthTrackerActivity extends AppCompatActivity {
 
         heartRateValue = findViewById(R.id.heartRateValue);
         spo2Value = findViewById(R.id.spo2Value);
+    }
+
+    private void setupClickListeners() {
+        heartRateCardMaterial.setOnClickListener(v -> {
+            HealthDetailDialog dialog = new HealthDetailDialog();
+            dialog.setType("heartRate");
+            dialog.show(getSupportFragmentManager(), "HeartRateDialog");
+        });
+
+        spo2CardMaterial.setOnClickListener(v -> {
+            HealthDetailDialog dialog = new HealthDetailDialog();
+            dialog.setType("spo2");
+            dialog.show(getSupportFragmentManager(), "SPO2Dialog");
+        });
     }
 
     private void setupCharts() {
@@ -106,45 +115,23 @@ public class HealthTrackerActivity extends AppCompatActivity {
         chart.invalidate();
     }
 
-    private void requestBluetoothPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-
-                requestPermissions(new String[]{
-                        Manifest.permission.BLUETOOTH_CONNECT,
-                        Manifest.permission.BLUETOOTH_SCAN
-                }, 101);
-            } else {
-                setupBluetooth();
+    private void startMonitoringHealthData() {
+        handler = new Handler();
+        updateTask = new Runnable() {
+            @Override
+            public void run() {
+                updateUIWithLatestHealthData();
+                handler.postDelayed(this, 3000); // Refresh every 3 seconds
             }
-        } else {
-            setupBluetooth();
-        }
+        };
+        handler.post(updateTask);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 101 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            setupBluetooth();
-        } else {
-            Toast.makeText(this, "Bluetooth permission denied", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void setupBluetooth() {
-        bluetoothController = new Bluetooth(this);
-        bluetoothController.setBluetoothDataListener((hr, sp) -> runOnUiThread(() -> updateVitals(hr, sp)));
-        bluetoothController.connect();
-    }
-
-    private void updateVitals(String hr, String sp) {
-        try {
-            if (hr == null || sp == null || hr.trim().isEmpty() || sp.trim().isEmpty()) return;
-
-            float heartRate = Float.parseFloat(hr.trim());
-            float spo2 = Float.parseFloat(sp.trim());
+    private void updateUIWithLatestHealthData() {
+        HealthData healthData = LiveHealthDataHolder.getHealthData();
+        if (healthData != null) {
+            int heartRate = healthData.getHeartRate();
+            int spo2 = healthData.getSpo2();
 
             heartRateEntries.add(new Entry(timeCounter, heartRate));
             spo2Entries.add(new Entry(timeCounter, spo2));
@@ -154,21 +141,17 @@ public class HealthTrackerActivity extends AppCompatActivity {
                 spo2Entries.remove(0);
             }
 
-            heartRateValue.setText(String.format(Locale.getDefault(), "%.0f BPM", heartRate));
-            spo2Value.setText(String.format(Locale.getDefault(), "%.0f %%", spo2));
+            heartRateValue.setText(String.format(Locale.getDefault(), "%d BPM", heartRate));
+            spo2Value.setText(String.format(Locale.getDefault(), "%d %%", spo2));
 
             setupMiniChart(heartRateChart, heartRateEntries, "Heart Rate");
             setupMiniChart(spo2Chart, spo2Entries, "SPO2");
 
             updateWellnessScore(heartRate, spo2);
             updateLastMeasuredTime();
-
             timeCounter++;
-
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Parse error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (Exception ex) {
-            Toast.makeText(this, "Crash: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Waiting for live health data...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -181,58 +164,29 @@ public class HealthTrackerActivity extends AppCompatActivity {
         animateWellnessScore(score);
     }
 
-
-    private void setupClickListeners() {
-        heartRateCardMaterial.setOnClickListener(v -> {
-            HealthDetailDialog dialog = new HealthDetailDialog();
-            dialog.setType("heartRate");
-            dialog.show(getSupportFragmentManager(), "HeartRateDialog");
-        });
-
-        spo2CardMaterial.setOnClickListener(v -> {
-            HealthDetailDialog dialog = new HealthDetailDialog();
-            dialog.setType("spo2");
-            dialog.show(getSupportFragmentManager(), "SPO2Dialog");
-        });
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void updateLastMeasuredTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy | h:mm a", Locale.getDefault());
-        lastMeasuredTime.setText(sdf.format(new Date()));
-    }
-
     private void animateWellnessScore(int score) {
         int currentProgress = wellnessScoreIndicator.getProgress();
-
         ObjectAnimator animation = ObjectAnimator.ofInt(
                 wellnessScoreIndicator,
                 "progress",
                 currentProgress,
                 score
         );
-
         animation.setDuration(1000);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
     }
 
+    private void updateLastMeasuredTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy | h:mm a", Locale.getDefault());
+        lastMeasuredTime.setText(sdf.format(new Date()));
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (bluetoothController != null) bluetoothController.disconnect();
+        if (handler != null && updateTask != null) {
+            handler.removeCallbacks(updateTask);
+        }
     }
 }

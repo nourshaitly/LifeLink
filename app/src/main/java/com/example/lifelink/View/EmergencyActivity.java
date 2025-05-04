@@ -9,9 +9,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsManager;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,10 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import android.content.pm.PackageManager;
 
+import com.example.lifelink.Controller.LiveHealthDataHolder;
+import com.example.lifelink.Model.HealthData;
 import com.example.lifelink.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.*;
@@ -37,18 +38,19 @@ public class EmergencyActivity extends AppCompatActivity {
     private static final int SMS_PERMISSION_REQUEST = 101;
     private static final String CHANNEL_ID = "emergency_channel";
 
-    private String emergencyLevel;
     private TextView statusText, heartRateText, spo2Text, recommendationText;
     private Button sosButton, voiceRecommendationsButton, emergencyContactButton, shareLocationButton;
     private TextToSpeech textToSpeech;
 
-    private int heartRate = 120;  // Sample
-    private int spo2 = 90;        // Sample
-    private String emergencyContact = "+96170875484";
-    private String sosnum = "+96170046401";
+    private int heartRate;
+    private int spo2;
+    private String emergencyContact = "+96171010584";
+    private String sosnum = "+96171010584";
     private String userLocation = "Location not available";
 
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private Handler handler;
+    private Runnable monitorTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,15 @@ public class EmergencyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_emergency);
 
         createEmergencyNotificationChannel();
+        initializeViews();
+        initializeTextToSpeech();
+        setupButtonListeners();
 
+        checkLocationSettingsThenFetch();
+        startMonitoringHealthData();
+    }
+
+    private void initializeViews() {
         statusText = findViewById(R.id.emergencyStatusValue);
         heartRateText = findViewById(R.id.heartRateValue);
         spo2Text = findViewById(R.id.spo2Value);
@@ -65,22 +75,21 @@ public class EmergencyActivity extends AppCompatActivity {
         voiceRecommendationsButton = findViewById(R.id.voiceRecommendationsButton);
         emergencyContactButton = findViewById(R.id.emergencyContactButton);
         shareLocationButton = findViewById(R.id.shareLocationButton);
+    }
 
+    private void initializeTextToSpeech() {
         textToSpeech = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeech.setLanguage(Locale.US);
             }
         });
+    }
 
+    private void setupButtonListeners() {
         sosButton.setOnClickListener(v -> handleSOSButtonClick());
         voiceRecommendationsButton.setOnClickListener(v -> speakRecommendations());
         emergencyContactButton.setOnClickListener(v -> handleEmergencyContactButton());
         shareLocationButton.setOnClickListener(v -> shareLocation());
-
-        emergencyLevel = getIntent().getStringExtra("emergency_level");
-        if (emergencyLevel == null) emergencyLevel = "Low";
-
-        checkLocationSettingsThenFetch();
     }
 
     private void createEmergencyNotificationChannel() {
@@ -95,6 +104,45 @@ public class EmergencyActivity extends AppCompatActivity {
             channel.enableLights(true);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void startMonitoringHealthData() {
+        handler = new Handler();
+        monitorTask = new Runnable() {
+            @Override
+            public void run() {
+                fetchAndUpdateEmergencyFlow();
+                handler.postDelayed(this, 3000); // Check every 3 seconds
+            }
+        };
+        handler.post(monitorTask);
+    }
+
+    private void fetchAndUpdateEmergencyFlow() {
+        HealthData healthData = LiveHealthDataHolder.getHealthData();
+        if (healthData != null) {
+            heartRate = healthData.getHeartRate();
+            spo2 = healthData.getSpo2();
+            continueEmergencyFlow();
+        } else {
+            Toast.makeText(this, "Waiting for live health data...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void continueEmergencyFlow() {
+        int level = classifyEmergencyLevel(heartRate, spo2);
+        updateUIBasedOnEmergencyLevel();
+
+        if (level == 3) {
+            triggerCall();
+            requestSmsPermissionIfNeeded();
+        } else if (level == 2) {
+            requestSmsPermissionIfNeeded();
+        }
+
+        if (level >= 2) {
+            showEmergencyNotification(recommendationText.getText().toString());
         }
     }
 
@@ -114,64 +162,6 @@ public class EmergencyActivity extends AppCompatActivity {
         manager.notify(2001, notification);
     }
 
-    private void checkLocationSettingsThenFetch() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build();
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest)
-                .setAlwaysShow(true);
-
-        LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
-                .addOnSuccessListener(locationSettingsResponse -> fetchUserLocationThenContinue())
-                .addOnFailureListener(e -> {
-                    if (e instanceof ResolvableApiException) {
-                        try {
-                            ((ResolvableApiException) e).startResolutionForResult(this, 103);
-                        } catch (Exception ex) {
-                            Toast.makeText(this, "Failed to request location settings.", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(this, "Location services not available.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void fetchUserLocationThenContinue() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 102);
-            return;
-        }
-
-        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        double lat = location.getLatitude();
-                        double lng = location.getLongitude();
-                        userLocation = "www.google.com/maps/search/?api=1&query=" + String.format(Locale.US, "%.6f,%.6f", lat, lng);
-                    }
-                    continueEmergencyFlow();
-                });
-    }
-
-    private void continueEmergencyFlow() {
-        int level = classifyEmergencyLevel(heartRate, spo2);
-        updateUIBasedOnEmergencyLevel();
-
-        if (level == 3) {
-            sosButton.setText("Calling...");
-            triggerCall();
-            requestSmsPermissionIfNeeded();
-        } else if (level == 2) {
-            requestSmsPermissionIfNeeded();
-        }
-
-        if (level >= 2) {
-            showEmergencyNotification(recommendationText.getText().toString());
-        }
-    }
-
     private void triggerCall() {
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + sosnum));
@@ -183,7 +173,7 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void sendSmsToEmergencyContact() {
-        String message = "Test emergency SMS\nCondition: " + getConditionMessage() +
+        String message = "🚨 Emergency detected\nCondition: " + getConditionMessage() +
                 "\nHR: " + heartRate + "\nSpO₂: " + spo2 + "\nLocation: " + userLocation;
 
         String phone = emergencyContact.replace(" ", "");
@@ -244,15 +234,14 @@ public class EmergencyActivity extends AppCompatActivity {
         }
     }
 
-    private void handleSOSButtonClick() {
-        sosButton.setText("Calling...");
-        triggerCall();
-        requestSmsPermissionIfNeeded();
-    }
-
     private void speakRecommendations() {
         String text = recommendationText.getText().toString();
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+
+    private void handleSOSButtonClick() {
+        triggerCall();
+        requestSmsPermissionIfNeeded();
     }
 
     private void handleEmergencyContactButton() {
@@ -266,8 +255,50 @@ public class EmergencyActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void checkLocationSettingsThenFetch() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build();
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest)
+                .setAlwaysShow(true);
+
+        LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
+                .addOnSuccessListener(locationSettingsResponse -> fetchUserLocation())
+                .addOnFailureListener(e -> {
+                    if (e instanceof ResolvableApiException) {
+                        try {
+                            ((ResolvableApiException) e).startResolutionForResult(this, 103);
+                        } catch (Exception ex) {
+                            Toast.makeText(this, "Failed to request location settings.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Location services not available.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void fetchUserLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 102);
+            return;
+        }
+
+        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        double lat = location.getLatitude();
+                        double lng = location.getLongitude();
+                        userLocation = "www.google.com/maps/search/?api=1&query=" + String.format(Locale.US, "%.6f,%.6f", lat, lng);
+                    }
+                });
+    }
+
     @Override
     protected void onDestroy() {
+        if (handler != null && monitorTask != null) {
+            handler.removeCallbacks(monitorTask);
+        }
         if (textToSpeech != null) {
             textToSpeech.stop();
             textToSpeech.shutdown();
@@ -276,23 +307,14 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 103 && resultCode == RESULT_OK) {
-            fetchUserLocationThenContinue();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CALL_PERMISSION_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             triggerCall();
         } else if (requestCode == SMS_PERMISSION_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             sendSmsToEmergencyContact();
         } else if (requestCode == 102 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            fetchUserLocationThenContinue();
+            fetchUserLocation();
         }
     }
 }

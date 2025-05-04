@@ -1,54 +1,40 @@
 package com.example.lifelink.Model;
 
-public class Reminder {
+import java.io.Serializable;
+import java.util.List;
 
-    private String name;    // Name of the medicine (e.g., "White Pill")
-    private String time;    // Time to take it (e.g., "Before breakfast")
-    private boolean taken;  // Whether it's marked as taken
-    private String type;    // Type of medication (pill, capsule, drop)
+public class Reminder implements Serializable {
+    private String id; // Firestore document ID
+    private String name;
+    private String time;
+    private boolean taken;
+    private List<String> days; // ✅ New field: selected days (e.g., ["Mon", "Wed", "Fri"])
 
-    // Full constructor
-    public Reminder(String name, String time, boolean taken, String type) {
+    public Reminder() {
+        // Required empty constructor for Firestore
+    }
+
+    public Reminder(String id, String name, String time, boolean taken, List<String> days) {
+        this.id = id;
         this.name = name;
         this.time = time;
         this.taken = taken;
-        this.type = type;
+        this.days = days;
     }
 
-    // Empty constructor (required if using Firebase or serialization)
-    public Reminder() {}
+    // Getters and setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    // Getters
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getTime() {
-        return time;
-    }
+    public String getTime() { return time; }
+    public void setTime(String time) { this.time = time; }
 
-    public boolean isTaken() {
-        return taken;
-    }
+    public boolean isTaken() { return taken; }
+    public void setTaken(boolean taken) { this.taken = taken; }
 
-    public String getType() {
-        return type;
-    }
-
-    // Setters
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public void setTaken(boolean taken) {
-        this.taken = taken;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    public List<String> getDays() { return days; }
+    public void setDays(List<String> days) { this.days = days; }
 }

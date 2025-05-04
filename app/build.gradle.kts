@@ -16,6 +16,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -35,6 +39,22 @@ android {
 }
 
 dependencies {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -66,8 +86,25 @@ dependencies {
     // Google Identity API (Keep if using Google Sign-In with Credential Manager)
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
+
+//email auth
+
+    implementation 'com.github.danysantiago:smtp-client:1.4.0'
+
+
+
+
+
+
+
+
+
+
+
+
     // Testing Dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }

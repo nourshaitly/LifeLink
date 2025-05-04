@@ -26,7 +26,9 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 
     <meta-data
@@ -64,6 +66,7 @@
             android:name=".View.WelcomeActivity"
             android:exported="true">
 
+
         </activity>
 
         <!-- Add LoginActivity declaration-->
@@ -87,11 +90,7 @@
             android:name=".View.MapIntroActivity"
             android:exported="true" >
 
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
         </activity>
 
 
@@ -113,14 +112,54 @@
          <activity android:name=".View.ResetPasswordActivity"
              android:exported="false"
              android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+
+
+
          <activity
+
              android:name=".View.RegisterActivity"
-             android:exported="true" />
+             android:exported="true">
+
+
+
+
+
+
+
+
+         </activity>
+
+
+
+
+
 
 
          <activity
              android:name=".View.HomeActivity"
-             android:exported="true" />
+             android:exported="true" >
+
+
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+
+
+         </activity>
+
+
+
+
+
+
+
+
+
+
+
          <activity android:name=".View.SignIn"
              android:exported="true"
              />
@@ -176,6 +215,60 @@
             android:name=".View.EmergencyActivity"
             android:exported="true" />
 
-     </application>
 
- </manifest>
+
+
+        <service
+            android:name=".Service.BluetoothMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice|health" />
+
+
+
+
+        <activity
+            android:name=".View.VerificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".View.PhoneVerificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".View.ForgotPasswordActivity"
+            android:exported="true" />
+
+
+
+        <activity
+            android:name=".View.AIChatActivity"
+            android:exported="true" />
+
+
+
+
+
+
+
+        <activity
+            android:name=".View.ChatHistoryActivity"
+            android:exported="true" >
+
+
+
+
+
+
+
+
+</activity >
+
+
+
+    </application>
+
+
+
+
+
+
+
+</manifest>

@@ -73,17 +73,52 @@
                 android:drawablePadding="6dp" />
         </LinearLayout>
 
-        <!-- Action button (optional) -->
-        <ImageButton
-            android:id="@+id/markDoneBtn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@android:color/transparent"
-            android:contentDescription="Mark as done"
-            app:srcCompat="@drawable/ic_check_green"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/green" />
+        <!-- Actions Row (Mark Done + Edit + Delete) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="8dp">
+
+            <ImageButton
+                android:id="@+id/markDoneBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="Mark as done"
+                app:srcCompat="@drawable/ic_check_green"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/green"/>
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="match_parent"/>
+
+            <ImageButton
+                android:id="@+id/editBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="Edit appointment"
+                app:srcCompat="@drawable/ic_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/blue"/>
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="match_parent"/>
+
+            <ImageButton
+                android:id="@+id/deleteBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="Delete appointment"
+                app:srcCompat="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/red"/>
+        </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

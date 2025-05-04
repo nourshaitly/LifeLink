@@ -13,6 +13,8 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 
 import com.example.lifelink.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ReminderAlarmReceiver extends BroadcastReceiver {
 
@@ -26,18 +28,46 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String medicineName = intent.getStringExtra("medicineName");
+        String reminderId = intent.getStringExtra("reminderId"); // ✅ important
         if (medicineName == null) medicineName = "your medicine";
 
         // ✅ Handle Mark as Taken
         if (ACTION_MARK_AS_TAKEN.equals(intent.getAction())) {
             stopAlarmSound();
-            Toast.makeText(context, "Marked as taken: " + medicineName, Toast.LENGTH_SHORT).show();
+
+            if (reminderId != null) {
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+
+                if (auth.getCurrentUser() != null) {
+                    String userId = auth.getCurrentUser().getUid();
+
+                    db.collection("users")
+                            .document(userId)
+                            .collection("reminders")
+                            .document(reminderId)
+                            .update("taken", true)
+                            .addOnSuccessListener(aVoid -> {
+                            //    Toast.makeText(context, "Marked as taken: " + medicineName, Toast.LENGTH_SHORT).show();
+                                cancelNotification(context);
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(context, "Failed to mark as taken: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(context, "Reminder ID not found", Toast.LENGTH_SHORT).show();
+            }
+
             return;
         }
 
         // ✅ Handle Stop Alarm
         if (ACTION_STOP_ALARM.equals(intent.getAction())) {
             stopAlarmSound();
+            cancelNotification(context);
             Toast.makeText(context, "Alarm stopped.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -51,8 +81,8 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
 
         createNotificationChannel(context);
 
-        // Open Dashboard on tap
-        Intent dashboardIntent = new Intent(context, ReminderFragment.class);
+        // Intent to open Reminder screen
+        Intent dashboardIntent = new Intent(context, DashboardActivity.class); // open dashboard or reminder fragment
         dashboardIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context, 0, dashboardIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
@@ -62,6 +92,7 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
         Intent markIntent = new Intent(context, ReminderAlarmReceiver.class);
         markIntent.setAction(ACTION_MARK_AS_TAKEN);
         markIntent.putExtra("medicineName", medicineName);
+        markIntent.putExtra("reminderId", reminderId); // ✅ pass id
         PendingIntent markPendingIntent = PendingIntent.getBroadcast(
                 context, 1, markIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -74,7 +105,7 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
                 context, 2, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Build the notification
+        // Build notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_check)
                 .setContentTitle("Medicine Reminder")
@@ -84,7 +115,7 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setVibrate(new long[]{0, 300, 200, 300})
                 .addAction(R.drawable.ic_check, "Mark as Taken", markPendingIntent)
-                .addAction(R.drawable.ic_stop, "Stop Alarm", stopPendingIntent); // ✅ NEW BUTTON
+                .addAction(R.drawable.ic_stop, "Stop Alarm", stopPendingIntent);
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) {
@@ -97,6 +128,13 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+        }
+    }
+
+    private void cancelNotification(Context context) {
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager != null) {
+            manager.cancelAll(); // ✅ cancel all after mark or stop
         }
     }
 
@@ -113,7 +151,7 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
                 channel.setDescription("Medicine reminders with looping alarm sound");
                 channel.enableVibration(true);
                 channel.setVibrationPattern(new long[]{0, 300, 200, 300});
-                channel.setSound(null, null); // Disable system sound (MediaPlayer used)
+                channel.setSound(null, null); // MediaPlayer used
                 manager.createNotificationChannel(channel);
             }
         }

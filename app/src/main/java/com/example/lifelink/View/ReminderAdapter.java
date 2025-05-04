@@ -16,10 +16,18 @@ import java.util.List;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder> {
 
-    private List<Reminder> reminderList;
+    public interface OnReminderClickListener {
+        void onEditClick(Reminder reminder);
+        void onDeleteClick(Reminder reminder);
+        void onMarkAsTakenClick(Reminder reminder); // ✅ Already added
+    }
 
-    public ReminderAdapter(List<Reminder> reminderList) {
+    private List<Reminder> reminderList;
+    private OnReminderClickListener listener;
+
+    public ReminderAdapter(List<Reminder> reminderList, OnReminderClickListener listener) {
         this.reminderList = reminderList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -36,21 +44,52 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         holder.medName.setText(reminder.getName());
         holder.medTime.setText(reminder.getTime());
 
-        // Optional: Update icons or visual cues based on state
+        // ✅ Set bell icon based on taken status
         if (reminder.isTaken()) {
-            holder.bellIcon.setVisibility(View.GONE); // Example: hide bell if already taken
+            holder.bellIcon.setImageResource(R.drawable.ic_check_green);
         } else {
-            holder.bellIcon.setVisibility(View.VISIBLE);
+            holder.bellIcon.setImageResource(R.drawable.ic_bell);
         }
 
-        // Optional: Change icon dynamically based on type
-        if (reminder.getType().equalsIgnoreCase("drop")) {
-            holder.medIcon.setImageResource(R.drawable.ic_drop);
-        } else if (reminder.getType().equalsIgnoreCase("capsule")) {
-            holder.medIcon.setImageResource(R.drawable.ic_capsule);
+        // ✅ Set days text
+        if (reminder.getDays() != null && !reminder.getDays().isEmpty()) {
+            StringBuilder daysBuilder = new StringBuilder();
+            for (String day : reminder.getDays()) {
+                switch (day) {
+                    case "Mon": daysBuilder.append("M "); break;
+                    case "Tue": daysBuilder.append("T "); break;
+                    case "Wed": daysBuilder.append("W "); break;
+                    case "Thu": daysBuilder.append("T "); break;
+                    case "Fri": daysBuilder.append("F "); break;
+                    case "Sat": daysBuilder.append("S "); break;
+                    case "Sun": daysBuilder.append("S "); break;
+                }
+            }
+            holder.daysText.setText(daysBuilder.toString().trim());
         } else {
-            holder.medIcon.setImageResource(R.drawable.ic_pill); // default
+            holder.daysText.setText("One-time");
         }
+
+        // ✅ Edit click
+        holder.editIcon.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEditClick(reminder);
+            }
+        });
+
+        // ✅ Delete click
+        holder.deleteIcon.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDeleteClick(reminder);
+            }
+        });
+
+        // ✅ Mark as taken click
+        holder.bellIcon.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onMarkAsTakenClick(reminder);
+            }
+        });
     }
 
     @Override
@@ -59,16 +98,18 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     }
 
     static class ReminderViewHolder extends RecyclerView.ViewHolder {
-        TextView medName, medTime;
-        ImageView medIcon, bellIcon, editIcon;
+        TextView medName, medTime, daysText; // ✅ Added daysText here
+        ImageView medIcon, bellIcon, editIcon, deleteIcon;
 
         public ReminderViewHolder(@NonNull View itemView) {
             super(itemView);
             medName = itemView.findViewById(R.id.medName);
             medTime = itemView.findViewById(R.id.medTime);
+            daysText = itemView.findViewById(R.id.daysText); // ✅ Connect daysText
             medIcon = itemView.findViewById(R.id.medIcon);
             bellIcon = itemView.findViewById(R.id.bellIcon);
             editIcon = itemView.findViewById(R.id.editIcon);
+            deleteIcon = itemView.findViewById(R.id.deleteIcon);
         }
     }
 }

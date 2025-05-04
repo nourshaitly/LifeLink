@@ -42,18 +42,39 @@
             app:layout_constraintEnd_toStartOf="@id/bellIcon"
             app:layout_constraintHorizontal_bias="0" />
 
-        <!-- Time Label -->
-        <TextView
-            android:id="@+id/medTime"
+        <!-- Time and Days in one line -->
+        <LinearLayout
+            android:id="@+id/timeAndDaysLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Before breakfast"
-            android:textColor="#1E88E5"
-            android:textSize="13sp"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="@id/medName"
             app:layout_constraintTop_toBottomOf="@id/medName"
-            app:layout_constraintEnd_toEndOf="@id/medName"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintEnd_toEndOf="@id/medName">
+
+            <!-- Time -->
+            <TextView
+                android:id="@+id/medTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Before breakfast"
+                android:textColor="#1E88E5"
+                android:textSize="13sp"/>
+
+            <!-- Small space -->
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="wrap_content"/>
+
+            <!-- Days -->
+            <TextView
+                android:id="@+id/daysText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="M W F"
+                android:textColor="#1565C0"
+                android:textSize="12sp"/>
+        </LinearLayout>
 
         <!-- Bell Icon -->
         <ImageView
@@ -77,6 +98,18 @@
             android:contentDescription="edit icon"
             app:layout_constraintTop_toTopOf="@id/medName"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Delete Icon -->
+        <ImageView
+            android:id="@+id/deleteIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="56dp"
+            android:contentDescription="delete icon"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/medName"
+            app:tint="#1976D2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

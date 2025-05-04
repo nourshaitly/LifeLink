@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.lifelink.R;
+import com.example.lifelink.Service.BluetoothMonitorService;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,7 +25,35 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(this, "HomePage Launched", Toast.LENGTH_SHORT).show(); // ✅ For debug
         setContentView(R.layout.home);
+
+
+
+        try {
+            // Try starting Bluetooth Monitor Service
+            Intent serviceIntent = new Intent(this, BluetoothMonitorService.class);
+            startService(serviceIntent);
+            Toast.makeText(this, "✅ Bluetooth Monitoring Started", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "❌ Failed to Start Monitoring: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         try {
             // Initialize Firebase Auth
@@ -39,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
             // Get current user
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser != null) {
-                Toast.makeText(this, "✅ User is logged in", Toast.LENGTH_SHORT).show();
+
 
                 String uid = currentUser.getUid();
                 Toast.makeText(this, "🔑 UID: " + uid, Toast.LENGTH_SHORT).show();

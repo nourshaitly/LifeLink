@@ -2,7 +2,7 @@ package com.example.lifelink.View;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.os.Handler;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,12 +18,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private EditText firstName, middleName, lastName, phoneNumber, email, password, confirmPassword;
     private Button registerButton;
-    private TextView loginText;
-    private ProgressBar loadingProgressBar;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
-    private String first, middle, last, phone, emailText, pass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Initialize views
+        // Initialize input fields
         firstName = findViewById(R.id.firstName);
         middleName = findViewById(R.id.middleName);
         lastName = findViewById(R.id.lastName);
@@ -42,89 +38,75 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         confirmPassword = findViewById(R.id.confirmPassword);
         registerButton = findViewById(R.id.registerButton);
-        loginText = findViewById(R.id.loginText);
-        //  loadingProgressBar = findViewById(R.id.loadingProgressBar); // ✅ Fixed here (uncommented)
 
         registerButton.setOnClickListener(v -> handleRegistration());
 
+        // Login Text
+        TextView loginText = findViewById(R.id.loginText);
         loginText.setOnClickListener(v -> {
-            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
             finish();
         });
     }
 
     private void handleRegistration() {
-        first = firstName.getText().toString().trim();
-        middle = middleName.getText().toString().trim();
-        last = lastName.getText().toString().trim();
-        phone = phoneNumber.getText().toString().trim();
-        emailText = email.getText().toString().trim();
-        pass = password.getText().toString().trim();
-        String confirmPassText = confirmPassword.getText().toString().trim();
+        String first = firstName.getText().toString().trim();
+        String middle = middleName.getText().toString().trim();
+        String last = lastName.getText().toString().trim();
+        String phone = phoneNumber.getText().toString().trim();
+        String emailText = email.getText().toString().trim();
+        String pass = password.getText().toString().trim();
+        String confirmPass = confirmPassword.getText().toString().trim();
 
-        if (first.isEmpty() || last.isEmpty() || phone.isEmpty() || emailText.isEmpty() || pass.isEmpty() || confirmPassText.isEmpty()) {
-            Toast.makeText(this, "Please fill in all required fields.", Toast.LENGTH_SHORT).show();
+        if (first.isEmpty() || last.isEmpty() || phone.isEmpty() || emailText.isEmpty() || pass.isEmpty() || confirmPass.isEmpty()) {
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (!isValidEmail(emailText)) {
-            Toast.makeText(this, "Please enter a valid email address.", Toast.LENGTH_SHORT).show();
+        if (!pass.equals(confirmPass)) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        if (!pass.equals(confirmPassText)) {
-            Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        //  loadingProgressBar.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(emailText, pass)
                 .addOnCompleteListener(this, task -> {
-                    //     loadingProgressBar.setVisibility(View.GONE);
-
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         if (firebaseUser != null) {
-                            firebaseUser.sendEmailVerification()
-                                    .addOnCompleteListener(emailTask -> {
-                                        if (emailTask.isSuccessful()) {
-                                            saveUserInFirestore(firebaseUser.getUid());
-                                        } else {
-                                            Toast.makeText(this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
-                                        }
+                            String uid = firebaseUser.getUid();
+
+                            Map<String, Object> userMap = new HashMap<>();
+                            userMap.put("firstName", first);
+                            userMap.put("middleName", middle);
+                            userMap.put("lastName", last);
+                            userMap.put("phoneNumber", phone);
+                            userMap.put("email", emailText);
+
+                            db.collection("users").document(uid)
+                                    .set(userMap)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+
+                                        // Show welcome message with user's name
+                                        String welcomeMessage = "Welcome, " + first + "!";
+                                        Toast.makeText(this, welcomeMessage, Toast.LENGTH_LONG).show();
+
+                                        // Add delay before moving to next activity
+                                        new Handler().postDelayed(() -> {
+                                            Intent intent = new Intent(RegisterActivity.this, HealthInfoActivity.class);
+                                            intent.putExtra("userName", first); // Pass the user's name
+                                            startActivity(intent);
+                                            finish();
+                                        }, 1500); // 1.5 second delay to show the welcome message
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show();
                                     });
                         }
                     } else {
                         Toast.makeText(this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
-    }
-
-    private void saveUserInFirestore(String uid) {
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put("firstName", first);
-        userMap.put("middleName", middle);
-        userMap.put("lastName", last);
-        userMap.put("phoneNumber", phone);
-        userMap.put("email", emailText);
-
-        db.collection("users").document(uid)
-                .set(userMap)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Registration successful! Verification email sent.\nPlease check your inbox or spam folder.", Toast.LENGTH_LONG).show();
-
-                    // Open VerificationActivity
-                    Intent intent = new Intent(RegisterActivity.this, VerificationActivity.class);
-                    startActivity(intent);
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to save user data.", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    private boolean isValidEmail(String email) {
-        return email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }
