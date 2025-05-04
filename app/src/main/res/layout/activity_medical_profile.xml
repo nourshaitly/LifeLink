@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/medicalProfileScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/mainContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Step 1: Physiological Information -->
+
+        <LinearLayout
+            android:id="@+id/stepPhysiological"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:text="Physiological Information"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"
+                android:text="Birthdate" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/birthdateInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="MM/DD/YYYY"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_calendar"
+                app:endIconCheckable="true"
+                app:endIconTint="@color/LogoBlue"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/birthdateEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"
+                android:text="Gender" />
+
+            <RadioGroup
+                android:id="@+id/genderRadioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/genderMale"
+                    android:layout_width="133dp"
+                    android:layout_height="match_parent"
+                    android:text="Male" />
+
+                <RadioButton
+                    android:id="@+id/genderFemale"
+                    android:layout_width="236dp"
+                    android:layout_height="match_parent"
+                    android:text="Female" />
+
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"
+                android:text="Blood Type" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+
+                <!-- Blood Type ChipGroup (4 chips) -->
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/bloodTypeChipGroup"
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="7"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:chipSpacingHorizontal="0dp"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipO"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:checkable="true"
+                        android:text="O"
+                        android:textColor="@color/LogoBlue"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/blood_chip_selector"
+                        app:chipCornerRadius="12dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipA"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:checkable="true"
+                        android:text="A"
+                        android:textColor="@color/LogoBlue"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/blood_chip_selector"
+                        app:chipCornerRadius="12dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipB"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:checkable="true"
+                        android:text="B"
+                        android:textColor="@color/LogoBlue"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/blood_chip_selector"
+                        app:chipCornerRadius="12dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAB"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:checkable="true"
+                        android:text="AB"
+                        android:textColor="@color/LogoBlue"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/blood_chip_selector"
+                        app:chipCornerRadius="12dp" />
+                </com.google.android.material.chip.ChipGroup>
+
+                <!-- Rh Factor ChipGroup (2 chips) -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/rhFactorChipGroup"
+                    android:layout_width="26dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPositive"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checkable="true"
+                        android:text="Rh+"
+                        android:textColor="@color/LogoRed"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/blood_chip_selector"
+                        app:chipCornerRadius="12dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipNegative"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checkable="true"
+                        android:text="Rh-"
+                        android:textColor="@color/LogoRed"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/blood_chip_selector"
+                        app:chipCornerRadius="12dp" />
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+
+
+            <!-- Height and Weight Cards -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="202dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Height\n"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <NumberPicker
+                            android:id="@+id/heightPicker"
+                            android:layout_width="74dp"
+                            android:layout_height="113dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="cm"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="201dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Weight\n"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <NumberPicker
+                            android:id="@+id/weightPicker"
+                            android:layout_width="75dp"
+                            android:layout_height="110dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="kg"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/nextToQuestionsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Next"
+                android:backgroundTint="@color/LogoBlue"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/stepMedicalQuestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Medical Questionnaire"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Q1: Heart/Respiratory Conditions -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Do you suffer from any heart or respiratory condition?" />
+
+            <RadioGroup
+                android:id="@+id/conditionGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/conditionYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yes" />
+                <RadioButton
+                    android:id="@+id/conditionNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No" />
+            </RadioGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/conditionDetailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Please specify your condition"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/conditionDetailInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Q2: Medications -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Are you taking any medications that affect your heart or breathing?" />
+
+            <RadioGroup
+                android:id="@+id/medicationsGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/medsYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yes" />
+                <RadioButton
+                    android:id="@+id/medsNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No" />
+            </RadioGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/medicationInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Please list your medications"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/medicationInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Q3: Medical Devices -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Do you have any implanted medical devices?" />
+
+            <RadioGroup
+                android:id="@+id/deviceGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/deviceYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yes" />
+                <RadioButton
+                    android:id="@+id/deviceNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No" />
+            </RadioGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/deviceInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Please describe the device"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/deviceInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Chronic Diseases -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Do you have any chronic diseases?" />
+
+            <CheckBox
+                android:id="@+id/checkDiabetes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Diabetes" />
+            <CheckBox
+                android:id="@+id/checkHypertension"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hypertension" />
+            <CheckBox
+                android:id="@+id/checkAsthma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Asthma" />
+            <CheckBox
+                android:id="@+id/checkOther"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Other" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/otherDiseaseLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Please specify"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otherDiseaseInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/backToPhy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/LogoBlue"/>
+            <Button
+                android:id="@+id/MedicalProfileButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Next"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/LogoBlue"/>
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:id="@+id/stepEmergencyContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:text="Emergency Contact"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <!-- Explanation Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:text="🚨 Why We Ask for an Emergency Contact\n\nIn the event of a medical emergency, we may need to contact someone on your behalf. This person will only be contacted if serious vital signs are detected or if you trigger the SOS alert.\n\nWe recommend selecting a trusted family member or friend. Your info is safe and used only when absolutely necessary." />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Emergency Contact Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emergencyNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contact Name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emergencyNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Emergency Contact Phone -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emergencyPhoneLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Phone Number"
+                android:layout_marginTop="12dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:startIconDrawable="@drawable/ic_phone"
+                app:startIconTint="@color/LogoBlue"
+                app:prefixText="+961 "
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emergencyPhoneInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="8"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Relationship Selection -->
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Relationship"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/relationshipRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start">
+
+                <RadioButton
+                    android:id="@+id/radioFamily"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Family Member" />
+
+                <RadioButton
+                    android:id="@+id/radioFriend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Friend" />
+
+                <RadioButton
+                    android:id="@+id/radioOtherRelation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Other" />
+            </RadioGroup>
+
+            <!-- Other Relation Input (Initially Hidden) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/otherRelationLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Please specify"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginTop="8dp"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue" >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otherRelationInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/backToMP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:backgroundTint="@color/LogoBlue"
+                android:layout_marginTop="24dp" />
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/submitProfileButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Finish"
+                android:backgroundTint="@color/LogoBlue"
+                android:layout_marginTop="24dp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -20,7 +20,7 @@
     <string name="MY_MAP_API_KEY">
         AIzaSyDGkTori7s092HchmI4Nyc48RARecxjHDo
     </string>
-
+    <string name="default_web_client_id">\n</string>
 
 
     <string-array name="med_types">
@@ -48,6 +48,8 @@
 
 
 
+
+    <string name="mapbox_access_token">YOUR_MAPBOX_ACCESS_TOKEN</string>
 
 
 </resources>

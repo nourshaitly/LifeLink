@@ -32,7 +32,7 @@
                 android:id="@+id/profileIcon"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/ic_launcher_foreground"
+                android:src="@drawable/ic_life_logo"
                 android:contentDescription="Profile Icon"
                 android:layout_marginBottom="24dp"/>
 
@@ -44,7 +44,7 @@
                 android:text="Build Your Health Profile"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/purpleLight"
+                android:textColor="@color/LogoBlue"
                 android:layout_marginBottom="16dp"/>
 
             <!-- Description -->
@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:text="Let's Begin"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/purpleLight"
+                android:backgroundTint="@color/LogoBlue"
                 android:padding="12dp"/>
 
         </LinearLayout>

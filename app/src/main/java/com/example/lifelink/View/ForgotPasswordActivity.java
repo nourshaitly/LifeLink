@@ -70,10 +70,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         // ✅ Email exists → Send reset email
                         sendResetButton.setOnClickListener(v ->sendResetEmail(email));;
-                        } else {
-                            // ❌ Email not registered
-                            Toast.makeText(this, "This email is not registered in our system.", Toast.LENGTH_SHORT).show();
-                        }
+                    } else {
+                        // ❌ Email not registered
+                        Toast.makeText(this, "This email is not registered in our system.", Toast.LENGTH_SHORT).show();
+                    }
 
                 });
     }

@@ -22,4 +22,5 @@
     <item name="cardAsthma" type="id" />
     <item name="cardHypertension" type="id" />
     <item name="welcomeTextView" type="id" />
+    <item name="birthdateInputLayout" type="id" />
 </resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.GeoMapsActivity">
+
+    ```
+    <!-- Map Fragment (behind) -->
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Overlay UI (Chips + Button) -->
+    <LinearLayout
+        android:id="@+id/overlayControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="@android:color/transparent"
+        android:layout_gravity="top">
+
+        <!-- Chips -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/placeFilterChips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="12dp"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAll"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="All" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipHospitals"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Hospitals" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPharmacies"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Pharmacies" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Button -->
+        <Button
+            android:id="@+id/showListButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/LogoBlue"
+            android:text="Show Places List"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+    ```
+
+</FrameLayout>

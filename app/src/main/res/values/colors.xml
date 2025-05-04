@@ -43,6 +43,10 @@
 
 
         <color name="success_green">#4CAF50</color>
+    <color name="darkBlue">#003C6D</color>
+    <color name="logoGreen">#00A859</color> <!-- Green for the ECG line -->
+
+
 
 
     <color name="LogoBlue">#2686CA</color>
@@ -52,4 +56,5 @@
 
 
     <color name="colorPrimary">#6200EE</color>
+
 </resources>
