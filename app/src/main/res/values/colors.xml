@@ -39,7 +39,8 @@
         <color name="primaryVariant">#303F9F</color>
         <color name="secondary">#FF4081</color>      <!-- Pink -->
         <color name="secondaryVariant">#C2185B</color>
-
+        <color name="LogoBlue">#2686CA</color>
+        <color name="LogoRed">#F94947</color>
 
 
         <color name="success_green">#4CAF50</color>
@@ -49,8 +50,7 @@
 
 
 
-    <color name="LogoBlue">#2686CA</color>
-    <color name="LogoRed">#F94947</color>
+
 
 
 

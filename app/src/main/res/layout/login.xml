@@ -14,16 +14,13 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="#80FFFFFF"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            >
-
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -32,17 +29,16 @@
                 android:padding="24dp">
 
                 <!-- Logo Image -->
-
-                <!-- Welcome Back Text -->
                 <ImageView
                     android:id="@+id/logoImage"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/img"
                     android:contentDescription="App Logo"
-                    android:src="@drawable/ic_life_logo" />
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"/>
 
+                <!-- Welcome Back Text -->
                 <TextView
                     android:id="@+id/welcomeText"
                     android:layout_width="wrap_content"
@@ -50,11 +46,11 @@
                     android:text="Welcome Back"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="@color/LogoBlue"
+                    android:textColor="@color/purpleLight"
                     android:layout_gravity="center"
                     android:layout_marginBottom="24dp"/>
 
-                <!-- App Name
+                <!-- App Name -->
                 <TextView
                     android:id="@+id/appName"
                     android:layout_width="wrap_content"
@@ -62,10 +58,10 @@
                     android:text="LifeLink"
                     android:textSize="32sp"
                     android:textStyle="bold"
-                    android:textColor="@color/darkBlue"
+                    android:textColor="@color/purpleLight"
                     android:layout_gravity="center"
                     android:layout_marginBottom="32dp"
-                    android:fontFamily="sans-serif-medium"/> -->
+                    android:fontFamily="sans-serif-medium"/>
 
                 <!-- Email input -->
                 <com.google.android.material.textfield.TextInputLayout
@@ -73,10 +69,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:boxStrokeColor="@color/LogoBlue"
-                    app:hintTextColor="@color/LogoBlue"
+                    app:boxStrokeColor="@color/purpleLight"
+                    app:hintTextColor="@color/purpleLight"
                     app:startIconDrawable="@android:drawable/ic_dialog_email"
-                    app:startIconTint="@color/LogoBlue"
+                    app:startIconTint="@color/purpleLight"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="Email">
                     <com.google.android.material.textfield.TextInputEditText
@@ -86,30 +82,44 @@
                         android:inputType="textEmailAddress"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/passwordLayout"
+                <!-- Password input with custom eye icon -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    app:boxStrokeColor="@color/LogoBlue"
-                    app:hintTextColor="@color/LogoBlue"
-                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                    app:startIconTint="@color/LogoBlue"
-                    app:endIconMode="password_toggle"
-                    app:endIconTint="@color/LogoBlue"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Password">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/passwordEditText"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/passwordLayout"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_weight="1"
+                        android:layout_marginBottom="24dp"
+                        app:boxStrokeColor="@color/purpleLight"
+                        app:hintTextColor="@color/purpleLight"
+                        app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                        app:startIconTint="@color/purpleLight"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:hint="Password">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/passwordEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-
+                    <!-- Eye icon to show/hide password -->
+                    <ImageView
+                        android:id="@+id/eyeIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="8dp"
+                        android:src="@drawable/baseline_visibility_24"
+                        android:contentDescription="Toggle password visibility"
+                        android:clickable="true"
+                        android:focusable="true"
+                        />
+                </LinearLayout>
 
                 <!-- Remember Me Checkbox -->
                 <com.google.android.material.checkbox.MaterialCheckBox
@@ -117,19 +127,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Remember me"
-                    android:textColor="@color/LogoBlue"
-                    android:buttonTint="@color/LogoBlue"
+                    android:textColor="@color/primaryDark"
+                    android:buttonTint="@color/purpleLight"
                     android:layout_marginBottom="24dp"/>
 
                 <!-- Login Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/loginButton"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="56dp"
                     android:text="Login"
                     android:textSize="16sp"
                     app:cornerRadius="28dp"
-                    android:backgroundTint="@color/LogoBlue"
+                    android:backgroundTint="@color/purpleLight"
                     android:layout_marginBottom="16dp"/>
 
                 <!-- Forgot Password -->
@@ -138,14 +148,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Forgot Password?"
-                    android:textColor="@color/LogoBlue"
+                    android:textColor="@color/purpleLight"
                     android:textSize="14sp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="8dp"
-                    android:background="?attr/selectableItemBackground" />
+                    android:background="?attr/selectableItemBackground"/>
 
                 <!-- Sign Up Text -->
                 <TextView
@@ -153,19 +163,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Don't have an account? Sign up"
-                    android:textColor="@color/LogoBlue"
+                    android:textColor="@color/purpleLight"
                     android:textSize="14sp"
                     android:layout_gravity="center"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="8dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:height="48dp"/>
+                    android:background="?attr/selectableItemBackground"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

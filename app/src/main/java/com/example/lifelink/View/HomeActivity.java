@@ -7,7 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.lifelink.R;
-//import com.example.lifelink.Service.BluetoothMonitorService;
+import com.example.lifelink.Service.BluetoothMonitorService;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +30,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-/*try {
+        try {
             // Try starting Bluetooth Monitor Service
             Intent serviceIntent = new Intent(this, BluetoothMonitorService.class);
             startService(serviceIntent);
@@ -39,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "❌ Failed to Start Monitoring: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
-*/
+
 
 
 

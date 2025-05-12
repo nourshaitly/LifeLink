@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.lifelink.R;
-//import com.example.lifelink.Service.BluetoothMonitorService;
+import com.example.lifelink.Service.BluetoothMonitorService;
 import com.google.android.material.button.MaterialButton;
 
 public class HeartConditionOptionsActivity extends AppCompatActivity {
