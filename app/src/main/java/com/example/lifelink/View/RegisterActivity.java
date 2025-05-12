@@ -43,7 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         confirmPassword = findViewById(R.id.confirmPassword);
         registerButton = findViewById(R.id.registerButton);
         loginText = findViewById(R.id.loginText);
-      //  loadingProgressBar = findViewById(R.id.loadingProgressBar); // ✅ Fixed here (uncommented)
+        //  loadingProgressBar = findViewById(R.id.loadingProgressBar); // ✅ Fixed here (uncommented)
 
         registerButton.setOnClickListener(v -> handleRegistration());
 
@@ -77,11 +77,11 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-      //  loadingProgressBar.setVisibility(View.VISIBLE);
+        //  loadingProgressBar.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(emailText, pass)
                 .addOnCompleteListener(this, task -> {
-               //     loadingProgressBar.setVisibility(View.GONE);
+                    //     loadingProgressBar.setVisibility(View.GONE);
 
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();

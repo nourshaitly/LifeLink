@@ -87,7 +87,7 @@ public class VerificationActivity extends AppCompatActivity {
     }
 
     private void goToHealthInfo() {
-        Intent intent = new Intent(VerificationActivity.this, HealthInfoActivity.class);
+        Intent intent = new Intent(VerificationActivity.this, MedicalProfileActivity.class);
         startActivity(intent);
         finish();
     }

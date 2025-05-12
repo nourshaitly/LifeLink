@@ -54,7 +54,23 @@
 
 
 
-
     <color name="colorPrimary">#6200EE</color>
+
+
+
+
+
+
+
+
+
+
+    <!-- Toolbar and primary colors -->
+
+    <color name="colorRed">#FD0F0F</color> <!-- SOS Button Red -->
+
+
+
+
 
 </resources>

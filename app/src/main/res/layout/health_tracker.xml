@@ -110,8 +110,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="8dp"
-                            android:text="Your health is in excellent condition"
+                            android:text=""
                             android:textAppearance="@style/TextAppearance.App.Body2" />
+
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

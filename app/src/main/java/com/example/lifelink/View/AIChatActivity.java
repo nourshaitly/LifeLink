@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.speech.RecognizerIntent;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,7 +47,6 @@ public class AIChatActivity extends AppCompatActivity {
     private ChatAdapter adapter;
     private RecyclerView recyclerView;
     private EditText editText;
-
     private FirebaseFirestore db;
     private String uid;
     private GeminiAPI api;
@@ -56,10 +57,15 @@ public class AIChatActivity extends AppCompatActivity {
     private List<ChatSession> chatSessions = new ArrayList<>();
     private TextToSpeech tts;
 
+    private static final int REQUEST_CODE_SPEECH_INPUT = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai_chat);
+
+        ImageButton voiceButton = findViewById(R.id.voiceButton);
+        voiceButton.setOnClickListener(v -> startVoiceInput());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -117,10 +123,11 @@ public class AIChatActivity extends AppCompatActivity {
         adapter.setOnMessageActionListener(new ChatAdapter.OnMessageActionListener() {
             @Override
             public void onCopy(ChatMessage message) {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                Context context = AIChatActivity.this;
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Message", message.message);
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(AIChatActivity.this, "Message copied!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Message copied!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -148,18 +155,26 @@ public class AIChatActivity extends AppCompatActivity {
         });
     }
 
-    private void ensureSessionCreated() {
+    private void ensureSessionCreated(String userMessage) {
         if (sessionId == null) {
             sessionId = UUID.randomUUID().toString();
-            sessionTitle = "New Chat";
+
+            // ✅ Shorten title to max 40 characters
+            String title = userMessage.length() > 40 ? userMessage.substring(0, 40) + "..." : userMessage;
+
+            sessionTitle = title;
+
             ChatSession newSession = new ChatSession(sessionId, sessionTitle, System.currentTimeMillis());
-            db.collection("users").document(uid).collection("ai_chats").document(sessionId).set(newSession)
+
+            db.collection("users").document(uid).collection("ai_chats").document(sessionId)
+                    .set(newSession)
                     .addOnSuccessListener(unused -> {
                         getSupportActionBar().setTitle(sessionTitle);
                         loadChatSessions();
                     });
         }
     }
+
 
     private void loadMessages() {
         db.collection("users").document(uid)
@@ -178,47 +193,44 @@ public class AIChatActivity extends AppCompatActivity {
                 });
     }
 
-    private void addMessage(String text, boolean isUser) {
-        ensureSessionCreated();
+    private void sendMessage(String userMessage) {
 
-        long ts = System.currentTimeMillis();
-        ChatMessage message = new ChatMessage(sessionId, text, isUser, getTime(), ts);
-        messages.add(message);
+        ensureSessionCreated(userMessage);
+
+        ChatMessage userChatMessage = new ChatMessage(sessionId, userMessage, true, getTime(), System.currentTimeMillis());
+        messages.add(userChatMessage);
         adapter.notifyItemInserted(messages.size() - 1);
         recyclerView.scrollToPosition(messages.size() - 1);
-
-        db.collection("users").document(uid)
-                .collection("ai_chats").document(sessionId)
-                .collection("messages")
-                .document(String.valueOf(ts))
-                .set(message);
-
-        if (messages.size() == 1 && isUser) {
-            String autoTitle = message.message;
-            ChatSession updatedSession = new ChatSession(sessionId, autoTitle, System.currentTimeMillis());
-            db.collection("users").document(uid)
-                    .collection("ai_chats").document(sessionId)
-                    .set(updatedSession, SetOptions.merge())
-                    .addOnSuccessListener(unused -> getSupportActionBar().setTitle(autoTitle));
-        }
-    }
-
-    private void sendMessage(String userMessage) {
-        addMessage(userMessage, true);
 
         ChatMessage typingMessage = new ChatMessage(sessionId, "AI is typing...", false, getTime(), System.currentTimeMillis());
         messages.add(typingMessage);
         adapter.notifyItemInserted(messages.size() - 1);
         recyclerView.scrollToPosition(messages.size() - 1);
 
-        GeminiRequest request = new GeminiRequest(userMessage);
+        String prompt = "You are a medical assistant. Only answer medical-related questions. "
+                + "If the question is not medical, say 'I can only answer medical questions.'\n\nUser: " + userMessage;
+
+        GeminiRequest request = new GeminiRequest(prompt);
         api.sendPrompt(request).enqueue(new Callback<GeminiResponse>() {
             @Override
             public void onResponse(Call<GeminiResponse> call, Response<GeminiResponse> response) {
                 messages.remove(typingMessage);
                 adapter.notifyItemRemoved(messages.size());
+
                 if (response.isSuccessful() && response.body() != null) {
                     String aiAnswer = response.body().candidates[0].content.parts[0].text;
+
+                    if (aiAnswer.contains("I can only answer medical questions")) {
+                        addMessage("AI refused to answer. This question is not medical.", false);
+                        return;
+                    }
+
+                    db.collection("users").document(uid)
+                            .collection("ai_chats").document(sessionId)
+                            .collection("messages")
+                            .document(String.valueOf(userChatMessage.timestamp))
+                            .set(userChatMessage);
+
                     addMessage(aiAnswer, false);
                 } else {
                     addMessage("Error: " + response.code(), false);
@@ -232,6 +244,28 @@ public class AIChatActivity extends AppCompatActivity {
                 addMessage("Error: " + t.getMessage(), false);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (result != null && result.size() > 0) {
+                String spokenText = result.get(0);
+                editText.setText(spokenText);
+                editText.setSelection(spokenText.length());
+            }
+        }
+    }
+
+    private void addMessage(String text, boolean isUser) {
+        long ts = System.currentTimeMillis();
+        ChatMessage message = new ChatMessage(sessionId, text, isUser, getTime(), ts);
+        messages.add(message);
+        adapter.notifyItemInserted(messages.size() - 1);
+        recyclerView.scrollToPosition(messages.size() - 1);
     }
 
     private String getTime() {
@@ -260,5 +294,17 @@ public class AIChatActivity extends AppCompatActivity {
                     }
                     historyAdapter.notifyDataSetChanged();
                 });
+    }
+
+    private void startVoiceInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...");
+        try {
+            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+        } catch (Exception e) {
+            Toast.makeText(this, "Your device does not support speech input", Toast.LENGTH_SHORT).show();
+        }
     }
 }

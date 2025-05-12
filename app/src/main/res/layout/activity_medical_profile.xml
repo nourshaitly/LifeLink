@@ -305,6 +305,25 @@
                 android:backgroundTint="@color/LogoBlue"/>
         </LinearLayout>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <LinearLayout
             android:id="@+id/stepMedicalQuestions"
             android:layout_width="match_parent"
@@ -321,125 +340,220 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Q1: Heart/Respiratory Conditions -->
+
+
+
+
+            <!-- Q1: Adding Questions  -->
+
+
+
+            <!-- Smoking Status -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Do you suffer from any heart or respiratory condition?" />
+                android:text="Do you currently use tobacco products?" />
 
             <RadioGroup
-                android:id="@+id/conditionGroup"
+                android:id="@+id/smokingGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <RadioButton
-                    android:id="@+id/conditionYes"
+                    android:id="@+id/smokingYes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Yes" />
                 <RadioButton
-                    android:id="@+id/conditionNo"
+                    android:id="@+id/smokingNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No" />
+            </RadioGroup>
+
+            <!-- Alcohol Consumption -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Do you consume alcoholic beverages?" />
+
+            <RadioGroup
+                android:id="@+id/alcoholGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/alcoholYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yes" />
+                <RadioButton
+                    android:id="@+id/alcoholNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No" />
+            </RadioGroup>
+
+
+
+
+
+            <!-- Medication Usage -->
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Health Risk Factors"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Current Symptoms -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Are you currently experiencing any of the following symptoms?" />
+
+                <CheckBox android:id="@+id/checkChestPain" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Chest pain or tightness" />
+                <CheckBox android:id="@+id/checkBreathless" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Shortness of breath" />
+                <CheckBox android:id="@+id/checkDizziness" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Dizziness or fainting" />
+                <CheckBox android:id="@+id/checkFatigue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Unusual fatigue or weakness" />
+                <CheckBox android:id="@+id/checkPalpitations" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Irregular heartbeat or palpitations" />
+            <CheckBox
+                android:id="@+id/checkNoSymptoms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="None of the above symptoms" />
+
+                <!-- Medications that affect vitals -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Are you currently taking any medications?"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <RadioGroup
+                android:id="@+id/medicationUsageGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/medicationYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yes" />
+
+                <RadioButton
+                    android:id="@+id/medicationNo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No" />
             </RadioGroup>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/conditionDetailLayout"
+                android:id="@+id/medicationListLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Please specify your condition"
+                android:hint="List your current medications"
                 android:visibility="gone"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:boxStrokeColor="@color/LogoBlue"
                 app:hintTextColor="@color/LogoBlue">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/conditionDetailInput"
+                    android:id="@+id/medicationListInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="textMultiLine"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Q2: Medications -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Are you taking any medications that affect your heart or breathing?" />
 
-            <RadioGroup
-                android:id="@+id/medicationsGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/medsYes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Yes" />
-                <RadioButton
-                    android:id="@+id/medsNo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No" />
-            </RadioGroup>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/medicationInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Please list your medications"
-                android:visibility="gone"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="@color/LogoBlue"
-                app:hintTextColor="@color/LogoBlue">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/medicationInput"
+            <!-- Allergies -->
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="16dp"
+                    android:text="Do you have any known allergies?" />
 
-            <!-- Q3: Medical Devices -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Do you have any implanted medical devices?" />
-
-            <RadioGroup
-                android:id="@+id/deviceGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/deviceYes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Yes" />
-                <RadioButton
-                    android:id="@+id/deviceNo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No" />
-            </RadioGroup>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/deviceInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Please describe the device"
-                android:visibility="gone"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="@color/LogoBlue"
-                app:hintTextColor="@color/LogoBlue">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/deviceInput"
+                <RadioGroup android:id="@+id/allergyGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="horizontal">
+                    <RadioButton android:id="@+id/allergyYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" />
+                    <RadioButton android:id="@+id/allergyNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/allergyInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Please list your allergies"
+                    android:visibility="gone"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="@color/LogoBlue"
+                    app:hintTextColor="@color/LogoBlue">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/allergyInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Family History -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Do you have a family history of any of the following conditions?"
+                    android:layout_marginTop="16dp" />
+
+                <CheckBox android:id="@+id/familyHeartDisease" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Heart disease" />
+                <CheckBox android:id="@+id/familyDiabetes" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Diabetes" />
+                <CheckBox android:id="@+id/familyHypertension" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Hypertension" />
+                <CheckBox android:id="@+id/familyStroke" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Stroke" />
+
+            <CheckBox
+                android:id="@+id/checkNofamily"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="None of the above conditions" />
+
+
+            <!-- Mental Health -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Have you been diagnosed with any of the following mental health conditions?"
+                    android:layout_marginTop="16dp" />
+
+                <CheckBox android:id="@+id/mentalDepression" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Depression" />
+                <CheckBox android:id="@+id/mentalAnxiety" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Anxiety" />
+                <CheckBox android:id="@+id/mentalPTSD" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="PTSD or Trauma" />
+
+            <CheckBox
+                android:id="@+id/checkNoMental"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="None of the above conditions" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- Chronic Diseases -->
             <TextView
@@ -462,28 +576,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Asthma" />
+
             <CheckBox
-                android:id="@+id/checkOther"
+                android:id="@+id/checkAnemia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Other" />
+                android:text="Anemia" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/otherDiseaseLayout"
+
+
+
+
+
+
+            <CheckBox
+                android:id="@+id/checkNoChronic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Please specify"
-                android:visibility="gone"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="@color/LogoBlue"
-                app:hintTextColor="@color/LogoBlue">
+                android:text="None of the above diseases" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/otherDiseaseInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
 
             <Button
                 android:id="@+id/backToPhy"

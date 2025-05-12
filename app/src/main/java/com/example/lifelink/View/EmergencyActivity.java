@@ -23,8 +23,11 @@ import androidx.core.app.NotificationCompat;
 
 import android.content.pm.PackageManager;
 
+import com.example.lifelink.Controller.FirestoreService;
+import com.example.lifelink.Controller.HealthTrackerState;
 import com.example.lifelink.Controller.LiveHealthDataHolder;
 import com.example.lifelink.Model.HealthData;
+import com.example.lifelink.Model.MedicalProfile;
 import com.example.lifelink.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.*;
@@ -52,6 +55,8 @@ public class EmergencyActivity extends AppCompatActivity {
     private Handler handler;
     private Runnable monitorTask;
 
+    private MedicalProfile medicalProfile;  // This will hold the Medical Profile data
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +66,8 @@ public class EmergencyActivity extends AppCompatActivity {
         initializeViews();
         initializeTextToSpeech();
         setupButtonListeners();
-
+        // Fetch the medical profile from Firestore
+        fetchMedicalProfile();
         checkLocationSettingsThenFetch();
         startMonitoringHealthData();
     }
@@ -109,12 +115,9 @@ public class EmergencyActivity extends AppCompatActivity {
 
     private void startMonitoringHealthData() {
         handler = new Handler();
-        monitorTask = new Runnable() {
-            @Override
-            public void run() {
-                fetchAndUpdateEmergencyFlow();
-                handler.postDelayed(this, 3000); // Check every 3 seconds
-            }
+        monitorTask = () -> {
+            fetchAndUpdateEmergencyFlow();
+            handler.postDelayed(monitorTask, 3000);
         };
         handler.post(monitorTask);
     }
@@ -131,93 +134,60 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void continueEmergencyFlow() {
-        int level = classifyEmergencyLevel(heartRate, spo2);
-        updateUIBasedOnEmergencyLevel();
-
-        if (level == 3) {
-            triggerCall();
-            requestSmsPermissionIfNeeded();
-        } else if (level == 2) {
-            requestSmsPermissionIfNeeded();
-        }
-
-        if (level >= 2) {
-            showEmergencyNotification(recommendationText.getText().toString());
-        }
-    }
-
-    private void showEmergencyNotification(String recommendation) {
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_announcement)
-                .setContentTitle("🚨 Emergency Recommendation")
-                .setContentText(recommendation)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setAutoCancel(true)
-                .build();
-
-        manager.notify(2001, notification);
-    }
-
-    private void triggerCall() {
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + sosnum));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            startActivity(callIntent);
+        if (medicalProfile!= null) {
+            int level = evaluatePersonalizedEmergencyLevel(medicalProfile, heartRate, spo2);
+            updateUIBasedOnLevel(level);
+            handleEmergencyActions(level);
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_PERMISSION_REQUEST);
+            Toast.makeText(this, "User profile not loaded yet.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void sendSmsToEmergencyContact() {
-        String message = "🚨 Emergency detected\nCondition: " + getConditionMessage() +
-                "\nHR: " + heartRate + "\nSpO₂: " + spo2 + "\nLocation: " + userLocation;
+    private int evaluatePersonalizedEmergencyLevel(MedicalProfile profile, int heartRate, int spo2) {
+        int score = 0;
+        int age = profile.getAge();
+        double bmi = calculateBMI(profile.getHeightCm(), profile.getWeightKg());
 
-        String phone = emergencyContact.replace(" ", "");
+        if (age >= 65) score += 2;
+        else if (age >= 50) score += 1;
 
-        try {
-            SmsManager smsManager = SmsManager.getDefault();
-            ArrayList<String> parts = smsManager.divideMessage(message);
-            smsManager.sendMultipartTextMessage(phone, null, parts, null, null);
-            Toast.makeText(this, "SMS sent successfully", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Failed to send SMS: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
+        if (bmi >= 30) score += 2;
+        else if (bmi >= 25) score += 1;
+
+        if (profile.isSmoker()) score += 2;
+        if (profile.isAlcoholic()) score += 1;
+
+        if (profile.getChronicDiseases().contains("Hypertension") ||
+                profile.getChronicDiseases().contains("Heart Disease")) score += 2;
+
+        if (profile.getChronicDiseases().contains("Asthma") ||
+                profile.getSymptoms().contains("Shortness of breath")) score += 2;
+
+        if (profile.getFamilyHistory().contains("Heart disease")) score += 1;
+
+
+        if (spo2 < 88) score += 4;
+        else if (spo2 < 92) score += 3;
+        else if (spo2 < 95) score += 2;
+
+        if (heartRate > 150) score += 4;
+        else if (heartRate > 130) score += 3;
+        else if (heartRate > 110) score += 2;
+
+        if (score >= 9) return 3;
+        else if (score >= 5) return 2;
+        else return 1;
     }
 
-    private void requestSmsPermissionIfNeeded() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_REQUEST);
-        } else {
-            sendSmsToEmergencyContact();
-        }
+    private double calculateBMI(int heightCm, int weightKg) {
+        double heightMeters = heightCm / 100.0;
+        return weightKg / (heightMeters * heightMeters);
     }
 
-    private int classifyEmergencyLevel(int heartRate, int spo2) {
-        if (heartRate <= 100 && spo2 >= 95) return 1;
-        else if (heartRate <= 120 && spo2 >= 90) return 2;
-        else return 3;
-    }
-
-    private String getConditionMessage() {
-        switch (classifyEmergencyLevel(heartRate, spo2)) {
-            case 1: return "Low-level emergency";
-            case 2: return "Medium-level emergency";
-            case 3: return "High-level emergency";
-            default: return "Unknown";
-        }
-    }
-
-    private void updateUIBasedOnEmergencyLevel() {
-        int level = classifyEmergencyLevel(heartRate, spo2);
-
-        sosButton.setText("SOS");
+    private void updateUIBasedOnLevel(int level) {
         heartRateText.setText("Heart Rate: " + heartRate + " bpm");
         spo2Text.setText("SpO₂: " + spo2 + "%");
+        sosButton.setText("SOS");
 
         if (level == 1) {
             statusText.setText("Low-Level Emergency");
@@ -231,6 +201,15 @@ public class EmergencyActivity extends AppCompatActivity {
             statusText.setText("High-Level Emergency");
             statusText.setTextColor(getResources().getColor(android.R.color.holo_red_light));
             recommendationText.setText("Critical! Help is on the way.");
+        }
+    }
+
+    private void handleEmergencyActions(int level) {
+        if (level == 3) {
+            showEmergencyNotification("Critical condition detected. Immediate action required.");
+            handleSOSButtonClick();
+        } else if (level == 2) {
+            showEmergencyNotification("Moderate emergency. Monitor condition and prepare to act.");
         }
     }
 
@@ -289,7 +268,7 @@ public class EmergencyActivity extends AppCompatActivity {
                     if (location != null) {
                         double lat = location.getLatitude();
                         double lng = location.getLongitude();
-                        userLocation = "www.google.com/maps/search/?api=1&query=" + String.format(Locale.US, "%.6f,%.6f", lat, lng);
+                        userLocation = "https://www.google.com/maps/search/?api=1&query=" + String.format(Locale.US, "%.6f,%.6f", lat, lng);
                     }
                 });
     }
@@ -317,4 +296,136 @@ public class EmergencyActivity extends AppCompatActivity {
             fetchUserLocation();
         }
     }
+
+
+
+
+
+    private void sendSmsToEmergencyContact() {
+        String message = "🚨 Emergency detected\nCondition: " + getConditionMessage() +
+                "\nHR: " + heartRate + "\nSpO₂: " + spo2 + "\nLocation: " + userLocation;
+
+        String phone = emergencyContact.replace(" ", "");
+
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            ArrayList<String> parts = smsManager.divideMessage(message);
+            smsManager.sendMultipartTextMessage(phone, null, parts, null, null);
+            Toast.makeText(this, "SMS sent successfully", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to send SMS: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+    private void triggerCall() {
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:" + sosnum));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            startActivity(callIntent);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_PERMISSION_REQUEST);
+        }
+    }
+
+
+
+
+    private void showEmergencyNotification(String recommendation) {
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_announcement)
+                .setContentTitle("🚨 Emergency Recommendation")
+                .setContentText(recommendation)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(true)
+                .build();
+
+        manager.notify(2001, notification);
+    }
+
+
+
+    private void requestSmsPermissionIfNeeded() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_REQUEST);
+        } else {
+            sendSmsToEmergencyContact();
+        }
+    }
+
+    private String getConditionMessage() {
+        int level = evaluatePersonalizedEmergencyLevel(medicalProfile, heartRate, spo2);
+        switch (level) {
+            case 1:
+                return "Low-level emergency";
+            case 2:
+                return "Medium-level emergency";
+            case 3:
+                return "High-level emergency";
+            default:
+                return "Unknown";
+        }
+    }
+
+
+
+    private void fetchMedicalProfile() {
+        FirestoreService firestoreService = new FirestoreService();
+        firestoreService.fetchMedicalProfile(new FirestoreService.OnProfileFetchedListener() {
+
+            @Override
+
+
+
+            public void onProfileFetched(MedicalProfile profile) {
+                if (profile == null) {
+                    Toast.makeText(EmergencyActivity.this, "❌ Profile is null", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                medicalProfile = profile;
+                HealthTrackerState.isProfileReady = true;
+
+                Toast.makeText(EmergencyActivity.this, "✅ Profile loaded", Toast.LENGTH_SHORT).show();
+           continueEmergencyFlow();
+            }
+
+
+
+
+
+
+
+
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(EmergencyActivity.this, error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

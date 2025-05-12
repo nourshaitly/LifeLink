@@ -37,6 +37,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         void onEdit(ChatMessage message, int position);
         void onSpeak(ChatMessage message);
         void onSendEditedMessage(ChatMessage message, String newText);
+
     }
 
     private OnMessageActionListener actionListener;

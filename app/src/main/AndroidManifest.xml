@@ -29,6 +29,8 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
 
 
     <meta-data
@@ -48,44 +50,40 @@
         tools:targetApi="31">
 
 
-
-
-
-            <!-- Other configurations -->
-
-
-
-
-
-
-
-
-
-
+        <!-- Other configurations -->
         <activity
-            android:name=".View.WelcomeActivity"
+            android:name=".View.HomeActivity"
             android:exported="true">
-
-
         </activity>
 
         <!-- Add LoginActivity declaration-->
         <activity
             android:name=".View.LoginActivity"
-            android:exported="true" />
+            android:exported="true" >
 
-        <activity
-            android:name=".View.HealthInfoActivity"
-            android:exported="true" />
+
+
+
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+
+
+
 
         <activity
             android:name=".View.MedicalProfileActivity"
-            android:exported="true" />
-
-
-        <activity
-            android:name=".View.GeoMapsActivity"
             android:exported="true" >
+
+
+
+
 
 
         </activity>
@@ -96,6 +94,13 @@
 
 
 
+
+
+
+        <activity
+            android:name=".View.GeoMapsActivity"
+            android:exported="true" >
+        </activity>
 
         <activity
             android:name=".View.HealthTrackerActivity"
@@ -106,46 +111,30 @@
              android:exported="false"
              android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> -->
 
-         <activity android:name=".View.ResetPasswordActivity"
-             android:exported="false"
-             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".View.ResetPasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
 
 
 
-         <activity
+        <activity
 
-             android:name=".View.RegisterActivity"
-             android:exported="true">
-
-
+            android:name=".View.RegisterActivity"
+            android:exported="true">
 
 
+        </activity>
 
-
-
-
-         </activity>
+        <activity
+            android:name=".View.WelcomeActivity"
+            android:exported="true" >
 
 
 
 
 
-
-
-         <activity
-             android:name=".View.HomeActivity"
-             android:exported="true" >
-
-
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-
-
-         </activity>
+        </activity>
 
 
 
@@ -157,24 +146,14 @@
 
 
 
-         <activity android:name=".View.SignIn"
-             android:exported="true"
-             />
-
-         <activity
-             android:name=".View.ProfileActivity"
-             android:exported="false"
-             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-
-
+        <activity android:name=".View.SignIn"
+            android:exported="true"
+            />
 
 
 
         <activity android:name=".View.RemindersWelcomeActivity"
             android:exported="true">
-
-
         </activity>
 
 
@@ -188,8 +167,7 @@
 
 
         <activity android:name=".View.DashboardActivity"
-            android:exported="true"
-            />
+            android:exported="true" />
 
 
 
@@ -205,8 +183,8 @@
 
 
         <meta-data
-             android:name="com.google.android.geo.API_KEY"
-             android:value="@string/MY_MAP_API_KEY" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/MY_MAP_API_KEY" />
 
         <activity
             android:name=".View.EmergencyActivity"
@@ -215,11 +193,27 @@
 
         <activity
             android:name=".View.HeartConditionOptionsActivity"
+            android:exported="true" >
+
+
+
+
+
+</activity>
+
+
+
+
+
+
+
+
+
+
+
+        <activity
+            android:name=".View.ForgotPasswordActivity"
             android:exported="true" />
-
-
-
-
 
         <activity
             android:name=".View.VerificationActivity"
@@ -227,43 +221,38 @@
         <activity
             android:name=".View.PhoneVerificationActivity"
             android:exported="true" />
-        <activity
-            android:name=".View.ForgotPasswordActivity"
-            android:exported="true" />
-
-
 
         <activity
             android:name=".View.AIChatActivity"
             android:exported="true" />
 
 
-
+        <activity
+            android:name=".View.ChatHistoryActivity"
+            android:exported="true" >
+        </activity >
 
 
 
 
         <activity
-            android:name=".View.ChatHistoryActivity"
+            android:name=".View.ProfileActivity"
             android:exported="true" >
 
 
 
 
+        </activity>
 
 
 
 
-</activity >
+
+
 
 
 
     </application>
-
-
-
-
-
 
 
 </manifest>

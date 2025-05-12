@@ -5,19 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Main content -->
+    <!-- Main Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:theme="?attr/actionBarTheme" />
+            android:theme="?attr/actionBarTheme"
+            app:title="AI Assistant"
+            app:titleTextColor="@android:color/white" />
 
+        <!-- Chat Messages RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chatRecyclerView"
             android:layout_width="match_parent"
@@ -25,7 +29,7 @@
             android:layout_weight="1"
             android:padding="8dp" />
 
-        <!-- Input Area -->
+        <!-- Message Input Area -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,19 +49,26 @@
                 android:textSize="16sp" />
 
             <ImageButton
+                android:id="@+id/voiceButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/rounded_send_background"
+                android:src="@drawable/ic_mic"
+                android:contentDescription="Voice Input" />
+
+            <ImageButton
                 android:id="@+id/sendButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/rounded_send_background"
                 android:src="@drawable/ic_send"
-                android:contentDescription="Send"
-
-                android:layout_marginStart="8dp" />
+                android:contentDescription="Send" />
         </LinearLayout>
-
     </LinearLayout>
 
-    <!-- Drawer content -->
+    <!-- Drawer Content (History) -->
     <LinearLayout
         android:layout_width="280dp"
         android:layout_height="match_parent"
