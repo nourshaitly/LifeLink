@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Health Tracker"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:text="Nearby Medical Centers"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/healthTrackerButton" />
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:text="Reminder"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/nearbyHospitalButton"/>
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:text="Emergency Page"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/bloodPressureButton"/>
@@ -60,9 +60,9 @@
         android:id="@+id/exerciseButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Exercise Guide"
+        android:text="AI Feature"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/emergencyPageButton"/>
@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:text="Diet Recommendations"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoBlue"
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/exerciseButton"/>
@@ -86,7 +86,7 @@
         android:layout_height="wrap_content"
         android:text="Back"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purpleLight"
+        android:backgroundTint="@color/LogoRed"
         android:padding="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

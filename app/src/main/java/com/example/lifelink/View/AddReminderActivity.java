@@ -10,8 +10,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.SparseArray;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +25,11 @@ import androidx.core.content.ContextCompat;
 
 import com.example.lifelink.Model.Reminder;
 import com.example.lifelink.R;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,6 +58,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private Reminder existingReminder;
     private AlarmManager alarmManager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +66,7 @@ public class AddReminderActivity extends AppCompatActivity {
 
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+        // Handling Notification Permission for Android 13 and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -67,6 +76,7 @@ public class AddReminderActivity extends AppCompatActivity {
             }
         }
 
+        // Initialize UI components
         medicineNameInput = findViewById(R.id.medicineNameInput);
         timePickerButton = findViewById(R.id.timePickerButton);
         saveReminderButton = findViewById(R.id.saveReminderButton);
@@ -80,11 +90,15 @@ public class AddReminderActivity extends AppCompatActivity {
         chipSat = findViewById(R.id.chipSat);
         chipSun = findViewById(R.id.chipSun);
 
+
+
+        // Load existing reminder if present
         if (getIntent().hasExtra("reminder")) {
             existingReminder = (Reminder) getIntent().getSerializableExtra("reminder");
             if (existingReminder != null) {
                 medicineNameInput.setText(existingReminder.getName());
 
+                // Split time to hour and minute
                 String[] timeParts = existingReminder.getTime().split(":");
                 if (timeParts.length == 2) {
                     selectedHour = Integer.parseInt(timeParts[0]);
@@ -92,7 +106,7 @@ public class AddReminderActivity extends AppCompatActivity {
                     selectedTimeText.setText("Time: " + existingReminder.getTime());
                 }
 
-                // ✅ Load selected days if editing
+                // Load selected days if editing
                 if (existingReminder.getDays() != null) {
                     for (String day : existingReminder.getDays()) {
                         switch (day) {
@@ -109,18 +123,23 @@ public class AddReminderActivity extends AppCompatActivity {
             }
         }
 
+        // Open Time Picker when button is clicked
         timePickerButton.setOnClickListener(v -> openTimePicker());
 
+        // Save reminder button clicked
         saveReminderButton.setOnClickListener(v -> {
             String name = medicineNameInput.getText().toString().trim();
 
+            // Validate input
             if (name.isEmpty() || selectedHour == -1) {
                 Toast.makeText(this, "Please enter medicine name and pick a time", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            // Format selected time
             String time = String.format("%02d:%02d", selectedHour, selectedMinute);
 
+            // Collect selected days
             List<String> selectedDays = new ArrayList<>();
             if (chipMon.isChecked()) selectedDays.add("Mon");
             if (chipTue.isChecked()) selectedDays.add("Tue");
@@ -130,6 +149,7 @@ public class AddReminderActivity extends AppCompatActivity {
             if (chipSat.isChecked()) selectedDays.add("Sat");
             if (chipSun.isChecked()) selectedDays.add("Sun");
 
+            // Save reminder to Firebase Firestore
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             FirebaseAuth auth = FirebaseAuth.getInstance();
 
@@ -143,12 +163,14 @@ public class AddReminderActivity extends AppCompatActivity {
                     .document(userId)
                     .collection("reminders");
 
+            // Create reminder data
             Map<String, Object> reminderData = new HashMap<>();
             reminderData.put("name", name);
             reminderData.put("time", time);
             reminderData.put("taken", false);
             reminderData.put("days", selectedDays);
 
+            // If editing, update reminder; otherwise, create new one
             if (existingReminder != null && existingReminder.getId() != null) {
                 remindersRef.document(existingReminder.getId())
                         .set(reminderData)
@@ -186,7 +208,26 @@ public class AddReminderActivity extends AppCompatActivity {
                         });
             }
         });
+
+        DashboardUtils.init(this,R.id.bottomNavigationView);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, DashboardActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                            | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            // tell DashboardActivity which tab to show
+            intent.putExtra("selected_tab", R.id.nav_reminder);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void openTimePicker() {
         MaterialTimePicker picker = new MaterialTimePicker.Builder()
@@ -220,76 +261,33 @@ public class AddReminderActivity extends AppCompatActivity {
             }
         }
 
-        if (reminder.getDays() != null && !reminder.getDays().isEmpty()) {
-            for (String day : reminder.getDays()) {
-                Calendar calendar = Calendar.getInstance();
-                switch (day) {
-                    case "Mon": calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY); break;
-                    case "Tue": calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY); break;
-                    case "Wed": calendar.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY); break;
-                    case "Thu": calendar.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY); break;
-                    case "Fri": calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY); break;
-                    case "Sat": calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY); break;
-                    case "Sun": calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY); break;
-                }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MILLISECOND, 0);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
 
-                if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-                    calendar.add(Calendar.WEEK_OF_YEAR, 1);
-                }
+        Intent intent = new Intent(this, ReminderAlarmReceiver.class);
+        intent.putExtra("medicineName", reminder.getName());
+        intent.putExtra("reminderId", reminder.getId());
 
-                Intent intent = new Intent(this, ReminderAlarmReceiver.class);
-                intent.putExtra("medicineName", reminder.getName());
-                intent.putExtra("reminderId", reminder.getId());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                reminder.getId().hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
 
-                int requestCode = (reminder.getId() + day).hashCode();
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                        this,
-                        requestCode,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                );
-
-                if (alarmManager != null) {
-                    alarmManager.setRepeating(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.getTimeInMillis(),
-                            AlarmManager.INTERVAL_DAY * 7,
-                            pendingIntent
-                    );
-                }
-            }
-        } else {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minute);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-
-            if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-                calendar.add(Calendar.DAY_OF_YEAR, 1);
-            }
-
-            Intent intent = new Intent(this, ReminderAlarmReceiver.class);
-            intent.putExtra("medicineName", reminder.getName());
-            intent.putExtra("reminderId", reminder.getId());
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    reminder.getId().hashCode(),
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-            );
-
-            if (alarmManager != null) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-            }
+        if (alarmManager != null) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
     }
+
+
 
     @Override
     protected void onResume() {
@@ -313,4 +311,6 @@ public class AddReminderActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }

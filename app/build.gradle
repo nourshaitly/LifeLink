@@ -73,6 +73,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
     implementation libs.play.services.maps
     implementation libs.play.services.location
+    implementation libs.androidx.gridlayout
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
@@ -109,17 +110,10 @@ dependencies {
 
 
 
-
-
-
-
-
-
-
-
-
-
     implementation 'com.google.maps.android:android-maps-utils:2.2.5'
 
+// CardView dependency
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation "androidx.work:work-runtime:2.9.0" // or latest
 
 }

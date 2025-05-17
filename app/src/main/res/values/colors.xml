@@ -27,10 +27,11 @@
     
     <!-- App specific colors -->
     <color name="background">#FFF5F5F5</color>
-    <color name="blue">#FF2196F3</color>
-    <color name="light_blue">#FFE3F2FD</color>
+    <color name="orange">#FF5218</color>
+    <color name="blue">#2196F3</color>
+    <color name="light_blue">#B5B5FB</color>
     <color name="red">#FFF44336</color>
-    <color name="green">#FF4CAF50</color>
+    <color name="green">#00C207</color>
     <color name="gray">#757575</color>
     <color name="dark_gray">#616161</color>
 
@@ -39,8 +40,8 @@
         <color name="primaryVariant">#303F9F</color>
         <color name="secondary">#FF4081</color>      <!-- Pink -->
         <color name="secondaryVariant">#C2185B</color>
-        <color name="LogoBlue">#2686CA</color>
-        <color name="LogoRed">#F94947</color>
+        <color name="LogoBlue">#0760F3</color>
+        <color name="LogoRed">#EF211F</color>
 
 
         <color name="success_green">#4CAF50</color>

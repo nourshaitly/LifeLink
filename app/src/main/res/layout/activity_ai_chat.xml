@@ -16,7 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/LogoBlue"
             android:theme="?attr/actionBarTheme"
             app:title="AI Assistant"
             app:titleTextColor="@android:color/white" />
@@ -54,6 +54,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/rounded_send_background"
+                android:backgroundTint="@color/LogoBlue"
                 android:src="@drawable/ic_mic"
                 android:contentDescription="Voice Input" />
 
@@ -63,7 +64,9 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/rounded_send_background"
+                android:backgroundTint="@color/LogoBlue"
                 android:src="@drawable/ic_send"
+                android:tint="@color/white"
                 android:contentDescription="Send" />
         </LinearLayout>
     </LinearLayout>

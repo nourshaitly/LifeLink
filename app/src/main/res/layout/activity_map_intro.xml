@@ -5,28 +5,69 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <ScrollView
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="24dp">
+        android:layout_height="wrap_content"
+        android:background="@color/LogoBlue"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Nearby Medical Finder"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_back">
+        <ImageView
+            android:id="@+id/profileIcon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_profile"
+            app:tint="@color/LogoBlue"
+            android:background="@drawable/bg_card_rounded"
+            android:padding="6dp"
+            />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="733dp"
+        android:layout_marginBottom="72dp"
+        android:layout_gravity="center_horizontal"
+        android:padding="10dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
 
             <!-- Friendly Illustration or Icon (optional) -->
-            <ImageView
-                android:id="@+id/mapIllustration"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:src="@drawable/ic_map_intro"
-                android:contentDescription="@string/map_intro_image"
-                android:layout_marginBottom="24dp" />
 
             <!-- Title Text -->
             <TextView
+                android:id="@+id/TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/mapIllustration"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="@string/map_intro_image"
+                android:src="@drawable/ic_map_intro" />
+
+            <!-- <TextView
                 android:id="@+id/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,18 +76,20 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
                 android:gravity="center"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp" /> -->
 
             <!-- Subtitle Text -->
             <TextView
                 android:id="@+id/subtitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📍 Instantly discover hospitals and pharmacies nearby\n🔀 Swipe or tap tabs to easily switch between categories\n📋 View important details: addresses, contacts, and directions\n🚨 Always ready to assist you in urgent moments"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="32dp"
+                android:text="Quickly Find Nearby Hospitals and Pharmacies\nEasily Navigate Between Categories\nView Important Details: Addresses, Contacts,  Directions\nAlways Ready to Assist you in Urgent Moments"
+                android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
 
-                android:layout_marginBottom="32dp" />
+                android:textStyle="bold" />
 
             <!-- Mini MapView inside CardView (clickable) -->
             <androidx.cardview.widget.CardView
@@ -79,21 +122,70 @@
             </androidx.cardview.widget.CardView>
 
 
-
-
             <!-- Hint Text -->
             <TextView
                 android:id="@+id/tapHintText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tap the map to start exploring"
-                android:textSize="14sp"
-                android:textColor="@color/LogoBlue"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="32dp"
                 android:gravity="center"
-                android:layout_marginBottom="32dp" />
+                android:text="Tap the map to start exploring"
+                android:textColor="@color/LogoBlue"
+                android:textSize="14sp" />
+
+            <!-- Emergency “Find Nearest Hospital” button -->
+            <Button
+                android:id="@+id/btnNearestHospital"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/LogoBlue"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Find Nearest Hospital"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
+
 
         </LinearLayout>
 
-    </ScrollView>
+
+
+
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_sos"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+
+        android:text="SOS"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+
+        app:backgroundTint="@color/LogoRed"
+        app:cornerRadius="34dp"
+        app:iconPadding="0dp"
+        android:padding="0dp"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemIconTint="@color/LogoBlue"
+        app:itemTextColor="@color/LogoBlue"
+        app:menu="@menu/bottom_navigation_menu"
+        app:labelVisibilityMode="unlabeled"/>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

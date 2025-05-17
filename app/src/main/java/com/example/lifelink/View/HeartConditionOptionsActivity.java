@@ -94,7 +94,7 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
         nearbyHospitalButton.setOnClickListener(v -> {
             try {
                 Log.d(TAG, "Launching NearbyHospitalsActivity");
-                Intent intent = new Intent(this, GeoMapsActivity.class);
+                Intent intent = new Intent(this, MapIntroActivity.class);
                 startActivity(intent);
             } catch (Exception e) {
                 Log.e(TAG, "Error launching NearbyHospitalsActivity: " + e.getMessage(), e);
@@ -124,40 +124,6 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         exerciseButton.setOnClickListener(v -> {
             try {
                 Log.d(TAG, "Launching AI ");
@@ -168,18 +134,6 @@ public class HeartConditionOptionsActivity extends AppCompatActivity {
                 showToast("Unable to open Emergency Page ");
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
 
         dietButton.setOnClickListener(v -> showToast("Diet Recommendations coming soon!"));
         backButton.setOnClickListener(v -> {

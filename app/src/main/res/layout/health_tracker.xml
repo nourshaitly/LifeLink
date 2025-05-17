@@ -6,9 +6,31 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/LogoBlue"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Health Track"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_back">
+        <ImageView
+            android:id="@+id/profileIcon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_profile"
+            app:tint="@color/LogoBlue"
+            android:background="@drawable/bg_card_rounded"
+            android:padding="6dp" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
         android:fillViewport="true"
         android:scrollbars="vertical"
         android:overScrollMode="never">
@@ -20,28 +42,7 @@
             android:padding="16dp"
             android:paddingBottom="100dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Health Dashboard"
-                    android:textAppearance="@style/TextAppearance.App.Headline6"
-                    android:layout_centerVertical="true"/>
-
-                <ImageButton
-                    android:id="@+id/profileButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/ic_profile"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="12dp"
-                    android:contentDescription="Profile"/>
-            </RelativeLayout>
 
             <!-- Wellness Score Card -->
             <com.google.android.material.card.MaterialCardView
@@ -61,7 +62,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginEnd="16dp"
-                        android:src="@drawable/ic_wellness"
+                        android:src="@drawable/ic_wellness_icon"
                         app:tint="@color/blue" />
 
                     <LinearLayout
@@ -144,8 +145,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -232,8 +233,52 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="\n\n"/>
+
 
 
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_sos"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+
+            android:text="SOS"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:gravity="center"
+
+            app:backgroundTint="@color/LogoRed"
+            app:cornerRadius="34dp"
+            app:iconPadding="0dp"
+            android:padding="0dp"/>
+
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemIconTint="@color/LogoBlue"
+        app:itemTextColor="@color/LogoBlue"
+        app:menu="@menu/bottom_navigation_menu"
+        app:labelVisibilityMode="unlabeled"/>
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

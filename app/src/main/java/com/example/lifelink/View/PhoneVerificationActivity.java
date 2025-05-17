@@ -186,7 +186,7 @@ public class PhoneVerificationActivity extends AppCompatActivity {
                 .setMessage("Welcome, your account has been verified successfully!")
                 .setCancelable(false)
                 .setPositiveButton("Continue", (dialog, which) -> {
-                    Intent intent = new Intent(PhoneVerificationActivity.this, HealthInfoActivity.class);
+                    Intent intent = new Intent(PhoneVerificationActivity.this,MedicalProfileActivity.class);
                     startActivity(intent);
                     finish();
                 })

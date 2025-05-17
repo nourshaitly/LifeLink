@@ -5,22 +5,20 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/LogoBlue"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Profile"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_back">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:title="Profile"
-            app:navigationIcon="@drawable/ic_back"
-            app:titleTextColor="@android:color/white" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.core.widget.NestedScrollView
+        android:layout_marginTop="60dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -161,7 +159,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Edit and Logout Buttons -->
-            <com.google.android.material.button.MaterialButton android:id="@+id/buttonEditSave" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="Edit Profile" android:textAllCaps="false" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/buttonEditSave" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="Edit Profile" android:textAllCaps="false" android:backgroundTint="@color/LogoBlue" />
             <com.google.android.material.button.MaterialButton android:id="@+id/buttonLogout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Logout" android:textColor="@android:color/white" android:backgroundTint="@color/LogoRed" android:textAllCaps="false" />
 
         </LinearLayout>

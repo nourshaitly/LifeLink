@@ -39,6 +39,7 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
     private ReminderAdapter reminderAdapter;
     private ListenerRegistration reminderListener;
 
+
     public ReminderFragment() {
         // Required empty public constructor
     }
@@ -64,6 +65,8 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
         });
 
         return view;
+
+
     }
 
     @Override

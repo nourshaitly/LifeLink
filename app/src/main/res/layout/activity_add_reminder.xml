@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     android:background="@android:color/white">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/LogoBlue"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Add Reminder"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_back">
+        <ImageView
+            android:id="@+id/profileIcon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_profile"
+            app:tint="@color/LogoBlue"
+            android:background="@drawable/bg_card_rounded"
+            android:padding="6dp" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="781dp"
+        android:gravity="center_vertical"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:padding="10dp">
 
         <!-- Medicine Name Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Medicine Name">
+            android:hint="Medicine Name"
+            app:hintTextColor="@color/LogoBlue">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/medicineNameInput"
@@ -31,89 +53,148 @@
             android:id="@+id/timePickerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pick Time"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/LogoBlue"
+            android:text="Pick Time" />
 
         <!-- Selected Time Display -->
         <TextView
             android:id="@+id/selectedTimeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No time selected"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:text="No time selected" />
 
         <!-- Repeat Days Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Repeat on:"
+            android:text="REPEAT ON:"
             android:textStyle="bold" />
 
-        <!-- Days ChipGroup -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/daysChipGroup"
+        <!-- Days GridLayout -->
+        <GridLayout
+            android:id="@+id/daysGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:alignmentMode="alignMargins"
+            android:columnCount="2"
+            android:useDefaultMargins="true">
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipMon"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Mon"
-                android:checkable="true" />
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                android:text="MONDAY"
+                android:textAlignment="center" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipTue"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Tue"
-                android:checkable="true" />
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                android:text="TUESDAY"
+                android:textAlignment="center" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipWed"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Wed"
-                android:checkable="true" />
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                android:text="WEDNESDAY"
+                android:textAlignment="center" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipThu"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Thu"
-                android:checkable="true" />
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                android:text="THURSDAY"
+                android:textAlignment="center" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipFri"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Fri"
-                android:checkable="true" />
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                android:text="FRIDAY"
+                android:textAlignment="center" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipSat"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Sat"
-                android:checkable="true" />
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                android:text="SATURDAY"
+                android:textAlignment="center" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipSun"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Sun"
-                android:checkable="true" />
-        </com.google.android.material.chip.ChipGroup>
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                android:text="SUNDAY"
+                android:textAlignment="center" />
+
+        </GridLayout>
 
         <!-- Save Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/saveReminderButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Reminder"
-            android:layout_marginTop="24dp" />
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/LogoBlue"
+            android:text="Save Reminder" />
+
+
+
     </LinearLayout>
-</ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_sos"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+
+        android:text="SOS"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+
+        app:backgroundTint="@color/LogoRed"
+        app:cornerRadius="34dp"
+        app:iconPadding="0dp"
+        android:padding="0dp"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemIconTint="@color/LogoBlue"
+        app:itemTextColor="@color/LogoBlue"
+        app:menu="@menu/bottom_navigation_menu"
+        app:labelVisibilityMode="unlabeled"/>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

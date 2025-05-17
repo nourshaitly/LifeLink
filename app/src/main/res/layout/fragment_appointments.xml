@@ -4,40 +4,132 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:background="#FAFAFA">
 
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
+    <!-- Top Appointment Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/appointmentCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Upcoming Appointments"
-        android:textStyle="bold"
-        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="12dp" />
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/appointmentIcon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:contentDescription="Appointment icon"
+                android:src="@drawable/ic_doctor_app"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/appointmentTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Appointments"
+                android:textColor="#212121"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="12dp"
+                app:layout_constraintStart_toEndOf="@id/appointmentIcon"
+                app:layout_constraintTop_toTopOf="@id/appointmentIcon"
+                app:layout_constraintEnd_toStartOf="@id/addAppointmentFab" />
+
+            <TextView
+                android:id="@+id/appointmentSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Manage your upcoming visits"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/appointmentTitle"
+                app:layout_constraintTop_toBottomOf="@id/appointmentTitle"
+                app:layout_constraintEnd_toEndOf="@id/appointmentTitle" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addAppointmentFab"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Add Appointment"
+                app:srcCompat="@drawable/ic_add"
+                android:backgroundTint="@color/LogoBlue"
+                app:tint="@android:color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Appointments Recycler -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/appointmentsRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/titleText"
-        app:layout_constraintBottom_toTopOf="@id/addAppointmentFab"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/appointmentCard"
+        app:layout_constraintBottom_toTopOf="@id/bottomBarContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addAppointmentFab"
-        android:layout_width="wrap_content"
+
+    <!-- Bottom Bar Container -->
+    <LinearLayout
+        android:id="@+id/bottomBarContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:contentDescription="Add Appointment"
-        app:srcCompat="@drawable/ic_add"
-        android:tint="@android:color/white"
-        android:backgroundTint="@color/primary"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Row for SOS FAB -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp">
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/fab_sos"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="SOS"
+                android:textSize="9sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:backgroundTint="@color/LogoRed"
+                app:cornerRadius="34dp"
+                app:iconPadding="0dp"
+                android:padding="0dp" />
+        </LinearLayout>
+
+        <!-- Bottom Navigation -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:itemIconTint="@color/LogoBlue"
+            app:itemTextColor="@color/LogoBlue"
+            app:menu="@menu/bottom_navigation_menu"
+            app:labelVisibilityMode="unlabeled" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

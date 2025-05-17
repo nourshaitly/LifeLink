@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.MainPageActivity"
+    android:background="@android:color/white">
+
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="@android:color/white"
+        >
+        <ImageView
+        android:id="@+id/logoIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="start"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_logo"
+        android:padding="6dp" />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LifeLink"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/LogoBlue"/>
+        <ImageView
+        android:id="@+id/profileIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_profile"
+        app:tint="@color/LogoBlue"
+        android:background="@drawable/bg_card_rounded"
+        android:padding="6dp"
+        android:clickable="true"
+        android:focusable="true"/>
+</com.google.android.material.appbar.MaterialToolbar>
+
+
+
+
+
+    <!-- ScrollView to make sure content is scrollable on smaller screens -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <LinearLayout
+            android:id="@+id/topSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="10dp">
+
+            <!-- SOS Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sosButton"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+
+                android:backgroundTint="#FF0000"
+                android:contentDescription="SOS Button"
+                android:elevation="8dp"
+                android:text="SOS"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:cornerRadius="100dp" />
+
+            <!-- GridLayout for Cards (Centered) -->
+            <androidx.gridlayout.widget.GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:columnCount="2"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
+
+                <!-- Emergency Page Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/emergencyCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardElevation="4dp"
+                    android:radius="8dp"
+                    app:layout_columnWeight="1"
+                    app:layout_rowWeight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="Emergency Page"
+                            android:src="@drawable/ic_emergency"
+                            app:tint="@color/LogoBlue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Emergency"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Health Tracker Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/healthTrackerCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardElevation="4dp"
+                    android:radius="8dp"
+                    app:layout_columnWeight="1"
+                    app:layout_rowWeight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="Health Tracker"
+                            android:src="@drawable/ic_health_tracker"
+                            app:tint="@color/LogoBlue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Health Tracker"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Nearby Medical Centers Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/nearbyMedicalCentersCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardElevation="4dp"
+                    android:radius="8dp"
+                    app:layout_columnWeight="1"
+                    app:layout_rowWeight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="Nearby Medical Centers"
+                            android:src="@drawable/ic_medical_location"
+                            app:tint="@color/LogoBlue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Nearby Hospitals"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- AI Feature Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/aiFeatureCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardElevation="4dp"
+                    android:radius="8dp"
+                    app:layout_columnWeight="1"
+                    app:layout_rowWeight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@drawable/ic_ai_chat1"
+                            app:tint="@color/LogoBlue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="AI"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+                <!-- Reminder Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/reminderCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardElevation="4dp"
+                    android:radius="8dp"
+                    app:layout_columnWeight="1"
+                    app:layout_rowWeight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="Reminder Page"
+                            android:src="@drawable/ic_reminder"
+                            app:tint="@color/LogoBlue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Reminder"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+
+
+                <!-- Diet Recommendations Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/extraCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardElevation="4dp"
+                    android:radius="8dp"
+                    app:layout_columnWeight="1"
+                    app:layout_rowWeight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="126dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="Diet Recommendations"
+                            android:src="@drawable/ic_wellness_icon"
+                            app:tint="@color/LogoBlue"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Wellness"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+            </androidx.gridlayout.widget.GridLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

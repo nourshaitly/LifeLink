@@ -4,51 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/wellness_background"
-    android:fillViewport="true"
-    android:padding="24dp">
+    android:backgroundTint="@color/white"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_gravity="start"
+        android:gravity="start">
 
-        <!-- 🌿 Welcome Section -->
-        <LinearLayout
-            android:id="@+id/introSection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp">
 
-            <TextView
-                android:id="@+id/tvWelcomeTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Welcome to your Wellness Coach 🌿"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:gravity="center" />
-
-            <TextView
-                android:id="@+id/tvWelcomeDesc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Get personalized wellness tips throughout your day."
-                android:textSize="16sp"
-                android:textColor="@android:color/white"
-                android:gravity="center"
-                android:layout_marginTop="8dp" />
-
-            <Button
-                android:id="@+id/btnStartSetup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="GET STARTED"
-                android:layout_marginTop="16dp" />
-        </LinearLayout>
 
         <!-- 🧠 Setup Section (hidden initially) -->
         <LinearLayout
@@ -57,7 +23,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             android:padding="24dp">
 
             <TextView
@@ -66,51 +32,66 @@
                 android:text="Choose your wellness areas:"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
+                android:textColor="@color/LogoRed"
                 android:layout_marginBottom="16dp" />
 
             <!-- Category Buttons -->
-            <Button
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnHydration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💧 Hydration"
-                android:layout_marginBottom="8dp" />
+                android:text="Hydration"
+                android:textColor="@color/LogoBlue"
+                android:layout_marginBottom="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNutrition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🍎 Nutrition"
-                android:layout_marginBottom="8dp" />
+                android:text="Nutrition"
+                android:textColor="@color/LogoBlue"
+                android:layout_marginBottom="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMental"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🧘 Mental Health"
-                android:layout_marginBottom="8dp" />
+                android:text="Mental Health"
+                android:textColor="@color/LogoBlue"
+                android:layout_marginBottom="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSleep"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🌙 Sleep"
-                android:layout_marginBottom="8dp" />
+                android:text="Sleep"
+                android:textColor="@color/LogoBlue"
+                android:layout_marginBottom="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMovement"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🚶 Movement"
-                android:layout_marginBottom="8dp" />
+                android:text="Movement"
+                android:textColor="@color/LogoBlue"
+                android:layout_marginBottom="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMotivation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💬 Motivation"
-                android:layout_marginBottom="16dp" />
+                android:text="Moivation"
+                android:textColor="@color/LogoBlue"
+
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+
 
             <!-- Frequency Selection -->
             <TextView
@@ -118,14 +99,14 @@
                 android:layout_height="wrap_content"
                 android:text="How often would you like to receive tips?"
                 android:textSize="16sp"
-                android:textColor="@android:color/white"
-                android:layout_marginTop="24dp" />
+                android:textColor="@color/LogoRed"
+                android:layout_marginTop="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp"
+
                 android:gravity="center_vertical">
 
                 <EditText
@@ -135,7 +116,7 @@
                     android:layout_weight="1"
                     android:hint="e.g. 2"
                     android:inputType="number"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:backgroundTint="@android:color/white"
                     android:padding="12dp"
                     android:textSize="16sp" />
@@ -153,13 +134,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Start Tips"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/LogoBlue" />
+
             <Button
                 android:id="@+id/btnStopTips"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Stop Tips"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/LogoBlue"/>
 
         </LinearLayout>
 

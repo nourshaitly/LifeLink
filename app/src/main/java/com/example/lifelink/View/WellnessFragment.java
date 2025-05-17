@@ -3,12 +3,16 @@ package com.example.lifelink.View;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +27,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
+import com.example.lifelink.Model.Tip;
 import com.example.lifelink.R;
+import com.example.lifelink.View.TipRepository;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,8 +50,8 @@ import java.util.concurrent.TimeUnit;
 
 public class WellnessFragment extends Fragment {
 
-    private LinearLayout introSection, setupSection;
-    private Button btnStartSetup, btnStartTips, btnStopTips;
+    private LinearLayout setupSection;
+    private Button btnStartTips, btnStopTips;
     private EditText editFrequencyNumber;
     private Spinner spinnerFrequencyUnit;
 
@@ -49,12 +59,10 @@ public class WellnessFragment extends Fragment {
     private Runnable tipRunnable;
 
     private static final String CHANNEL_ID = "wellness_tips_channel";
-    private int tipNotificationId = 1;
-
     private final Map<String, List<String>> wellnessTips = new HashMap<>();
     private final List<String> selectedCategories = new ArrayList<>();
-
     private final Map<String, Button> categoryButtons = new HashMap<>();
+
     private final Map<String, String> categoryEmojis = new HashMap<String, String>() {{
         put("Hydration", "💧");
         put("Nutrition", "🍎");
@@ -63,6 +71,9 @@ public class WellnessFragment extends Fragment {
         put("Movement", "🚶");
         put("Motivation", "💬");
     }};
+
+    private String lastTipText = null;
+    private boolean tipsActive = false;
 
     public WellnessFragment() {}
 
@@ -79,15 +90,26 @@ public class WellnessFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        introSection = view.findViewById(R.id.introSection);
         setupSection = view.findViewById(R.id.setupSection);
-        btnStartSetup = view.findViewById(R.id.btnStartSetup);
         btnStartTips = view.findViewById(R.id.btnStartTips);
         btnStopTips = view.findViewById(R.id.btnStopTips);
         editFrequencyNumber = view.findViewById(R.id.editFrequencyNumber);
         spinnerFrequencyUnit = view.findViewById(R.id.spinnerFrequencyUnit);
 
-        // Load tips from JSON
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager manager = requireContext().getSystemService(NotificationManager.class);
+            NotificationChannel existing = manager.getNotificationChannel(CHANNEL_ID);
+            if (existing == null) {
+                NotificationChannel channel = new NotificationChannel(
+                        CHANNEL_ID,
+                        "Wellness Tips",
+                        NotificationManager.IMPORTANCE_HIGH
+                );
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+
         wellnessTips.putAll(loadTipsFromJson(requireContext()));
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -98,14 +120,11 @@ public class WellnessFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFrequencyUnit.setAdapter(adapter);
 
-        btnStartSetup.setOnClickListener(v -> {
-            fadeOutView(introSection);
-            fadeInView(setupSection);
-        });
-
         setupCategoryButtons(view);
 
         btnStartTips.setOnClickListener(v -> {
+
+
             String numberText = editFrequencyNumber.getText().toString().trim();
             if (numberText.isEmpty() || Integer.parseInt(numberText) <= 0) {
                 Toast.makeText(getContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
@@ -121,6 +140,8 @@ public class WellnessFragment extends Fragment {
             String unit = spinnerFrequencyUnit.getSelectedItem().toString();
             long intervalMillis = getIntervalMillis(freq, unit);
 
+            scheduleTipWorker(intervalMillis);
+
             if (intervalMillis <= 0) {
                 Toast.makeText(getContext(), "Invalid interval selected", Toast.LENGTH_SHORT).show();
                 return;
@@ -133,9 +154,37 @@ public class WellnessFragment extends Fragment {
         btnStopTips.setOnClickListener(v -> {
             if (tipRunnable != null) {
                 tipHandler.removeCallbacks(tipRunnable);
+                tipRunnable = null;
+                tipsActive = false;
                 Toast.makeText(getContext(), "Tips stopped.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (tipsActive && tipRunnable == null) {
+            String numberText = editFrequencyNumber.getText().toString().trim();
+            String unit = spinnerFrequencyUnit.getSelectedItem().toString();
+
+            if (!numberText.isEmpty()) {
+                try {
+                    int freq = Integer.parseInt(numberText);
+                    long intervalMillis = getIntervalMillis(freq, unit);
+                    if (intervalMillis > 0) {
+                        startRepeatingTips(intervalMillis);
+                        Toast.makeText(getContext(), "Resumed tip notifications.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getContext(), "Error: invalid frequency input.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else if (!tipsActive) {
+            Toast.makeText(getContext(), "Tip system is inactive. Press 'Start' to begin.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Tip loop already running.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupCategoryButtons(View view) {
@@ -201,75 +250,92 @@ public class WellnessFragment extends Fragment {
             return;
         }
 
+        if (tipRunnable != null) {
+            tipHandler.removeCallbacks(tipRunnable);
+        }
+
         tipRunnable = new Runnable() {
             @Override
             public void run() {
-                String tip = selectedTips.get(new Random().nextInt(selectedTips.size()));
+                String tip;
+                Random random = new Random();
+                do {
+                    tip = selectedTips.get(random.nextInt(selectedTips.size()));
+                } while (tip.equals(lastTipText) && selectedTips.size() > 1);
+
+                lastTipText = tip;
+                TipRepository.addTip(new Tip("💡 Wellness Tip", tip));
                 showTipNotification(tip);
                 tipHandler.postDelayed(this, intervalMillis);
             }
         };
 
         tipHandler.post(tipRunnable);
+        tipsActive = true;
     }
 
     private void showTipNotification(String tip) {
         if (getContext() == null) return;
 
-        NotificationManager manager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        long timestamp = System.currentTimeMillis();
+        int uniqueId = (int) (SystemClock.elapsedRealtime() % Integer.MAX_VALUE);  // ✅ truly unique ID
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Wellness Tips",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.setDescription("Personalized wellness tips");
-            channel.enableVibration(true);
-            channel.enableLights(true);
-            manager.createNotificationChannel(channel);
-        }
+        Log.d("WellnessTip", "Notifying: " + tip);
+        Toast.makeText(getContext(), "Notification sent", Toast.LENGTH_SHORT).show();
 
-        Notification notification = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_health)
+        Intent intent = new Intent(requireContext(), WellnessDashboardActivity.class);
+        intent.putExtra("EXTRA_TAB_INDEX", 1);
+        intent.putExtra("EXTRA_TIP", tip);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                requireContext(),
+                uniqueId,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT // ✅ Important!
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_health_tracker)
                 .setContentTitle("💡 Wellness Tip")
-                .setContentText(tip)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentText(tip + " [" + (uniqueId % 1000) + "]") // 🔁 force content to vary slightly
+                .setWhen(timestamp)
+                .setShowWhen(true)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setAutoCancel(true)
-                .build();
+                .setContentIntent(pendingIntent);
 
-        manager.notify(tipNotificationId++, notification);
+        NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(uniqueId, builder.build());
     }
+
 
     private long getIntervalMillis(int value, String unit) {
         switch (unit) {
-            case "Minutes":
-                return TimeUnit.MINUTES.toMillis(value);
-            case "Hours":
-                return TimeUnit.HOURS.toMillis(value);
-            case "Days":
-                return TimeUnit.DAYS.toMillis(value);
-            default:
-                return 0;
+            case "Minutes": return TimeUnit.MINUTES.toMillis(value);
+            case "Hours": return TimeUnit.HOURS.toMillis(value);
+            case "Days": return TimeUnit.DAYS.toMillis(value);
+            default: return 0;
         }
     }
 
-    private void fadeOutView(View view) {
-        view.animate()
-                .alpha(0f)
-                .setDuration(500)
-                .withEndAction(() -> view.setVisibility(View.GONE))
-                .start();
+    private void scheduleTipWorker(long intervalMillis) {
+        TipRepository.prepareTipsPool(wellnessTips, selectedCategories); // you must implement this
+
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
+                TipWorker.class,
+                intervalMillis, TimeUnit.MILLISECONDS
+        ).build();
+
+        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
+                "WellnessTipJob",
+                ExistingPeriodicWorkPolicy.UPDATE,
+                request
+        );
+
+        Toast.makeText(getContext(), "Tip reminders scheduled in background.", Toast.LENGTH_SHORT).show();
     }
 
-    private void fadeInView(View view) {
-        view.setAlpha(0f);
-        view.setVisibility(View.VISIBLE);
-        view.animate()
-                .alpha(1f)
-                .setDuration(500)
-                .start();
-    }
 }

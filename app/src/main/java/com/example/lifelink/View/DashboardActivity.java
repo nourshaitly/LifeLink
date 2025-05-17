@@ -1,8 +1,11 @@
 package com.example.lifelink.View;
 
+
 import android.os.Bundle;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.lifelink.R;
 import com.google.android.material.tabs.TabLayout;
@@ -13,6 +16,7 @@ public class DashboardActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private DashboardPagerAdapter pagerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +39,25 @@ public class DashboardActivity extends AppCompatActivity {
                     case 1:
                         tab.setText("Appointments");
                         break;
-                    case 2:
-                        tab.setText("Wellness");
-                        break;
                 }
             }
         }).attach();
+        DashboardUtils.init(this,R.id.bottomNavigationView);
+
+
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // let DashboardUtils handle the Up/Home click
+        if (DashboardUtils.onHomeClicked(this, item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+
+
 }

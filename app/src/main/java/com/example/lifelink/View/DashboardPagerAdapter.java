@@ -17,8 +17,7 @@ public class DashboardPagerAdapter extends FragmentStateAdapter {
         switch (position) {
             case 1:
                 return new AppointmentsFragment();
-            case 2:
-               return new WellnessFragment();
+
             default:
                 return new ReminderFragment();
         }
@@ -26,6 +25,6 @@ public class DashboardPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 2;
     }
 }

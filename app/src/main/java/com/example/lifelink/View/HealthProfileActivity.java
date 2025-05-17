@@ -29,7 +29,7 @@ public class HealthProfileActivity extends AppCompatActivity {
             startButton.setOnClickListener(v -> {
                 try {
                     // Navigate to HealthInfoActivity for questions
-                    Intent intent = new Intent(HealthProfileActivity.this, HealthInfoActivity.class);
+                    Intent intent = new Intent(HealthProfileActivity.this, MedicalProfileActivity.class);
                     startActivity(intent);
                 } catch (Exception e) {
                     Log.e(TAG, "Error starting HealthInfoActivity: " + e.getMessage(), e);

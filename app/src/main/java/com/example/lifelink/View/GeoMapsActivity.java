@@ -10,8 +10,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.chip.ChipGroup;
 
@@ -58,15 +58,22 @@ public class GeoMapsActivity extends FragmentActivity implements OnMapReadyCallb
     private FusedLocationProviderClient fusedLocationClient;
     private ChipGroup filterChips;
     private Button showListButton;
+    private SeekBar radiusSeekBar;
+    private TextView radiusTextView;
 
-    private List<NearbyPlace> allHospitalsList = new ArrayList<>();
+    private boolean showNearestHospital = false;
+    private boolean nearestHandled       = false;
+
+
+    private List<NearbyPlace> allHospitalsList  = new ArrayList<>();
     private List<NearbyPlace> allPharmaciesList = new ArrayList<>();
 
     private double currentLat, currentLon;
-    private ExecutorService executor = Executors.newSingleThreadExecutor(); // New executor instead of AsyncTask
-    private Handler handler = new Handler(Looper.getMainLooper()); // UI thread handler
+    private int searchRadiusMeters = 5000; // default 5 km
 
-    // Restricting to Lebanon Bounds
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private Handler handler           = new Handler(Looper.getMainLooper());
+
     private final LatLngBounds LEBANON_BOUNDS = new LatLngBounds(
             new LatLng(33.05, 35.1),
             new LatLng(34.7, 36.6)
@@ -76,16 +83,44 @@ public class GeoMapsActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_geo_maps);
+        showNearestHospital = getIntent().getBooleanExtra("showNearestHospital", false);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        filterChips = findViewById(R.id.placeFilterChips);
-        showListButton = findViewById(R.id.showListButton);
+        filterChips      = findViewById(R.id.placeFilterChips);
+        showListButton   = findViewById(R.id.showListButton);
+        radiusSeekBar    = findViewById(R.id.radiusSeekBar);
+        radiusTextView   = findViewById(R.id.radiusTextView);
+
+        // --- SeekBar setup ---
+        radiusSeekBar.setMax(20);
+        radiusSeekBar.setProgress(5);
+        radiusTextView.setText("5 km");
+        radiusSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar sb, int prog, boolean fromUser) {
+                int km = Math.max(prog, 1);
+                searchRadiusMeters = km * 1000;
+                radiusTextView.setText(km + " km");
+            }
+            @Override public void onStartTrackingTouch(SeekBar sb) { }
+            @Override public void onStopTrackingTouch(SeekBar sb) {
+                // re-fetch current filter
+                int checked = filterChips.getCheckedChipId();
+                mMap.clear();
+                allHospitalsList.clear();
+                allPharmaciesList.clear();
+                if (checked == R.id.chipHospitals || checked == R.id.chipAll) {
+                    fetchPlaces("hospital");
+                }
+                if (checked == R.id.chipPharmacies || checked == R.id.chipAll) {
+                    fetchPlaces("pharmacy");
+                }
+            }
+        });
 
         filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
             mMap.clear();
             allHospitalsList.clear();
             allPharmaciesList.clear();
-
             if (checkedIds.contains(R.id.chipAll)) {
                 fetchPlaces("hospital");
                 fetchPlaces("pharmacy");
@@ -106,192 +141,250 @@ public class GeoMapsActivity extends FragmentActivity implements OnMapReadyCallb
             }
         });
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
-    }
 
-    private void showBottomSheet(List<NearbyPlace> hospitals, List<NearbyPlace> pharmacies) {
-        Collections.sort(hospitals, Comparator.comparingDouble(NearbyPlace::getDistance));
-        Collections.sort(pharmacies, Comparator.comparingDouble(NearbyPlace::getDistance));
 
-        NearbyPlacesBottomSheet bottomSheet = new NearbyPlacesBottomSheet(hospitals, pharmacies, place -> {
-            if (mMap != null) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLocation(), 17f));
-            }
-        });
-        bottomSheet.show(getSupportFragmentManager(), "NearbyPlaces");
     }
 
     @Override
+
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setOnMarkerClickListener(marker -> {
-            LatLng position = marker.getPosition();
-            NearbyPlace clickedPlace = null;
-
-            for (NearbyPlace place : allHospitalsList)
-                if (place.getLocation().equals(position)) clickedPlace = place;
-            for (NearbyPlace place : allPharmaciesList)
-                if (place.getLocation().equals(position)) clickedPlace = place;
-
-            if (clickedPlace != null) {
-                NearbyPlaceDetailBottomSheet detailBottomSheet = new NearbyPlaceDetailBottomSheet(clickedPlace);
-                detailBottomSheet.show(getSupportFragmentManager(), "PlaceDetail");
-            }
-            return false;
-        });
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(33.8547, 35.8623), 8f));
+        // Clamp camera to Lebanon
         mMap.setLatLngBoundsForCameraTarget(LEBANON_BOUNDS);
         mMap.setMinZoomPreference(6f);
         mMap.setMaxZoomPreference(18f);
         mMap.getUiSettings().setMapToolbarEnabled(true);
 
+        // Always start framed on all of Lebanon:
+        int paddingPx = (int)(getResources().getDisplayMetrics().widthPixels * 0.10);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(LEBANON_BOUNDS, paddingPx));
+
+        // Marker click opens detail sheet
+        mMap.setOnMarkerClickListener(marker -> {
+            LatLng pos = marker.getPosition();
+            NearbyPlace clicked = null;
+            for (NearbyPlace p : allHospitalsList)
+                if (p.getLocation().equals(pos)) clicked = p;
+            for (NearbyPlace p : allPharmaciesList)
+                if (p.getLocation().equals(pos)) clicked = p;
+
+            if (clicked != null) {
+                new NearbyPlaceDetailBottomSheet(clicked)
+                        .show(getSupportFragmentManager(), "PlaceDetail");
+            }
+            return false;
+        });
+
+        // If we're in “nearest hospital” mode, bypass chips and fetch only hospitals:
+        if (showNearestHospital) {
+            // clear any previous data
+            allHospitalsList.clear();
+            allPharmaciesList.clear();
+            mMap.clear();
+
+            // fetch hospitals; the handler.post will zoom to & show the nearest once loaded
+            fetchPlaces("hospital");
+        } else {
+            // normal behavior: check “All” to load both categories
+            filterChips.check(R.id.chipAll);
+        }
+
+        // Now enable the blue-dot & live location, if permission is granted
         enableUserLocation();
     }
 
-    private void enableUserLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-            return;
-        }
-
-        if (mMap != null) {
-            mMap.setMyLocationEnabled(true);
-        }
-
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-            if (location != null) {
-                currentLat = location.getLatitude();
-                currentLon = location.getLongitude();
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLat, currentLon), 14f));
-                filterChips.check(R.id.chipAll);
-            } else {
-                Toast.makeText(this, "Unable to fetch current location", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void fetchPlaces(String type) {
-        Toast.makeText(this, "Fetching " + type + "s...", Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(this, "Fetching " + type + "s…", Toast.LENGTH_SHORT).show();
         executor.execute(() -> {
             try {
                 String urlStr = String.format(Locale.US,
-                        "https://api.geoapify.com/v2/places?categories=healthcare.%s&filter=circle:%.7f,%.7f,5000&limit=20&apiKey=%s",
-                        type, currentLon, currentLat, GEOAPIFY_KEY);
-
-                HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
+                        "https://api.geoapify.com/v2/places?" +
+                                "categories=healthcare.%s&" +
+                                "filter=circle:%.7f,%.7f,%d&" +
+                                "limit=20&apiKey=%s",
+                        type, currentLon, currentLat,
+                        searchRadiusMeters, GEOAPIFY_KEY
+                );
+                HttpURLConnection conn =
+                        (HttpURLConnection) new URL(urlStr).openConnection();
                 conn.setRequestMethod("GET");
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
+                BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder(); String line;
                 while ((line = reader.readLine()) != null) sb.append(line);
                 reader.close();
 
-                JSONArray features = new JSONObject(sb.toString()).optJSONArray("features");
+                JSONArray features = new JSONObject(sb.toString())
+                        .optJSONArray("features");
                 List<NearbyPlace> places = new ArrayList<>();
 
                 if (features != null) {
                     for (int i = 0; i < features.length(); i++) {
-                        JSONObject props = features.getJSONObject(i).getJSONObject("properties");
-                        JSONArray coord = features.getJSONObject(i).getJSONObject("geometry").getJSONArray("coordinates");
+                        JSONObject props = features.getJSONObject(i)
+                                .getJSONObject("properties");
+                        JSONArray coord = features.getJSONObject(i)
+                                .getJSONObject("geometry")
+                                .getJSONArray("coordinates");
                         LatLng pos = new LatLng(coord.getDouble(1), coord.getDouble(0));
 
-                        String name = props.optString("name", "Unnamed");
-                        String address = props.optString("address_line2", "Address not available");
+                        // restore full contact & datasource logic:
+                        String name    = props.optString("name", "Unnamed");
+                        String address = props.optString("address_line2", "N/A");
+                        String phone   = "Not available", email = "Not available", website = "Not available";
 
-                        String phone = null, email = null, website = null;
                         JSONObject contact = props.optJSONObject("contact");
                         if (contact != null) {
-                            phone = contact.optString("phone", null);
-                            email = contact.optString("email", null);
-                            website = contact.optString("website", null);
+                            phone   = contact.optString("phone", phone);
+                            email   = contact.optString("email", email);
+                            website = contact.optString("website", website);
+                        }
+                        JSONObject ds = props.optJSONObject("datasource");
+                        if (ds != null && ds.optJSONObject("raw") != null) {
+                            JSONObject raw = ds.getJSONObject("raw");
+                            phone   = (phone.equals("Not available")) ?
+                                    raw.optString("contact:phone", phone) : phone;
+                            email   = (email.equals("Not available")) ?
+                                    raw.optString("contact:email", email) : email;
+                            website = (website.equals("Not available")) ?
+                                    raw.optString("contact:website", website) : website;
                         }
 
-                        JSONObject datasource = props.optJSONObject("datasource");
-                        if (datasource != null) {
-                            JSONObject raw = datasource.optJSONObject("raw");
-                            if (raw != null) {
-                                if (phone == null || phone.isEmpty()) phone = raw.optString("contact:phone", null);
-                                if (email == null || email.isEmpty()) email = raw.optString("contact:email", null);
-                                if (website == null || website.isEmpty()) website = raw.optString("contact:website", null);
-                                if ((website == null || website.isEmpty()) && raw.has("contact:facebook"))
-                                    website = raw.optString("contact:facebook");
-                            }
-                        }
-
-                        if (phone == null) phone = "Not available";
-                        if (email == null) email = "Not available";
-                        if (website == null) website = "Not available";
-
-                        NearbyPlace place = new NearbyPlace(name, pos, type, address, phone, email, website);
-
-                        float[] results = new float[1];
-                        Location.distanceBetween(currentLat, currentLon, pos.latitude, pos.longitude, results);
-                        place.setDistance(results[0]);
-
+                        NearbyPlace place = new NearbyPlace(
+                                name, pos, type,
+                                address, phone, email, website
+                        );
+                        float[] dist = new float[1];
+                        Location.distanceBetween(
+                                currentLat, currentLon, pos.latitude, pos.longitude, dist
+                        );
+                        place.setDistance(dist[0]);
                         places.add(place);
                     }
                 }
 
                 handler.post(() -> {
                     if (places.isEmpty()) {
-                        Toast.makeText(GeoMapsActivity.this, "No " + type + "s found nearby", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,
+                                "No " + type + "s found within radius",
+                                Toast.LENGTH_SHORT
+                        ).show();
                     } else {
-                        for (NearbyPlace place : places) {
-                            if (mMap != null) {
-                                float hue = type.equals("pharmacy") ? BitmapDescriptorFactory.HUE_AZURE : BitmapDescriptorFactory.HUE_RED;
-                                Marker marker = mMap.addMarker(new MarkerOptions()
-                                        .position(place.getLocation())
-                                        .title(place.getName())
-                                        .snippet("Address: " + place.getAddress())
-                                        .icon(BitmapDescriptorFactory.defaultMarker(hue)));
-                                if (marker != null) marker.setTag(type);
-                            }
+                        float hue = type.equals("pharmacy")
+                                ? BitmapDescriptorFactory.HUE_AZURE
+                                : BitmapDescriptorFactory.HUE_RED;
+                        // add markers
+                        for (NearbyPlace p : places) {
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(p.getLocation())
+                                    .title(p.getName())
+                                    .snippet(p.getAddress())
+                                    .icon(BitmapDescriptorFactory.defaultMarker(hue))
+                            ).setTag(type);
                         }
 
+                        // collect into lists
                         if (type.equals("hospital")) {
                             allHospitalsList.addAll(places);
                         } else {
                             allPharmaciesList.addAll(places);
                         }
+
+                        // if we're in “nearest hospital” mode and haven't handled it yet:
+                        if (showNearestHospital && type.equals("hospital") && !nearestHandled) {
+                            // sort by distance and pick the first
+                            Collections.sort(allHospitalsList,
+                                    Comparator.comparingDouble(NearbyPlace::getDistance));
+                            NearbyPlace nearest = allHospitalsList.get(0);
+
+                            // zoom in on the nearest hospital
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                    nearest.getLocation(), 17f
+                            ));
+
+                            // show its detail bottom sheet
+                            new NearbyPlaceDetailBottomSheet(nearest)
+                                    .show(getSupportFragmentManager(), "PlaceDetail");
+
+                            nearestHandled = true;
+                        }
                     }
                 });
 
+
             } catch (Exception e) {
-                Log.e(TAG, "Fetch places error", e);
+                Log.e(TAG, "Fetch error", e);
                 handler.post(() ->
-                        Toast.makeText(GeoMapsActivity.this, "Error fetching " + type + "s.", Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this,
+                                "Error fetching " + type + "s.",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                );
+            }
+        });
+    }
+
+    private void showBottomSheet(List<NearbyPlace> hospitals,
+                                 List<NearbyPlace> pharmacies) {
+        Collections.sort(hospitals,   Comparator.comparingDouble(NearbyPlace::getDistance));
+        Collections.sort(pharmacies, Comparator.comparingDouble(NearbyPlace::getDistance));
+        new NearbyPlacesBottomSheet(hospitals, pharmacies, place ->
+                mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(place.getLocation(), 17f)
+                )
+        ).show(getSupportFragmentManager(), "NearbyPlaces");
+    }
+
+    private void enableUserLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE
+            );
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, loc -> {
+            if (loc != null) {
+                currentLat = loc.getLatitude();
+                currentLon = loc.getLongitude();
+                mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(currentLat, currentLon), 14f
+                        )
+                );
+                filterChips.check(R.id.chipAll);
+            } else {
+                Toast.makeText(this,
+                        "Unable to fetch current location",
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         });
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                enableUserLocation();
-            } else {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    // Permission permanently denied
-                    Toast.makeText(this, "Location permission permanently denied. Enable from settings.", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show();
-                }
-            }
+    public void onRequestPermissionsResult(int code,
+                                           @NonNull String[] perms, @NonNull int[] results) {
+        super.onRequestPermissionsResult(code, perms, results);
+        if (code == LOCATION_PERMISSION_REQUEST_CODE
+                && results.length > 0
+                && results[0] == PackageManager.PERMISSION_GRANTED) {
+            enableUserLocation();
+        } else {
+            Toast.makeText(this,
+                    "Location permission required",
+                    Toast.LENGTH_LONG
+            ).show();
         }
     }
 }

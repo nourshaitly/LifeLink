@@ -12,7 +12,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsManager;
+import android.util.SparseArray;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,8 @@ import com.example.lifelink.Model.MedicalProfile;
 import com.example.lifelink.R;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.*;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -57,6 +62,17 @@ public class EmergencyActivity extends AppCompatActivity {
 
     private MedicalProfile medicalProfile;  // This will hold the Medical Profile data
 
+    private static final SparseArray<Class<?>> NAV_MAP = new SparseArray<>();
+    static {
+        NAV_MAP.put(R.id.nav_nearby, MapIntroActivity.class);
+        NAV_MAP.put(R.id.nav_reminder, RemindersWelcomeActivity.class);
+        NAV_MAP.put(R.id.nav_home, AIChatActivity.class);
+        NAV_MAP.put(R.id.nav_emergency, EmergencyActivity.class);
+        NAV_MAP.put(R.id.nav_health, HealthTrackerActivity.class);
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +86,58 @@ public class EmergencyActivity extends AppCompatActivity {
         fetchMedicalProfile();
         checkLocationSettingsThenFetch();
         startMonitoringHealthData();
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ImageView profileIcon = findViewById(R.id.profileIcon);
+        profileIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Display back button
+
+
+        setupBottomNav();
+
+
+
     }
+
+    private void setupBottomNav() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        // bottomNav.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+        bottomNav.setOnItemSelectedListener(this::onNavItemSelected);
+        //bottomNav.setSelectedItemId(R.id.nav_nearby); // Set default selected item
+    }
+    private boolean onNavItemSelected(@NonNull MenuItem item) {
+        Class<?> target = NAV_MAP.get(item.getItemId());
+        if (target == null) {
+            return false; // No matching activity
+        }
+        Intent intent = new Intent(this, target)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Class<?> target = NAV_MAP.get(R.id.nav_home);
+            if (target != null) {
+                Intent intent = new Intent(this, target)
+                        .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            } else {
+                onBackPressed();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
 
     private void initializeViews() {
         statusText = findViewById(R.id.emergencyStatusValue);
@@ -191,15 +258,15 @@ public class EmergencyActivity extends AppCompatActivity {
 
         if (level == 1) {
             statusText.setText("Low-Level Emergency");
-            statusText.setTextColor(getResources().getColor(android.R.color.holo_green_light));
+            statusText.setTextColor(getResources().getColor(R.color.green));
             recommendationText.setText("Stay calm and rest.");
         } else if (level == 2) {
             statusText.setText("Medium-Level Emergency");
-            statusText.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+            statusText.setTextColor(getResources().getColor(R.color.orange));
             recommendationText.setText("Seek help if symptoms worsen.");
         } else {
             statusText.setText("High-Level Emergency");
-            statusText.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+            statusText.setTextColor(getResources().getColor(R.color.LogoRed));
             recommendationText.setText("Critical! Help is on the way.");
         }
     }
@@ -401,31 +468,11 @@ public class EmergencyActivity extends AppCompatActivity {
             }
 
 
-
-
-
-
-
-
-
             @Override
             public void onError(String error) {
                 Toast.makeText(EmergencyActivity.this, error, Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

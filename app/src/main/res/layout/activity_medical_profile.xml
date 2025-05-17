@@ -401,32 +401,32 @@
             <!-- Medication Usage -->
 
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Health Risk Factors"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Health Risk Factors"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
 
-                <!-- Current Symptoms -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Are you currently experiencing any of the following symptoms?" />
+            <!-- Current Symptoms -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Are you currently experiencing any of the following symptoms?" />
 
-                <CheckBox android:id="@+id/checkChestPain" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Chest pain or tightness" />
-                <CheckBox android:id="@+id/checkBreathless" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Shortness of breath" />
-                <CheckBox android:id="@+id/checkDizziness" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Dizziness or fainting" />
-                <CheckBox android:id="@+id/checkFatigue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Unusual fatigue or weakness" />
-                <CheckBox android:id="@+id/checkPalpitations" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Irregular heartbeat or palpitations" />
+            <CheckBox android:id="@+id/checkChestPain" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Chest pain or tightness" />
+            <CheckBox android:id="@+id/checkBreathless" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Shortness of breath" />
+            <CheckBox android:id="@+id/checkDizziness" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Dizziness or fainting" />
+            <CheckBox android:id="@+id/checkFatigue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Unusual fatigue or weakness" />
+            <CheckBox android:id="@+id/checkPalpitations" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Irregular heartbeat or palpitations" />
             <CheckBox
                 android:id="@+id/checkNoSymptoms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="None of the above symptoms" />
 
-                <!-- Medications that affect vitals -->
+            <!-- Medications that affect vitals -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -473,48 +473,48 @@
 
 
             <!-- Allergies -->
-                <TextView
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Do you have any known allergies?" />
+
+            <RadioGroup android:id="@+id/allergyGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton android:id="@+id/allergyYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" />
+                <RadioButton android:id="@+id/allergyNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
+            </RadioGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/allergyInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Please list your allergies"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/LogoBlue"
+                app:hintTextColor="@color/LogoBlue">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/allergyInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Do you have any known allergies?" />
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                <RadioGroup android:id="@+id/allergyGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <RadioButton android:id="@+id/allergyYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" />
-                    <RadioButton android:id="@+id/allergyNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
-                </RadioGroup>
+            <!-- Family History -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Do you have a family history of any of the following conditions?"
+                android:layout_marginTop="16dp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/allergyInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Please list your allergies"
-                    android:visibility="gone"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:boxStrokeColor="@color/LogoBlue"
-                    app:hintTextColor="@color/LogoBlue">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/allergyInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Family History -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Do you have a family history of any of the following conditions?"
-                    android:layout_marginTop="16dp" />
-
-                <CheckBox android:id="@+id/familyHeartDisease" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Heart disease" />
-                <CheckBox android:id="@+id/familyDiabetes" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Diabetes" />
-                <CheckBox android:id="@+id/familyHypertension" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Hypertension" />
-                <CheckBox android:id="@+id/familyStroke" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Stroke" />
+            <CheckBox android:id="@+id/familyHeartDisease" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Heart disease" />
+            <CheckBox android:id="@+id/familyDiabetes" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Diabetes" />
+            <CheckBox android:id="@+id/familyHypertension" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Hypertension" />
+            <CheckBox android:id="@+id/familyStroke" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Stroke" />
 
             <CheckBox
                 android:id="@+id/checkNofamily"
@@ -524,15 +524,15 @@
 
 
             <!-- Mental Health -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Have you been diagnosed with any of the following mental health conditions?"
-                    android:layout_marginTop="16dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Have you been diagnosed with any of the following mental health conditions?"
+                android:layout_marginTop="16dp" />
 
-                <CheckBox android:id="@+id/mentalDepression" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Depression" />
-                <CheckBox android:id="@+id/mentalAnxiety" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Anxiety" />
-                <CheckBox android:id="@+id/mentalPTSD" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="PTSD or Trauma" />
+            <CheckBox android:id="@+id/mentalDepression" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Depression" />
+            <CheckBox android:id="@+id/mentalAnxiety" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Anxiety" />
+            <CheckBox android:id="@+id/mentalPTSD" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="PTSD or Trauma" />
 
             <CheckBox
                 android:id="@+id/checkNoMental"

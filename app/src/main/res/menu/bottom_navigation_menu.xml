@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Home Menu Item -->
+    <item
+        android:id="@+id/nav_nearby"
+        android:icon="@drawable/ic_medical_location"
+        android:title=""
+        app:showAsAction="always"/>
+
+    <!-- Dashboard Menu Item -->
+    <item
+        android:id="@+id/nav_reminder"
+        android:icon="@drawable/ic_reminder"
+        android:title=""
+        app:showAsAction="always"/>
+
+
+
+    <!-- Profile Menu Item -->
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_ai_chat1"
+        android:iconTint="@color/LogoBlue"
+        android:title=""
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/nav_emergency"
+        android:icon="@drawable/ic_emergency"
+        android:title=""
+        app:showAsAction="always"/>
+
+
+    <item
+        android:id="@+id/nav_health"
+        android:icon="@drawable/ic_health_tracker"
+        android:title=""
+        app:showAsAction="always"/>
+
+
+
+
+</menu>

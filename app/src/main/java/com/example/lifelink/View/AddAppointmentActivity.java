@@ -9,25 +9,27 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.example.lifelink.Model.Appointment;
 import com.example.lifelink.R;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -56,6 +58,8 @@ public class AddAppointmentActivity extends AppCompatActivity {
     private Calendar appointmentCalendar;
 
     private Appointment existingAppointment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,6 +213,23 @@ public class AddAppointmentActivity extends AppCompatActivity {
                 }
             }
         });
+        // Handle toolbar back button
+        DashboardUtils.init(this,R.id.bottomNavigationView);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, DashboardActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                            | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            // tell DashboardActivity which tab to show
+            intent.putExtra("selected_tab", R.id.nav_reminder);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void requestNotificationPermission() {
@@ -278,4 +299,8 @@ public class AddAppointmentActivity extends AppCompatActivity {
             Toast.makeText(this, "Cannot set exact alarm: Permission denied.", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
+
 }

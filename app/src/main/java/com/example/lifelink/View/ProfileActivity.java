@@ -1,19 +1,23 @@
 package com.example.lifelink.View;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.lifelink.R;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -73,6 +77,11 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         buttonLogout.setOnClickListener(v -> showLogoutDialog());
+
+        // 1) Find and set the toolbar
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
     }
 
     private void initializeViews() {
@@ -223,4 +232,17 @@ public class ProfileActivity extends AppCompatActivity {
             return "1.0";
         }
     }
+
+   @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Navigate back to ReminderFragment
+            startActivity(new Intent(this, MainPageActivity.class));
+            finish(); // Finish the current activity
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 }

@@ -1,13 +1,22 @@
 package com.example.lifelink.View;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.SparseArray;
+import android.view.MenuItem;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.example.lifelink.Controller.BluetoothManager;
 import com.example.lifelink.Controller.FirestoreService;
@@ -21,7 +30,11 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.text.SimpleDateFormat;
@@ -48,6 +61,8 @@ public class HealthTrackerActivity extends AppCompatActivity {
     private int heartRateLevel = -1;
     private int spo2Level = -1;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +77,19 @@ public class HealthTrackerActivity extends AppCompatActivity {
         startMonitoringHealthData();
         // Fetch the medical profile from Firestore
         fetchMedicalProfile();
+
+        DashboardUtils.init(this,R.id.bottomNavigationView);
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // let DashboardUtils handle the Up/Home click
+        if (DashboardUtils.onHomeClicked(this, item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initializeViews() {
@@ -99,12 +127,6 @@ public class HealthTrackerActivity extends AppCompatActivity {
                 Toast.makeText(HealthTrackerActivity.this, "✅ Profile loaded", Toast.LENGTH_SHORT).show();
                 trySetupClickListeners();
             }
-
-
-
-
-
-
 
 
 
@@ -300,17 +322,13 @@ public class HealthTrackerActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
     // ✅ Required to handle Bluetooth permission result
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         BluetoothManager.handlePermissionResult(this, requestCode, grantResults);
     }
+
+
+
 }
