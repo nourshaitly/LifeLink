@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -14,125 +14,89 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:title="Health Track"
         app:titleTextColor="@android:color/white"
-        app:navigationIcon="@drawable/ic_back">
-        <ImageView
-            android:id="@+id/profileIcon"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_profile"
-            app:tint="@color/LogoBlue"
-            android:background="@drawable/bg_card_rounded"
-            android:padding="6dp" />
-    </com.google.android.material.appbar.MaterialToolbar>
+        app:navigationIcon="@drawable/ic_back" />
 
+    <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
         android:fillViewport="true"
-        android:scrollbars="vertical"
-        android:overScrollMode="never">
+        android:overScrollMode="never"
+        android:paddingBottom="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:paddingBottom="100dp">
-
-
+            android:padding="16dp">
 
             <!-- Wellness Score Card -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/wellnessScoreCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginEnd="16dp"
-                        android:src="@drawable/ic_wellness_icon"
-                        app:tint="@color/blue" />
+                    <TextView
+                        android:text="Wellness Score"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"  />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/wellnessScoreIndicator"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:indeterminate="false"
+                        android:progress="0"
+                        app:indicatorSize="120dp"
+                        app:trackColor="@color/light_blue" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Wellness Score"
-                            android:textAppearance="@style/TextAppearance.App.Headline6" />
+                    <TextView
+                        android:id="@+id/wellnessScoreValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:text=""
+                        android:textColor="@color/blue"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
 
-                        <com.google.android.material.progressindicator.CircularProgressIndicator
-                            android:id="@+id/wellnessScoreIndicator"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="16dp"
-                            android:progress="0"
-                            app:indicatorSize="120dp"
-                            app:trackColor="@color/light_blue" />
+                    <TextView
+                        android:id="@+id/lastMeasuredTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text=""
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
-                        <TextView
-                            android:id="@+id/wellnessScoreValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="8dp"
-                            android:text=""
-                            android:textAppearance="@style/TextAppearance.App.Headline4"
-                            android:textColor="@color/blue" />
+                    <TextView
+                        android:id="@+id/wellnessDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:text=""
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
-                        <TextView
-                            android:id="@+id/lastMeasuredTime"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text=""
-                            android:textAppearance="@style/TextAppearance.App.Caption" />
-
-                        <TextView
-                            android:id="@+id/wellnessDescription"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="8dp"
-                            android:text=""
-                            android:textAppearance="@style/TextAppearance.App.Body2" />
-
-                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Vital Signs Title -->
-            <TextView
-                android:id="@+id/vitalSignsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Vital Signs"
-                android:textAppearance="@style/TextAppearance.App.Headline6" />
 
             <!-- Heart Rate Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/heartRateCardMaterial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginTop="24dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
 
@@ -142,50 +106,35 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <LinearLayout
+                    <TextView
+                        android:text="Heart Rate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+                    <TextView
+                        android:id="@+id/heartRateValue"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="16dp"
-                            android:src="@drawable/ic_heart_rate"
-                            app:tint="@color/red" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Heart Rate"
-                            android:textAppearance="@style/TextAppearance.App.Subtitle1" />
-
-                        <TextView
-                            android:id="@+id/heartRateValue"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text=""
-                            android:textAppearance="@style/TextAppearance.App.Headline6"
-                            android:textColor="@color/red" />
-                    </LinearLayout>
+                        android:text=""
+                        android:gravity="end"
+                        android:textColor="@color/red"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/heartRateChart"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:layout_marginTop="16dp" />
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- SPO2 Card -->
+            <!-- SpO2 Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/spo2CardMaterial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
 
@@ -195,57 +144,54 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <LinearLayout
+                    <TextView
+                        android:text="SpO2"
+                        android:layout_width="match_parent"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"  android:layout_height="20dp"/>
+
+                    <TextView
+                        android:id="@+id/spo2Value"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="16dp"
-                            android:src="@drawable/ic_spo2"
-                            app:tint="@color/green" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="SPO2"
-                            android:textAppearance="@style/TextAppearance.App.Subtitle1" />
-
-                        <TextView
-                            android:id="@+id/spo2Value"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text=""
-                            android:textAppearance="@style/TextAppearance.App.Headline6"
-                            android:textColor="@color/green" />
-                    </LinearLayout>
+                        android:text=""
+                        android:gravity="end"
+                        android:textColor="@color/green"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/spo2Chart"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:layout_marginTop="16dp" />
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
+            <!-- View Daily Report Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewDailyReportButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="\n\n"/>
-
+                android:layout_height="wrap_content"
+                android:text="📊 View Daily Report"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/LogoBlue"
+                android:textColor="@android:color/white"
+                android:icon="@drawable/ic_check"
+                />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewHistoryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📂 View Report History"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/LogoBlue"
+                android:textColor="@android:color/white" />
 
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
-
-
+    <!-- Floating SOS and Bottom Nav -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -256,29 +202,25 @@
             android:id="@+id/fab_sos"
             android:layout_width="68dp"
             android:layout_height="68dp"
-            android:layout_gravity="bottom|end"
+            android:layout_gravity="end"
             android:layout_margin="16dp"
-
             android:text="SOS"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             android:gravity="center"
-
             app:backgroundTint="@color/LogoRed"
             app:cornerRadius="34dp"
-            app:iconPadding="0dp"
-            android:padding="0dp"/>
-
+            app:icon="@drawable/ic_sos"
+            app:iconPadding="0dp" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/white"
-        app:itemIconTint="@color/LogoBlue"
-        app:itemTextColor="@color/LogoBlue"
-        app:menu="@menu/bottom_navigation_menu"
-        app:labelVisibilityMode="unlabeled"/>
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:itemIconTint="@color/LogoBlue"
+            app:itemTextColor="@color/LogoBlue"
+            app:menu="@menu/bottom_navigation_menu"
+            app:labelVisibilityMode="unlabeled" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

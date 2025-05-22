@@ -39,6 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -63,6 +64,14 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+            setContentView(R.layout.activity_add_appointment);
+
+
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_appointment);
 
@@ -102,6 +111,21 @@ public class AddAppointmentActivity extends AppCompatActivity {
         notificationTimeButton.setOnClickListener(v -> {
             if (notificationCard.getVisibility() == View.GONE) {
                 notificationCard.setVisibility(View.VISIBLE);
+                // When user selects a chip (Minutes, Hours, Days)
+                timeUnitChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                    if (checkedId != View.NO_ID) {
+                        float sliderValue = reminderTimeSlider.getValue();
+
+                        if (sliderValue >= 1) {
+                            // Hide the card once user selects a valid chip and slider value
+                            notificationCard.setVisibility(View.GONE);
+
+                            // Optionally update button text back
+                            Button notificationTimeButton = findViewById(R.id.notificationTimeButton);
+                            notificationTimeButton.setText("Set Notification Time (optional)");
+                        }
+                    }
+                });
                 notificationTimeButton.setText("Hide Notification Settings");
             } else {
                 notificationCard.setVisibility(View.GONE);
@@ -139,6 +163,11 @@ public class AddAppointmentActivity extends AppCompatActivity {
         });
 
         saveAppointmentButton.setOnClickListener(v -> {
+            Toast.makeText(this, "Scheduling test reminder...", Toast.LENGTH_SHORT).show();
+
+            long testTime = System.currentTimeMillis() + 5000;
+            scheduleReminder(testTime, "Test Doctor", 999);
+
             String doctor = editDoctorName.getText().toString().trim();
             String location = editLocation.getText().toString().trim();
             String dateTimeText = selectedDateTimeText.getText().toString().trim();
@@ -203,6 +232,10 @@ public class AddAppointmentActivity extends AppCompatActivity {
                 else if (selectedChipId == R.id.chipHours) timeUnit = "hours";
                 else if (selectedChipId == R.id.chipDays) timeUnit = "days";
 
+
+
+                requestNotificationPermission(); // Already in your code
+
                 for (int i = 1; i <= repeatTimes; i++) {
                     long offsetMillis = convertToMillis(reminderValue * i, timeUnit);
                     long triggerAt = appointmentCalendar.getTimeInMillis() - offsetMillis;
@@ -264,6 +297,9 @@ public class AddAppointmentActivity extends AppCompatActivity {
     }
 
     private void scheduleReminder(long triggerTime, String doctor, int requestCode) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        Toast.makeText(this, "⏰ Alarm set for " + sdf.format(new Date(triggerTime)), Toast.LENGTH_LONG).show();
+
         Intent intent = new Intent(this, AppointmentNotificationReceiver.class);
         intent.putExtra("doctorName", doctor);
 

@@ -32,6 +32,7 @@ public class Bluetooth {
 
     public interface BluetoothDataListener {
         void onDataReceived(String heartRate, String spo2);
+        void onSosTriggered();
     }
 
     private BluetoothDataListener dataListener;
@@ -113,6 +114,14 @@ public class Bluetooth {
 
                     for (String line : lines) {
                         line = line.trim();
+                        if (line.equals("SOS triggered")) {
+                            toast("🚨 SOS Trigger received");
+                            if (dataListener != null) {
+                                toast("datalistner");
+                                dataListener.onSosTriggered();  // ⬅️ SOS is passed to app
+                            }
+                            continue;
+                        }
 
                         if (line.startsWith("HR:")) {
                             lastHeartRate = line.substring(3).trim();

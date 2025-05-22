@@ -24,12 +24,15 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
 
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
 
     <meta-data
         android:name="com.mapbox.maps.token"
@@ -56,6 +59,9 @@
 
 
 
+        <activity android:name=".View.CallEmergencyActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
 
 
 
@@ -66,14 +72,28 @@
             android:name=".View.LoginActivity"
             android:exported="true">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!-- Add LoginActivity declaration-->
         <activity
             android:name=".View.WelcomeActivity"
-            android:exported="true" />
+            android:exported="true"/>
 
+
+        <receiver android:name=".View.AppointmentNotificationReceiver"
+            android:exported="true"/>
+
+
+
+
+        <activity
+            android:name=".View.AIChatActivity"
+            android:exported="true" />
         <activity
             android:name=".View.MedicalProfileActivity"
             android:exported="true" />
@@ -117,7 +137,21 @@
          <activity
 
              android:name=".View.RegisterActivity"
-             android:exported="true"/>
+             android:exported="true">
+
+
+
+
+         </activity>
+
+
+
+
+
+
+
+
+
 
 
         <activity
@@ -134,6 +168,7 @@
 
 
 
+
         <activity
 
             android:name=".View.WellnessDashboardActivity"
@@ -141,14 +176,11 @@
          <activity
              android:name=".View.MainPageActivity"
              android:exported="true" >
-             <intent-filter>
-                 <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
 
 
          </activity>
+
 
 
 
@@ -220,12 +252,13 @@
             android:name=".View.ForgotPasswordActivity"
             android:exported="true" />
 
-
-
         <activity
-            android:name=".View.AIChatActivity"
+            android:name=".View.DailyHealthReportActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".View.DailyReportHistoryActivity"
+            android:exported="true" />
 
         <activity
             android:name=".View.ChatHistoryActivity"

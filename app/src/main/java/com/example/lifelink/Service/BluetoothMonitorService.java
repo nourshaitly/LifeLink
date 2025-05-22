@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -17,6 +18,8 @@ import com.example.lifelink.Controller.Bluetooth;
 import com.example.lifelink.Controller.LiveHealthDataHolder;
 import com.example.lifelink.Model.HealthData;
 import com.example.lifelink.R;
+import com.example.lifelink.View.CallEmergencyActivity;
+import com.example.lifelink.View.EmergencyActivity;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -72,23 +75,46 @@ public class BluetoothMonitorService extends Service {
 
     private void setupBluetoothConnection() {
         bluetoothController = new Bluetooth(getApplicationContext());
-        bluetoothController.setBluetoothDataListener((hr, sp) -> {
-            if (hr != null && sp != null && !hr.trim().isEmpty() && !sp.trim().isEmpty()) {
-                try {
-                    float heartRate = Float.parseFloat(hr.trim());
-                    float spo2 = Float.parseFloat(sp.trim());
 
-                    HealthData healthData = new HealthData((int) heartRate, (int) spo2, Timestamp.now());
-                    LiveHealthDataHolder.setHealthData(healthData);
+        bluetoothController.setBluetoothDataListener(new Bluetooth.BluetoothDataListener() {
+            @Override
+            public void onDataReceived(String hr, String sp) {
+                if (hr != null && sp != null && !hr.trim().isEmpty() && !sp.trim().isEmpty()) {
+                    try {
+                        float heartRate = Float.parseFloat(hr.trim());
+                        float spo2 = Float.parseFloat(sp.trim());
 
-                    saveToFirestore(heartRate, spo2);
-                } catch (NumberFormatException ignored) {
+                        HealthData healthData = new HealthData((int) heartRate, (int) spo2, Timestamp.now());
+                        LiveHealthDataHolder.setHealthData(healthData);
+
+                        saveToFirestore(heartRate, spo2);
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
             }
+
+            @Override
+
+            public void onSosTriggered() {
+
+
+                Toast.makeText(BluetoothMonitorService.this, "FINALLY", Toast.LENGTH_SHORT).show();
+
+
+
+
+                Intent intent = new Intent(getApplicationContext(), CallEmergencyActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
+
+
         });
 
         bluetoothController.connect();
     }
+
 
     private void saveToFirestore(float heartRate, float spo2) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

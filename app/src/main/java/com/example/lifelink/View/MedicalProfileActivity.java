@@ -1,6 +1,7 @@
 package com.example.lifelink.View;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.lifelink.MainActivity;
 import com.example.lifelink.R;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -39,7 +41,7 @@ public class MedicalProfileActivity extends AppCompatActivity {
     private CheckBox mentalDepression, mentalAnxiety, mentalPTSD, checkNoMental;
     private CheckBox checkDiabetes, checkHypertension, checkAsthma, checkNoChronic, checkAnemia;
 
-    private Button nextToQuestionsButton, medicalProfileButton, backToPhy, backToMP, submitProfileButton;
+    private Button nextToQuestionsButton, medicalProfileButton, backToPhy, backToMP, submitProfileButton,submit;
 
     private String selectedGender = "", selectedBloodType = "", selectedRhFactor = "";
 
@@ -100,9 +102,14 @@ public class MedicalProfileActivity extends AppCompatActivity {
             if (checkedId == R.id.allergyNo) allergyInput.setText("");
         });
 
-        submitProfileButton.setOnClickListener(v -> {
+
+
+        submit.setOnClickListener(v -> {
             if (!validateEmergencyContact()) return;
             saveProfile(heightPicker, weightPicker);
+            Intent intent = new Intent(MedicalProfileActivity.this, MainPageActivity.class);
+            startActivity(intent);
+            finish(); // Optional: finish current activity if you don't want the user to return to it
         });
     }
 
@@ -165,7 +172,8 @@ public class MedicalProfileActivity extends AppCompatActivity {
         medicalProfileButton = findViewById(R.id.MedicalProfileButton);
         backToPhy = findViewById(R.id.backToPhy);
         backToMP = findViewById(R.id.backToMP);
-        submitProfileButton = findViewById(R.id.submitProfileButton);
+
+        submit =  findViewById(R.id.submitProfileButton);
     }
 
 
@@ -313,6 +321,23 @@ public class MedicalProfileActivity extends AppCompatActivity {
 
         return valid;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void saveProfile(NumberPicker heightPicker, NumberPicker weightPicker) {
         final String LOG_TAG = "MedicalProfileDebug";

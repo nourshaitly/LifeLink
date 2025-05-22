@@ -39,7 +39,6 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
     private ReminderAdapter reminderAdapter;
     private ListenerRegistration reminderListener;
 
-
     public ReminderFragment() {
         // Required empty public constructor
     }
@@ -61,18 +60,16 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
         reminderListRecycler.setAdapter(reminderAdapter);
 
         addReminderFab.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), AddReminderActivity.class));
+            startActivity(new Intent(requireContext(), AddReminderActivity.class));
         });
 
         return view;
-
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        startReminderListener();
+        startReminderListener();  // ✅ Matches AppointmentsFragment logic
     }
 
     @Override
@@ -108,16 +105,21 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
                 }
 
                 if (snapshots != null) {
+                    Toast.makeText(getContext(), "Snapshot received: " + snapshots.size() + " reminders", Toast.LENGTH_SHORT).show();
                     reminderList.clear();
                     for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        Toast.makeText(getContext(), "Doc: " + doc.getId(), Toast.LENGTH_SHORT).show();
                         Reminder reminder = doc.toObject(Reminder.class);
                         if (reminder != null) {
-                            reminder.setId(doc.getId()); // Ensure the ID is set
+                            reminder.setId(doc.getId());
                             reminderList.add(reminder);
+                        } else {
+                            Toast.makeText(getContext(), "Reminder is null for doc " + doc.getId(), Toast.LENGTH_SHORT).show();
                         }
                     }
                     reminderAdapter.notifyDataSetChanged();
                 }
+
             }
         });
     }
@@ -162,20 +164,18 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
     }
 
     @Override
-
     public void onMarkAsTakenClick(Reminder reminder) {
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Mark as Taken")
                 .setMessage("Are you sure you want to mark this reminder as taken?")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    markReminderAsTaken(reminder); // ✅ If user clicks Yes, mark as taken
-                    cancelReminderAlarm(reminder); // ✅ After marking as taken, cancel alarm
+                    markReminderAsTaken(reminder);
+                    cancelReminderAlarm(reminder);
                 })
-                .setNegativeButton("No", (dialog, which) -> {
-                    dialog.dismiss(); // ❌ If user clicks No, dismiss the dialog
-                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
     private void markReminderAsTaken(Reminder reminder) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -206,14 +206,13 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
         Intent intent = new Intent(requireContext(), ReminderAlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 requireContext(),
-                reminder.getId().hashCode(), // use same ID you used when setting alarm
+                reminder.getId().hashCode(),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
         if (alarmManager != null) {
-            alarmManager.cancel(pendingIntent); // ✅ Cancel the scheduled alarm
+            alarmManager.cancel(pendingIntent);
         }
     }
-
 }

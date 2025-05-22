@@ -32,6 +32,7 @@ import com.example.lifelink.Controller.LiveHealthDataHolder;
 import com.example.lifelink.Model.HealthData;
 import com.example.lifelink.Model.MedicalProfile;
 import com.example.lifelink.R;
+import com.example.lifelink.Service.BluetoothMonitorService;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.*;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -391,7 +392,8 @@ public class EmergencyActivity extends AppCompatActivity {
 
 
 
-    private void triggerCall() {
+    public void triggerCall() {
+        Toast.makeText(EmergencyActivity.this, "Finally", Toast.LENGTH_SHORT).show();
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + sosnum));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {

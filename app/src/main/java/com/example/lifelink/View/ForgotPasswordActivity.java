@@ -16,39 +16,30 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private EditText emailEditText;
     private Button sendResetButton;
-    private FirebaseFirestore db;
+
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
+    // Service account credentials
+    private static final String SERVICE_EMAIL = "forgot@lifelink.app";
+    private static final String SERVICE_PASSWORD = "StrongTempPass123"; // Store securely in production
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        // Initialize views
         emailEditText = findViewById(R.id.emailEditText);
         sendResetButton = findViewById(R.id.sendResetButton);
 
-        // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        // Button click → Send reset email
         sendResetButton.setOnClickListener(v -> handleResetPassword());
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // ✅ Check if user is logged in
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            // 🚨 User is logged out → Go to login page
-            startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
-            finish();
-        }
     }
 
     private void handleResetPassword() {
         String email = emailEditText.getText().toString().trim();
-        db = FirebaseFirestore.getInstance();
 
         if (email.isEmpty()) {
             Toast.makeText(this, "Please enter your email address.", Toast.LENGTH_SHORT).show();
@@ -60,33 +51,57 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if email exists in Firebase Auth
+        // Sign in as service account to access Firestore
+        mAuth.signInWithEmailAndPassword(SERVICE_EMAIL, SERVICE_PASSWORD)
+                .addOnSuccessListener(authResult -> checkEmailInFirestore(email))
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Internal service login failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                });
+    }
 
-        // ✅ Check Firestore users collection if email exists
+    private void checkEmailInFirestore(String userEmail) {
         db.collection("users")
-                .whereEqualTo("email", email)
+                .whereEqualTo("email", userEmail)
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        // ✅ Email exists → Send reset email
-                        sendResetButton.setOnClickListener(v ->sendResetEmail(email));;
+                .addOnSuccessListener(snapshot -> {
+                    if (!snapshot.isEmpty()) {
+                        // ✅ Found user in Firestore, send reset email
+                        sendResetEmail(userEmail);
                     } else {
-                        // ❌ Email not registered
                         Toast.makeText(this, "This email is not registered in our system.", Toast.LENGTH_SHORT).show();
                     }
 
+                    // Optional: sign out the service account
+                    FirebaseAuth.getInstance().signOut();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Firestore access error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                    FirebaseAuth.getInstance().signOut();
                 });
     }
 
     private void sendResetEmail(String email) {
-        mAuth.sendPasswordResetEmail(email)
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Reset link sent! Please check your inbox or spam folder.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Reset link sent! Please check your inbox.", Toast.LENGTH_LONG).show();
 
-                    } else {
-                        Toast.makeText(this, "Failed to send reset email. Please try again later.", Toast.LENGTH_LONG).show();
+                        // ✅ Redirect to LoginActivity
+                        Intent intent = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish(); // Prevent going back to forgot password
+
+
+                } else {
+                        Toast.makeText(this, "Failed to send reset email. Try again later.", Toast.LENGTH_LONG).show();
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error sending reset email: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
                 });
     }
 }

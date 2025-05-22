@@ -2,7 +2,7 @@ package com.example.lifelink.View;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Patterns;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,7 +19,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText firstName, middleName, lastName, phoneNumber, email, password, confirmPassword;
     private Button registerButton;
     private TextView loginText;
-    private ProgressBar loadingProgressBar;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -33,7 +32,6 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Initialize views
         firstName = findViewById(R.id.firstName);
         middleName = findViewById(R.id.middleName);
         lastName = findViewById(R.id.lastName);
@@ -43,10 +41,8 @@ public class RegisterActivity extends AppCompatActivity {
         confirmPassword = findViewById(R.id.confirmPassword);
         registerButton = findViewById(R.id.registerButton);
         loginText = findViewById(R.id.loginText);
-      //  loadingProgressBar = findViewById(R.id.loadingProgressBar); // ✅ Fixed here (uncommented)
 
         registerButton.setOnClickListener(v -> handleRegistration());
-
         loginText.setOnClickListener(v -> {
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             finish();
@@ -67,8 +63,23 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        if (!first.matches("[a-zA-Z]+") || !last.matches("[a-zA-Z]+")) {
+            Toast.makeText(this, "First and last names must contain only letters.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isValidLebanesePhone(phone)) {
+            Toast.makeText(this, "Invalid Lebanese phone number. Format: 71XXXXXX", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!isValidEmail(emailText)) {
             Toast.makeText(this, "Please enter a valid email address.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isStrongPassword(pass)) {
+            Toast.makeText(this, "Password must be at least 8 characters, include a letter, a number, and a symbol.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -77,12 +88,8 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-      //  loadingProgressBar.setVisibility(View.VISIBLE);
-
         mAuth.createUserWithEmailAndPassword(emailText, pass)
                 .addOnCompleteListener(this, task -> {
-               //     loadingProgressBar.setVisibility(View.GONE);
-
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         if (firebaseUser != null) {
@@ -113,10 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .set(userMap)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Registration successful! Verification email sent.\nPlease check your inbox or spam folder.", Toast.LENGTH_LONG).show();
-
-                    // Open VerificationActivity
-                    Intent intent = new Intent(RegisterActivity.this, VerificationActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(RegisterActivity.this, VerificationActivity.class));
                     finish();
                 })
                 .addOnFailureListener(e -> {
@@ -125,6 +129,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isValidEmail(String email) {
-        return email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private boolean isValidLebanesePhone(String phone) {
+        return phone.matches("^(70|71|76|78|79|81|03)\\d{6}$");
+    }
+
+    private boolean isStrongPassword(String password) {
+        // At least 8 characters, one letter, one digit, one special character
+        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$");
     }
 }

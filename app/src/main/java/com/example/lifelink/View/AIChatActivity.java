@@ -197,16 +197,27 @@ public class AIChatActivity extends AppCompatActivity {
 
         ensureSessionCreated(userMessage);
 
-        ChatMessage userChatMessage = new ChatMessage(sessionId, userMessage, true, getTime(), System.currentTimeMillis());
+        // Create and show user message
+        long userTimestamp = System.currentTimeMillis();
+        ChatMessage userChatMessage = new ChatMessage(sessionId, userMessage, true, getTime(), userTimestamp);
         messages.add(userChatMessage);
         adapter.notifyItemInserted(messages.size() - 1);
         recyclerView.scrollToPosition(messages.size() - 1);
 
+        // Save user message to Firestore
+        db.collection("users").document(uid)
+                .collection("ai_chats").document(sessionId)
+                .collection("messages")
+                .document(String.valueOf(userTimestamp))
+                .set(userChatMessage);
+
+        // Show typing indicator
         ChatMessage typingMessage = new ChatMessage(sessionId, "AI is typing...", false, getTime(), System.currentTimeMillis());
         messages.add(typingMessage);
         adapter.notifyItemInserted(messages.size() - 1);
         recyclerView.scrollToPosition(messages.size() - 1);
 
+        // Send to Gemini API
         String prompt = "You are a medical assistant. Only answer medical-related questions. "
                 + "If the question is not medical, say 'I can only answer medical questions.'\n\nUser: " + userMessage;
 
@@ -218,21 +229,30 @@ public class AIChatActivity extends AppCompatActivity {
                 adapter.notifyItemRemoved(messages.size());
 
                 if (response.isSuccessful() && response.body() != null) {
-                    String aiAnswer = response.body().candidates[0].content.parts[0].text;
+                    String rawAnswer = response.body().candidates[0].content.parts[0].text;
 
-                    if (aiAnswer.contains("I can only answer medical questions")) {
+                    if (rawAnswer.contains("I can only answer medical questions")) {
                         addMessage("AI refused to answer. This question is not medical.", false);
                         return;
                     }
 
+                    // ✅ Add disclaimer before the AI's actual reply
+                    String aiAnswer = "⚠️ You should consult a doctor for professional advice.\n\n" + rawAnswer;
+
+                    // Save and show AI response
+                    long aiTimestamp = System.currentTimeMillis();
+                    ChatMessage aiChatMessage = new ChatMessage(sessionId, aiAnswer, false, getTime(), aiTimestamp);
+                    messages.add(aiChatMessage);
+                    adapter.notifyItemInserted(messages.size() - 1);
+                    recyclerView.scrollToPosition(messages.size() - 1);
+
                     db.collection("users").document(uid)
                             .collection("ai_chats").document(sessionId)
                             .collection("messages")
-                            .document(String.valueOf(userChatMessage.timestamp))
-                            .set(userChatMessage);
-
-                    addMessage(aiAnswer, false);
-                } else {
+                            .document(String.valueOf(aiTimestamp))
+                            .set(aiChatMessage);
+                }
+                else {
                     addMessage("Error: " + response.code(), false);
                 }
             }
@@ -245,6 +265,7 @@ public class AIChatActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -2,6 +2,7 @@ package com.example.lifelink.Controller;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.lifelink.Model.HealthData;
+import com.example.lifelink.View.CallEmergencyActivity;
 import com.example.lifelink.View.HealthTrackerActivity;
 
 public class BluetoothManager {
@@ -53,53 +55,61 @@ public class BluetoothManager {
     private static void connect(Activity activity) {
         bluetooth = new Bluetooth(activity);
 
-        bluetooth.setBluetoothDataListener((heartRate, spo2) -> {
-            if (heartRate != null && !heartRate.isEmpty()) {
-                latestHR = heartRate;
-                try {
-                    int hr = Integer.parseInt(latestHR);
-                    new Handler(activity.getMainLooper()).post(() ->
-                            Toast.makeText(activity, "❤️ HR updated: " + hr, Toast.LENGTH_SHORT).show()
-                    );
-                } catch (NumberFormatException e) {
-                    latestHR = null;
+        bluetooth.setBluetoothDataListener(new Bluetooth.BluetoothDataListener() {
+            @Override
+            public void onDataReceived(String heartRate, String spo2) {
+                if (heartRate != null && !heartRate.isEmpty()) {
+                    latestHR = heartRate;
+                    try {
+                        int hr = Integer.parseInt(latestHR);
+                        new Handler(activity.getMainLooper()).post(() ->
+                                Toast.makeText(activity, "❤️ HR updated: " + hr, Toast.LENGTH_SHORT).show()
+                        );
+                    } catch (NumberFormatException e) {
+                        latestHR = null;
+                    }
+                }
+
+                if (spo2 != null && !spo2.isEmpty()) {
+                    latestSPO2 = spo2;
+                    try {
+                        int sp = Integer.parseInt(latestSPO2);
+                        new Handler(activity.getMainLooper()).post(() ->
+                                Toast.makeText(activity, "🩸 SpO₂ updated: " + sp, Toast.LENGTH_SHORT).show()
+                        );
+                    } catch (NumberFormatException e) {
+                        latestSPO2 = null;
+                    }
+                }
+
+                // ✅ When both are available, set LiveHealthData + ready flag
+                if (latestHR != null && latestSPO2 != null) {
+                    try {
+                        int hr = Integer.parseInt(latestHR);
+                        int sp = Integer.parseInt(latestSPO2);
+
+                        LiveHealthDataHolder.setHealthData(new HealthData(hr, sp));
+                        HealthTrackerState.isHealthDataReady = true;
+
+                        new Handler(activity.getMainLooper()).post(() -> {
+                            if (activity instanceof HealthTrackerActivity) {
+                                ((HealthTrackerActivity) activity).trySetupClickListeners();
+                            }
+                        });
+
+                        latestHR = null;
+                        latestSPO2 = null;
+                    } catch (Exception e) {
+                        // Ignore parse errors
+                    }
                 }
             }
 
-            if (spo2 != null && !spo2.isEmpty()) {
-                latestSPO2 = spo2;
-                try {
-                    int sp = Integer.parseInt(latestSPO2);
-                    new Handler(activity.getMainLooper()).post(() ->
-                            Toast.makeText(activity, "🩸 SpO₂ updated: " + sp, Toast.LENGTH_SHORT).show()
-                    );
-                } catch (NumberFormatException e) {
-                    latestSPO2 = null;
-                }
-            }
-
-            // ✅ When both are available, set LiveHealthData + ready flag
-            if (latestHR != null && latestSPO2 != null) {
-                try {
-                    int hr = Integer.parseInt(latestHR);
-                    int sp = Integer.parseInt(latestSPO2);
-
-                    LiveHealthDataHolder.setHealthData(new HealthData(hr, sp));
-                    HealthTrackerState.isHealthDataReady = true;
-
-                    new Handler(activity.getMainLooper()).post(() -> {
-                        if (activity instanceof HealthTrackerActivity) {
-                            ((HealthTrackerActivity) activity).trySetupClickListeners();
-                        }
-                    });
-
-
-                    // Clear after setting once
-                    latestHR = null;
-                    latestSPO2 = null;
-                } catch (Exception e) {
-                    // Ignore parse errors
-                }
+            @Override
+            public void onSosTriggered() {
+                Intent intent = new Intent(activity.getApplicationContext(), CallEmergencyActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
             }
         });
 
@@ -107,6 +117,7 @@ public class BluetoothManager {
         Toast.makeText(activity, "Trying to connect to ESP32...", Toast.LENGTH_SHORT).show();
         isInitialized = true;
     }
+
 
 
 
