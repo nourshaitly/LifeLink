@@ -48,6 +48,7 @@
     <color name="darkBlue">#003C6D</color>
     <color name="logoGreen">#00A859</color> <!-- Green for the ECG line -->
 
+    <color name="lightGreen">#E8F5E9</color> <!-- or any soft green -->
 
 
 
@@ -59,6 +60,7 @@
 
 
 
+    <color name="defaultCard">#42A5F5</color> <!-- or whatever your normal card color is -->
 
 
 

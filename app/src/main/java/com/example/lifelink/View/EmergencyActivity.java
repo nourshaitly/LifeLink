@@ -211,6 +211,8 @@ public class EmergencyActivity extends AppCompatActivity {
         }
     }
 
+
+
     private int evaluatePersonalizedEmergencyLevel(MedicalProfile profile, int heartRate, int spo2) {
         int score = 0;
         int age = profile.getAge();

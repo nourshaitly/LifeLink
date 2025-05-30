@@ -55,7 +55,7 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
         addReminderFab = view.findViewById(R.id.addReminderFab);
 
         reminderList = new ArrayList<>();
-        reminderAdapter = new ReminderAdapter(reminderList, this);
+        reminderAdapter = new ReminderAdapter(getContext(),reminderList, this);
         reminderListRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         reminderListRecycler.setAdapter(reminderAdapter);
 

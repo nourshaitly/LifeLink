@@ -23,6 +23,7 @@ public class AppointmentNotificationReceiver extends BroadcastReceiver {
         Toast.makeText(context, "📅 Appointment Broadcast Received", Toast.LENGTH_SHORT).show();
 
         String doctorName = intent.getStringExtra("doctorName");
+        String location=intent.getStringExtra("location");
         if (doctorName == null) doctorName = "Your Doctor";
 
         // Open main dashboard on tap (or change to another activity if needed)
@@ -63,12 +64,15 @@ public class AppointmentNotificationReceiver extends BroadcastReceiver {
 
         // ✅ Safe icon to avoid crashes (for test use android built-in icon)
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_delete)
+                .setSmallIcon(android.R.drawable.ic_notification_clear_all)
 
                 .setContentTitle("Doctor Appointment")
-                .setContentText("Reminder: Appointment with Dr. " + doctorName)
+                .setContentText("Reminder: Appointment with Dr. " + doctorName+"at"+location)
+
+
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Reminder: Appointment with Dr. " + doctorName + " — tap to open app"))
+                        .bigText("Reminder: Appointment with Dr. " + doctorName +"at"+location+ " — tap to open app"))
+
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)

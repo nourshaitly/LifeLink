@@ -214,7 +214,7 @@ public class HealthTrackerActivity extends AppCompatActivity {
             updateCharts();
             updateWellnessScore(heartRate, spo2);
             updateLastMeasuredTime();
-
+calculateOverallWellnessScore(heartRate,spo2);
             if (System.currentTimeMillis() - lastSavedTime >= 5 * 60 * 1000) {
                 saveLiveHealthToFirestore(heartRate, spo2);
                 lastSavedTime = System.currentTimeMillis();
@@ -263,6 +263,7 @@ public class HealthTrackerActivity extends AppCompatActivity {
         wellnessScoreIndicator.setProgress(score);
         wellnessScoreValue.setText(String.valueOf(score));
         animateWellnessScore(score);
+
     }
 
     private int calculateOverallWellnessScore(int hrLevel, int spo2Level) {

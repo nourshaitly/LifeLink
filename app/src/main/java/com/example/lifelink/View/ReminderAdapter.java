@@ -1,5 +1,6 @@
 package com.example.lifelink.View;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,14 +8,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lifelink.Model.Reminder;
 import com.example.lifelink.R;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder> {
+
 
     public interface OnReminderClickListener {
         void onEditClick(Reminder reminder);
@@ -24,15 +28,18 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
 
     private List<Reminder> reminderList;
     private OnReminderClickListener listener;
+    private final Context context; // ✅ Add this
 
-    public ReminderAdapter(List<Reminder> reminderList, OnReminderClickListener listener) {
+    public ReminderAdapter(Context context,List<Reminder> reminderList, OnReminderClickListener listener) {
         this.reminderList = reminderList;
         this.listener = listener;
+        this.context = context; // ✅ Assign it here
     }
 
     @NonNull
     @Override
     public ReminderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_reminder, parent, false);
         return new ReminderViewHolder(view);
@@ -46,10 +53,15 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
 
         // ✅ Set bell icon based on taken status
         if (reminder.isTaken()) {
-            holder.bellIcon.setImageResource(R.drawable.ic_check_green);
+            // ✅ If taken: green background + check icon
+            holder.reminderCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.lightGreen));
+            holder.bellIcon.setImageResource(R.drawable.ic_check_green); // use a green check icon
         } else {
+            // ✅ If not taken: default background + bell icon
+            holder.reminderCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_blue)); // make sure defaultCard is defined
             holder.bellIcon.setImageResource(R.drawable.ic_bell);
         }
+
 
         // ✅ Set days text
         if (reminder.getDays() != null && !reminder.getDays().isEmpty()) {
@@ -100,6 +112,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     static class ReminderViewHolder extends RecyclerView.ViewHolder {
         TextView medName, medTime, daysText; // ✅ Added daysText here
         ImageView medIcon, bellIcon, editIcon, deleteIcon;
+        MaterialCardView reminderCard;
 
         public ReminderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -110,6 +123,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             bellIcon = itemView.findViewById(R.id.bellIcon);
             editIcon = itemView.findViewById(R.id.editIcon);
             deleteIcon = itemView.findViewById(R.id.deleteIcon);
+            reminderCard = itemView.findViewById(R.id.reminderCard); // ✅ Initialize here only
         }
     }
 }

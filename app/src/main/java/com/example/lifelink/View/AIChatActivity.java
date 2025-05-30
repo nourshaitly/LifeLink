@@ -218,8 +218,9 @@ public class AIChatActivity extends AppCompatActivity {
         recyclerView.scrollToPosition(messages.size() - 1);
 
         // Send to Gemini API
-        String prompt = "You are a medical assistant. Only answer medical-related questions. "
-                + "If the question is not medical, say 'I can only answer medical questions.'\n\nUser: " + userMessage;
+     String prompt = "You are a medical assistant. Only answer medical-related questions. "
+               + "If the question is not medical, say 'I can only answer medical questions.'\n\nUser: " + userMessage;
+
 
         GeminiRequest request = new GeminiRequest(prompt);
         api.sendPrompt(request).enqueue(new Callback<GeminiResponse>() {
