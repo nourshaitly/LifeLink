@@ -23,6 +23,7 @@ import com.example.lifelink.Model.ChatSession;
 import com.example.lifelink.Model.GeminiRequest;
 import com.example.lifelink.Model.GeminiResponse;
 import com.example.lifelink.R;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -69,6 +70,11 @@ public class AIChatActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ExtendedFloatingActionButton fab = findViewById(R.id.fab_sos); // Make sure to have this FAB in your layout
+        fab.setOnClickListener(v -> {
+            DashboardUtils.triggerCall(this);
+        });
 
         drawerLayout = findViewById(R.id.drawerLayout);
         historyRecyclerView = findViewById(R.id.historyRecyclerView);

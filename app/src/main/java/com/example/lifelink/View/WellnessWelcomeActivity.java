@@ -65,7 +65,12 @@ public class WellnessWelcomeActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Display back button
 
         // Set up SOS Floating Action Button
-        setupSOSFab();
+        ExtendedFloatingActionButton fab = findViewById(R.id.fab_sos); // Make sure to have this FAB in your layout
+        fab.setOnClickListener(v -> {
+            DashboardUtils.triggerCall(this);
+        });
+
+
         setupBottomNav();
     }
 
@@ -86,19 +91,7 @@ public class WellnessWelcomeActivity extends AppCompatActivity {
         return true;
     }
 
-    private void setupSOSFab() {
-        ExtendedFloatingActionButton fab = findViewById(R.id.fab_sos); // Make sure to have this FAB in your layout
-        fab.setOnClickListener(v -> triggerCall());  // Trigger the call when the SOS button is clicked
-    }
-    // Handle the SOS call
-    private void triggerCall() {
-        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + sosnum));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            startActivity(callIntent);
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_PERMISSION_REQUEST);
-        }
-    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

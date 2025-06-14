@@ -1,9 +1,14 @@
 package com.example.lifelink.View;
 
+import static com.example.lifelink.View.DashboardUtils.*;
+
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,13 +29,18 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,6 +69,15 @@ public class HealthTrackerActivity extends AppCompatActivity {
     private int heartRateLevel = -1;
     private int spo2Level = -1;
     private long lastSavedTime = 0;
+    private static final SparseArray<Class<?>> NAV_MAP = new SparseArray<>();
+
+    static {
+        NAV_MAP.put(R.id.nav_nearby, MapIntroActivity.class);
+        NAV_MAP.put(R.id.nav_reminder, RemindersWelcomeActivity.class);
+        NAV_MAP.put(R.id.nav_home, AIChatActivity.class);
+        NAV_MAP.put(R.id.nav_emergency, EmergencyActivity.class);
+        NAV_MAP.put(R.id.nav_health, HealthTrackerActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,24 +85,72 @@ public class HealthTrackerActivity extends AppCompatActivity {
         setContentView(R.layout.health_tracker);
         BluetoothManager.init(this);
 
+
         initializeViews();
         setupCharts();
         updateLastMeasuredTime();
         startMonitoringHealthData();
         fetchMedicalProfile();
-        MaterialButton viewDailyReportButton = findViewById(R.id.viewDailyReportButton);
-        viewDailyReportButton.setOnClickListener(v -> {
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        setupBottomNav();
+        ExtendedFloatingActionButton fab = findViewById(R.id.fab_sos);
+        fab.setOnClickListener(v -> {
+            DashboardUtils.triggerCall(this);
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_health_track, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        // let DashboardUtils handle the Up/Home click
+        if (onHomeClicked(this, item)) {
+            return true;
+        }
+
+
+        if (id == R.id.action_daily_report) {
             String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
             Intent intent = new Intent(this, DailyHealthReportActivity.class);
             intent.putExtra("reportDate", todayDate);
             startActivity(intent);
-        });
-        findViewById(R.id.viewHistoryButton).setOnClickListener(v -> {
+            return true;
+
+        } else if (id == R.id.action_report_history) {
             Intent intent = new Intent(this, DailyReportHistoryActivity.class);
             startActivity(intent);
-        });
+            return true;
+        }
 
+        return super.onOptionsItemSelected(item);
     }
+    private void setupBottomNav() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        // bottomNav.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+        bottomNav.setOnItemSelectedListener(this::onNavItemSelected);
+        //bottomNav.setSelectedItemId(R.id.nav_nearby); // Set default selected item
+    }
+
+    private boolean onNavItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        Class<?> target = NAV_MAP.get(item.getItemId());
+        if (target == null) {
+            return false; // No matching activity
+        }
+        Intent intent = new Intent(this, target)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        return true;
+    }
+
 
     private void initializeViews() {
         wellnessScoreIndicator = findViewById(R.id.wellnessScoreIndicator);
@@ -114,13 +181,14 @@ public class HealthTrackerActivity extends AppCompatActivity {
                 }
                 medicalProfile = profile;
                 HealthTrackerState.isProfileReady = true;
-                Toast.makeText(HealthTrackerActivity.this, "✅ Profile loaded", Toast.LENGTH_SHORT).show();
+                LiveHealthDataUtils.setChronicDiseases(profile.getChronicDiseases());
+                //Toast.makeText(HealthTrackerActivity.this, "✅ Profile loaded", Toast.LENGTH_SHORT).show();
                 trySetupClickListeners();
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(HealthTrackerActivity.this, error, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(HealthTrackerActivity.this, error, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -196,6 +264,8 @@ public class HealthTrackerActivity extends AppCompatActivity {
         if (healthData != null) {
             int heartRate = healthData.getHeartRate();
             int spo2 = healthData.getSpo2();
+            LiveHealthDataUtils.updateData(heartRate, spo2); // ✅ Send to global storage
+
             long currentTime = System.currentTimeMillis();
 
             heartRateEntries.add(new Entry(timeStamps.size(), heartRate));
@@ -215,12 +285,14 @@ public class HealthTrackerActivity extends AppCompatActivity {
             updateWellnessScore(heartRate, spo2);
             updateLastMeasuredTime();
 
+            calculateOverallWellnessScore(heartRate,spo2);
+
             if (System.currentTimeMillis() - lastSavedTime >= 5 * 60 * 1000) {
                 saveLiveHealthToFirestore(heartRate, spo2);
                 lastSavedTime = System.currentTimeMillis();
             }
         } else {
-            Toast.makeText(this, "Waiting for live health data...", Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(this, "Waiting for live health data...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -270,14 +342,21 @@ public class HealthTrackerActivity extends AppCompatActivity {
         int spo2Score = 100 - (spo2Level - 1) * 40;
         int averageScore = (hrScore + spo2Score) / 2;
 
-        if (averageScore >= 90) {
-            wellnessdescription.setText("Your vital signs are excellent. Keep maintaining a healthy lifestyle.");
-        } else if (averageScore >= 70) {
-            wellnessdescription.setText("Your health is generally stable, but minor irregularities were detected.");
-        } else if (averageScore >= 40) {
-            wellnessdescription.setText("Some concerning signs were identified. Monitoring or lifestyle adjustment is recommended.");
-        } else {
+        // Display critical message only if both are worst level
+        if (hrLevel == 3 && spo2Level == 3) {
             wellnessdescription.setText("Serious health irregularities detected. Please seek medical attention immediately.");
+        }
+        else if (averageScore >= 90 && averageScore <= 100) {
+            wellnessdescription.setText("Your vital signs are excellent. Keep maintaining a healthy lifestyle.");
+        }
+        else if (averageScore >= 70 && averageScore < 90) {
+            wellnessdescription.setText("Your health is generally stable, but minor irregularities were detected.");
+        }
+        else if (averageScore >= 40 && averageScore < 70) {
+            wellnessdescription.setText("Some concerning signs were identified. Monitoring or lifestyle adjustment is recommended.");
+        }
+        else { // averageScore < 40
+            wellnessdescription.setText("Health signs indicate increased risk. Consider seeking medical advice.");
         }
 
         return averageScore;
@@ -286,7 +365,7 @@ public class HealthTrackerActivity extends AppCompatActivity {
     private void setupClickListeners() {
         HealthData healthData = LiveHealthDataHolder.getHealthData();
         if (healthData == null || medicalProfile == null) {
-            Toast.makeText(this, "⚠️ Still waiting for health data or profile", Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(this, "⚠️ Still waiting for health data or profile", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -350,4 +429,6 @@ public class HealthTrackerActivity extends AppCompatActivity {
             setupClickListeners();
         }
     }
+
+
 }

@@ -211,7 +211,7 @@
                         android:maxLength="50" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Google Sign-In Button -->
+                <!-- Google Sign-In Button
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/googleSignUpButton"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -221,7 +221,7 @@
                     android:text="Sign Up with Google"
                     android:textAllCaps="false"
                     android:textColor="@color/LogoBlue"
-                    app:cornerRadius="28dp" />
+                    app:cornerRadius="28dp" />-->
 
                 <!-- Register Button -->
                 <com.google.android.material.button.MaterialButton

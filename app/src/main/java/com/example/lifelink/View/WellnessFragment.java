@@ -156,7 +156,7 @@ public class WellnessFragment extends Fragment {
                 tipHandler.removeCallbacks(tipRunnable);
                 tipRunnable = null;
                 tipsActive = false;
-                Toast.makeText(getContext(), "Tips stopped.", Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(getContext(), "Tips stopped.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -174,7 +174,7 @@ public class WellnessFragment extends Fragment {
                     long intervalMillis = getIntervalMillis(freq, unit);
                     if (intervalMillis > 0) {
                         startRepeatingTips(intervalMillis);
-                        Toast.makeText(getContext(), "Resumed tip notifications.", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getContext(), "Resumed tip notifications.", Toast.LENGTH_SHORT).show();
                     }
                 } catch (NumberFormatException e) {
                     Toast.makeText(getContext(), "Error: invalid frequency input.", Toast.LENGTH_SHORT).show();

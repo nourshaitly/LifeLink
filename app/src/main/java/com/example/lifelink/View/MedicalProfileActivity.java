@@ -61,9 +61,37 @@ public class MedicalProfileActivity extends AppCompatActivity {
         setupChipGroups();
         setupBirthdatePicker();
 
+
+
+
         NumberPicker heightPicker = findViewById(R.id.heightPicker);
         NumberPicker weightPicker = findViewById(R.id.weightPicker);
         setupNumberPickers(heightPicker, weightPicker);
+
+
+
+
+        // ❌ This is invalid Java syntax if placed directly inside the class (but outside a method):
+        setupMutualExclusion(checkNoSymptoms, checkChestPain, checkBreathless, checkDizziness, checkFatigue, checkPalpitations);
+        setupMutualExclusion(checkNofamily, familyHeartDisease, familyDiabetes, familyHypertension, familyStroke);
+        setupMutualExclusion(checkNoChronic, checkDiabetes, checkHypertension, checkAsthma, checkAnemia);
+        setupMutualExclusion(checkNoMental, mentalDepression, mentalAnxiety, mentalPTSD);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         nextToQuestionsButton.setOnClickListener(v -> {
             if (!validatePhysiologicalInfo(heightPicker, weightPicker)) return;
@@ -153,7 +181,7 @@ public class MedicalProfileActivity extends AppCompatActivity {
         familyDiabetes = findViewById(R.id.familyDiabetes);
         familyHypertension = findViewById(R.id.familyHypertension);
         familyStroke = findViewById(R.id.familyStroke);
-      //  familyOther = findViewById(R.id.familyOther);
+        //  familyOther = findViewById(R.id.familyOther);
         checkNofamily = findViewById(R.id.checkNofamily);
 
         mentalDepression = findViewById(R.id.mentalDepression);
@@ -178,6 +206,23 @@ public class MedicalProfileActivity extends AppCompatActivity {
 
 
 
+    private void setupMutualExclusion(CheckBox noneBox, CheckBox... others) {
+        // If "None" is checked ➜ Uncheck all others
+        noneBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                for (CheckBox cb : others) cb.setChecked(false);
+            }
+        });
+
+        // If any other is checked ➜ Uncheck "None"
+        for (CheckBox cb : others) {
+            cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked && noneBox.isChecked()) {
+                    noneBox.setChecked(false);
+                }
+            });
+        }
+    }
 
 
 
@@ -283,6 +328,29 @@ public class MedicalProfileActivity extends AppCompatActivity {
         weightPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private boolean validatePhysiologicalInfo(NumberPicker heightPicker, NumberPicker weightPicker) {
         if (birthdateEditText.getText().toString().isEmpty() ||
                 selectedGender.isEmpty() || selectedBloodType.isEmpty() || selectedRhFactor.isEmpty()) {
@@ -341,7 +409,7 @@ public class MedicalProfileActivity extends AppCompatActivity {
 
     private void saveProfile(NumberPicker heightPicker, NumberPicker weightPicker) {
         final String LOG_TAG = "MedicalProfileDebug";
-        Toast.makeText(this, "🟡 saveProfile() triggered", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "🟡 saveProfile() triggered", Toast.LENGTH_SHORT).show();
         Log.d(LOG_TAG, "saveProfile() method entered");
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -353,7 +421,7 @@ public class MedicalProfileActivity extends AppCompatActivity {
 
         String uid = user.getUid();
         Log.d(LOG_TAG, "✅ Current UID: " + uid);
-        Toast.makeText(this, "✅ UID OK", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "✅ UID OK", Toast.LENGTH_SHORT).show();
 
         // ✅ Step 1: Start with a simple test map
         Map<String, Object> profile = new HashMap<>();
@@ -487,11 +555,11 @@ public class MedicalProfileActivity extends AppCompatActivity {
                 .set(profile)
                 .addOnSuccessListener(unused -> {
                     Log.d(LOG_TAG, "✅ Firestore write SUCCESS");
-                    Toast.makeText(this, "✅ Medical profile saved!", Toast.LENGTH_LONG).show();
+                   // Toast.makeText(this, "✅ Medical profile saved!", Toast.LENGTH_LONG).show();
                 })
                 .addOnFailureListener(e -> {
                     Log.e(LOG_TAG, "❌ Firestore write FAILED: " + e.getMessage());
-                    Toast.makeText(this, "❌ Failed to save: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(this, "❌ Failed to save: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 

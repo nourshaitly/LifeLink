@@ -149,6 +149,8 @@ public class AddReminderActivity extends AppCompatActivity {
             if (chipSat.isChecked()) selectedDays.add("Sat");
             if (chipSun.isChecked()) selectedDays.add("Sun");
 
+            saveReminderButton.setEnabled(false);
+
             // Save reminder to Firebase Firestore
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             FirebaseAuth auth = FirebaseAuth.getInstance();

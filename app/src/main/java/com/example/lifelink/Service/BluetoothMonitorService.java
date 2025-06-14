@@ -98,7 +98,7 @@ public class BluetoothMonitorService extends Service {
             public void onSosTriggered() {
 
 
-                Toast.makeText(BluetoothMonitorService.this, "FINALLY", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(BluetoothMonitorService.this, "FINALLY", Toast.LENGTH_SHORT).show();
 
 
 

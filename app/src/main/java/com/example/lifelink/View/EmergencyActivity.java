@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -37,6 +38,9 @@ import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.*;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -53,7 +57,7 @@ public class EmergencyActivity extends AppCompatActivity {
 
     private int heartRate;
     private int spo2;
-    private String emergencyContact = "+96171010584";
+    private String emergencyContact;
     private String sosnum = "+96171010584";
     private String userLocation = "Location not available";
 
@@ -61,9 +65,13 @@ public class EmergencyActivity extends AppCompatActivity {
     private Handler handler;
     private Runnable monitorTask;
 
+    private boolean smsSentForMedium = false;
+    private boolean smsSentForHigh = false;
+
     private MedicalProfile medicalProfile;  // This will hold the Medical Profile data
 
     private static final SparseArray<Class<?>> NAV_MAP = new SparseArray<>();
+
     static {
         NAV_MAP.put(R.id.nav_nearby, MapIntroActivity.class);
         NAV_MAP.put(R.id.nav_reminder, RemindersWelcomeActivity.class);
@@ -73,12 +81,12 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency);
 
+        //getEmergencyContact();
         createEmergencyNotificationChannel();
         initializeViews();
         initializeTextToSpeech();
@@ -97,12 +105,12 @@ public class EmergencyActivity extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Display back button
 
-
         setupBottomNav();
 
 
-
     }
+
+
 
     private void setupBottomNav() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
@@ -110,6 +118,7 @@ public class EmergencyActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(this::onNavItemSelected);
         //bottomNav.setSelectedItemId(R.id.nav_nearby); // Set default selected item
     }
+
     private boolean onNavItemSelected(@NonNull MenuItem item) {
         Class<?> target = NAV_MAP.get(item.getItemId());
         if (target == null) {
@@ -120,24 +129,17 @@ public class EmergencyActivity extends AppCompatActivity {
         startActivity(intent);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Class<?> target = NAV_MAP.get(R.id.nav_home);
-            if (target != null) {
-                Intent intent = new Intent(this, target)
-                        .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            } else {
-                onBackPressed();
-            }
-            return true;
-        }
+
+        Intent intent = new Intent(this, MainPageActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     private void initializeViews() {
@@ -197,12 +199,12 @@ public class EmergencyActivity extends AppCompatActivity {
             spo2 = healthData.getSpo2();
             continueEmergencyFlow();
         } else {
-            Toast.makeText(this, "Waiting for live health data...", Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(this, "Waiting for live health data...", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void continueEmergencyFlow() {
-        if (medicalProfile!= null) {
+        if (medicalProfile != null) {
             int level = evaluatePersonalizedEmergencyLevel(medicalProfile, heartRate, spo2);
             updateUIBasedOnLevel(level);
             handleEmergencyActions(level);
@@ -253,8 +255,8 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void updateUIBasedOnLevel(int level) {
-        heartRateText.setText("Heart Rate: " + heartRate + " bpm");
-        spo2Text.setText("SpO₂: " + spo2 + "%");
+        heartRateText.setText(heartRate + " BPM");
+        spo2Text.setText(spo2 + "%");
         sosButton.setText("SOS");
 
         if (level == 1) {
@@ -272,14 +274,28 @@ public class EmergencyActivity extends AppCompatActivity {
         }
     }
 
+
     private void handleEmergencyActions(int level) {
         if (level == 3) {
-            showEmergencyNotification("Critical condition detected. Immediate action required.");
-            handleSOSButtonClick();
+            if (!smsSentForHigh) {
+                showEmergencyNotification("Critical condition detected. Immediate action required.");
+                handleSOSButtonClick();
+                sendSmsToEmergencyContact();
+                smsSentForHigh = true;
+            }
         } else if (level == 2) {
-            showEmergencyNotification("Moderate emergency. Monitor condition and prepare to act.");
+            if (!smsSentForMedium) {
+                sendSmsToEmergencyContact();
+                showEmergencyNotification("Moderate emergency. Monitor condition and prepare to act.");
+                smsSentForMedium = true;
+            }
+        } else {
+            // Reset flags when condition is no longer critical or moderate
+            smsSentForHigh = false;
+            smsSentForMedium = false;
         }
     }
+
 
     private void speakRecommendations() {
         String text = recommendationText.getText().toString();
@@ -289,6 +305,31 @@ public class EmergencyActivity extends AppCompatActivity {
     private void handleSOSButtonClick() {
         triggerCall();
         requestSmsPermissionIfNeeded();
+        sendSmsToSosNumber();            // this sends to fixed SOS number with full info
+    }
+
+    private void sendSmsToSosNumber() {
+      /*  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_REQUEST);
+            return;
+        }
+
+        if (!LiveHealthDataUtils.isDataValid()) {
+            Toast.makeText(this, "⚠️ No valid health data to send.", Toast.LENGTH_SHORT).show();
+            return;
+        }*/
+
+        String message = LiveHealthDataUtils.getEmergencyMessage();
+
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            ArrayList<String> parts = smsManager.divideMessage(message);
+            smsManager.sendMultipartTextMessage(sosnum, null, parts, null, null);
+            Toast.makeText(this, "✅ SOS SMS sent", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "❌ Failed to send SOS SMS", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
     private void handleEmergencyContactButton() {
@@ -366,11 +407,8 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
 
-
-
-
     private void sendSmsToEmergencyContact() {
-        String message = "🚨 Emergency detected\nCondition: " + getConditionMessage() +
+        String message = "🚨 Emergency detected from LifeLink\nCondition: " + getConditionMessage() +
                 "\nHR: " + heartRate + "\nSpO₂: " + spo2 + "\nLocation: " + userLocation;
 
         String phone = emergencyContact.replace(" ", "");
@@ -387,11 +425,6 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     public void triggerCall() {
         Toast.makeText(EmergencyActivity.this, "Finally", Toast.LENGTH_SHORT).show();
         Intent callIntent = new Intent(Intent.ACTION_CALL);
@@ -402,8 +435,6 @@ public class EmergencyActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_PERMISSION_REQUEST);
         }
     }
-
-
 
 
     private void showEmergencyNotification(String recommendation) {
@@ -421,7 +452,6 @@ public class EmergencyActivity extends AppCompatActivity {
 
         manager.notify(2001, notification);
     }
-
 
 
     private void requestSmsPermissionIfNeeded() {
@@ -447,34 +477,53 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
 
-
     private void fetchMedicalProfile() {
-        FirestoreService firestoreService = new FirestoreService();
-        firestoreService.fetchMedicalProfile(new FirestoreService.OnProfileFetchedListener() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String uid = auth.getCurrentUser().getUid();
 
-            @Override
+        // Fetch personal info first
+        db.collection("users").document(uid).get().addOnSuccessListener(userSnapshot -> {
+            String fullName = userSnapshot.getString("firstName") + " " +
+                    userSnapshot.getString("middleName") + " " +
+                    userSnapshot.getString("lastName");
 
+            // Then fetch medical profile
+            db.collection("users").document(uid)
+                    .collection("medical_profile").document("profile")
+                    .get().addOnSuccessListener(profileSnapshot -> {
 
+                        if (profileSnapshot.exists()) {
+                            emergencyContact = profileSnapshot.getString("emergency_phone");
+                            String relation = profileSnapshot.getString("emergency_relation");
 
-            public void onProfileFetched(MedicalProfile profile) {
-                if (profile == null) {
-                    Toast.makeText(EmergencyActivity.this, "❌ Profile is null", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                            // ✅ Save to utility class
+                            LiveHealthDataUtils.setUserInfo(fullName.trim());
+                            LiveHealthDataUtils.setEmergencyContact(emergencyContact, relation);
 
-                medicalProfile = profile;
-                HealthTrackerState.isProfileReady = true;
+                            // Then load full MedicalProfile model as usual
+                            FirestoreService firestoreService = new FirestoreService();
+                            firestoreService.fetchMedicalProfile(new FirestoreService.OnProfileFetchedListener() {
+                                @Override
+                                public void onProfileFetched(MedicalProfile profile) {
+                                    if (profile == null) {
+                                     //   Toast.makeText(EmergencyActivity.this, "❌ Profile is null", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
 
-                Toast.makeText(EmergencyActivity.this, "✅ Profile loaded", Toast.LENGTH_SHORT).show();
-           continueEmergencyFlow();
-            }
+                                    medicalProfile = profile;
+                                    HealthTrackerState.isProfileReady = true;
+                               //     Toast.makeText(EmergencyActivity.this, "✅ Profile loaded", Toast.LENGTH_SHORT).show();
+                                    continueEmergencyFlow();
+                                }
 
-
-            @Override
-            public void onError(String error) {
-                Toast.makeText(EmergencyActivity.this, error, Toast.LENGTH_SHORT).show();
-            }
+                                @Override
+                                public void onError(String error) {
+                                    Toast.makeText(EmergencyActivity.this, error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
         });
     }
-
 }

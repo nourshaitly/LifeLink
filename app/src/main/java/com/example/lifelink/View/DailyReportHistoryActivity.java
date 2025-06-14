@@ -55,7 +55,7 @@ public class DailyReportHistoryActivity extends AppCompatActivity implements Rep
             }
             Collections.sort(reportDates, Collections.reverseOrder()); // Show latest first
             adapter.notifyDataSetChanged();
-            Toast.makeText(this, "✅ Loaded " + count + " report day(s)", Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(this, "✅ Loaded " + count + " report day(s)", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(e ->
                 Toast.makeText(this, "❌ Failed to load report dates", Toast.LENGTH_SHORT).show());
     }

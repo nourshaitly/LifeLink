@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.telephony.SmsManager;
 import android.view.MenuItem;
 
 import androidx.annotation.IdRes;
@@ -17,9 +18,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import android.util.SparseArray;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class DashboardUtils {
     private static final String SOS_NUM = "+96171010584";
+    private static final int SMS_PERMISSION_REQUEST = 101;
     private static final int CALL_PERM_REQ = 100;
 
     // map bottom-nav IDs to Activity classes
@@ -80,7 +85,7 @@ public class DashboardUtils {
     public static boolean onHomeClicked(AppCompatActivity act, MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             // navigate to the "home" tab (MainPageActivity)
-            Intent i = new Intent(act, NAV_MAP.get(R.id.nav_home))
+            Intent i = new Intent(act, MainPageActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                             | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             act.startActivity(i);
@@ -91,7 +96,7 @@ public class DashboardUtils {
     }
 
     // helper to place a call (SOS)
-    private static void triggerCall(Activity act) {
+    public static void triggerCall(Activity act) {
         Intent call = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + SOS_NUM));
         if (ActivityCompat.checkSelfPermission(act, Manifest.permission.CALL_PHONE)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -103,5 +108,24 @@ public class DashboardUtils {
                     CALL_PERM_REQ
             );
         }
+
+        if (ActivityCompat.checkSelfPermission(act, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(act, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_REQUEST);
+            return;
+        }
+
+
+        String message = LiveHealthDataUtils.getEmergencyMessage();
+
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            ArrayList<String> parts = smsManager.divideMessage(message);
+            smsManager.sendMultipartTextMessage(SOS_NUM, null, parts, null, null);
+            Toast.makeText(act, "✅ SOS SMS sent", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(act, "❌ Failed to send SOS SMS", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
+
 }

@@ -117,7 +117,7 @@ public class Bluetooth {
                         if (line.equals("SOS triggered")) {
                             toast("🚨 SOS Trigger received");
                             if (dataListener != null) {
-                                toast("datalistner");
+                             //   toast("datalistner");
                                 dataListener.onSosTriggered();  // ⬅️ SOS is passed to app
                             }
                             continue;
@@ -125,18 +125,18 @@ public class Bluetooth {
 
                         if (line.startsWith("HR:")) {
                             lastHeartRate = line.substring(3).trim();
-                            toast("✅ HR: " + lastHeartRate);
+                         //   toast("✅ HR: " + lastHeartRate);
                         }  if (line.startsWith("SPO2:")) {
                             lastSpO2 = line.substring(5).trim();
-                            toast("✅ SpO2: " + lastSpO2);
+                          //  toast("✅ SpO2: " + lastSpO2);
                         }
 
                         if (lastHeartRate != null || lastSpO2 != null) {
                             if (dataListener != null) {
                                 dataListener.onDataReceived(lastHeartRate, lastSpO2);
-                                toast("📤 Sent ➜ HR: " + lastHeartRate + " | SpO₂: " + lastSpO2);
+                             //   toast("📤 Sent ➜ HR: " + lastHeartRate + " | SpO₂: " + lastSpO2);
                             } else {
-                                toast("⚠️ No data listener.");
+                             //   toast("⚠️ No data listener.");
                             }
                             lastHeartRate = null;
                             lastSpO2 = null;
@@ -144,7 +144,7 @@ public class Bluetooth {
                     }
 
                 } catch (IOException e) {
-                    toast("❌ Read error: " + e.getMessage());
+                //    toast("❌ Read error: " + e.getMessage());
                     break;
                 }
             }

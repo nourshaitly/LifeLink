@@ -1,4 +1,4 @@
-package com.example.lifelink.Adapter;
+package com.example.lifelink.View;
 
 import android.view.LayoutInflater;
 import android.view.View;

@@ -1,0 +1,15 @@
+<!-- res/menu/menu_health_track.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_daily_report"
+        android:title="View Daily Report"
+        android:icon="@drawable/ic_bar_chart"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_report_history"
+        android:title="View Report History"
+        android:icon="@drawable/ic_folder"
+        app:showAsAction="never" />
+</menu>

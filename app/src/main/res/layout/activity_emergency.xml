@@ -76,46 +76,96 @@
 
             <!-- Heart Rate -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:gravity="center">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Heart Rate"
-                    android:textSize="16sp" />
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/heartRateCard"
+                    android:layout_width="30dp"
+                    android:layout_height="110dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    app:cardElevation="4dp"
+                    app:cardCornerRadius="16dp">
 
-                <TextView
-                    android:id="@+id/heartRateValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="72 bpm"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_heart"
+                            android:contentDescription="Heart Icon" />
+
+                        <TextView
+                            android:id="@+id/heartRateLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Heart Rate"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:layout_marginTop="4dp" />
+
+                        <TextView
+                            android:id="@+id/heartRateValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="72 BPM"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="@color/red"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
             <!-- SpO₂ -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SpO₂"
-                    android:textSize="16sp" />
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/spo2Card"
+                    android:layout_width="30dp"
+                    android:layout_height="110dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    app:cardElevation="4dp"
+                    app:cardCornerRadius="16dp">
 
-                <TextView
-                    android:id="@+id/spo2Value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="98%"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_oxygen"
+                            android:contentDescription="Oxygen Icon" />
+
+                        <TextView
+                            android:id="@+id/spo2Label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SpO₂"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:layout_marginTop="4dp" />
+
+                        <TextView
+                            android:id="@+id/spo2Value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="98%"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="@color/blue"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

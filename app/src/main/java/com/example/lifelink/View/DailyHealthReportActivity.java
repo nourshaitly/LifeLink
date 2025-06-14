@@ -55,12 +55,12 @@ public class DailyHealthReportActivity extends AppCompatActivity {
         reportDateFormatted = getIntent().getStringExtra("reportDate");
         if (reportDateFormatted == null) {
             reportDateFormatted = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-            Toast.makeText(this, "⚠️ No date received. Defaulting to today.", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "⚠️ No date received. Defaulting to today.", Toast.LENGTH_SHORT).show();
         }
 
         reportDocDate = reportDateFormatted.replace("-", "_");
         reportTitle.setText("📅 Daily Health Report - " + reportDateFormatted);
-        Toast.makeText(this, "Loading report for: " + reportDateFormatted, Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Loading report for: " + reportDateFormatted, Toast.LENGTH_SHORT).show();
 
         dailySummaryRecycler.setLayoutManager(new LinearLayoutManager(this));
         adapter = new DailySummaryAdapter(summaryList);
@@ -77,7 +77,7 @@ public class DailyHealthReportActivity extends AppCompatActivity {
         });
 
         btnShareReport.setOnClickListener(v -> {
-            Toast.makeText(this, "Preparing report for sharing...", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "Preparing report for sharing...", Toast.LENGTH_SHORT).show();
             shareReportAsPdf();
         });
     }
@@ -85,7 +85,7 @@ public class DailyHealthReportActivity extends AppCompatActivity {
     private void loadDailySummary() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (summaryList.isEmpty()) {
-            Toast.makeText(this, "⚠️ No entries found for " + reportDateFormatted, Toast.LENGTH_LONG).show();
+           // Toast.makeText(this, "⚠️ No entries found for " + reportDateFormatted, Toast.LENGTH_LONG).show();
         }
 
         FirebaseFirestore.getInstance()
@@ -121,16 +121,16 @@ public class DailyHealthReportActivity extends AppCompatActivity {
                         int avgHR = totalHR / count;
                         int avgSpO2 = totalSpO2 / count;
                         summaryList.add(new DailySummaryItem("Average", avgHR, avgSpO2));
-                        Toast.makeText(this, "📈 " + count + " entries loaded.", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(this, "📈 " + count + " entries loaded.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(this, "ℹ️ No health data found for this day.", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(this, "ℹ️ No health data found for this day.", Toast.LENGTH_SHORT).show();
                     }
 
                     summaryList.addAll(tempList);
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "❌ Failed to load data: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                   // Toast.makeText(this, "❌ Failed to load data: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -174,16 +174,16 @@ public class DailyHealthReportActivity extends AppCompatActivity {
                 document.close();
                 Toast.makeText(this, "✅ PDF saved to Downloads", Toast.LENGTH_LONG).show();
             } catch (IOException e) {
-                Toast.makeText(this, "❌ Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "❌ Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else {
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
             try (FileOutputStream out = new FileOutputStream(file)) {
                 document.writeTo(out);
                 document.close();
-                Toast.makeText(this, "✅ Saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+             //   Toast.makeText(this, "✅ Saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
             } catch (IOException e) {
-                Toast.makeText(this, "❌ Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "❌ Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -257,7 +257,7 @@ public class DailyHealthReportActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(shareIntent, "Share PDF via"));
             }
         } catch (IOException e) {
-            Toast.makeText(this, "❌ Error creating or sharing PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "❌ Error creating or sharing PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

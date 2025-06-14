@@ -47,6 +47,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         // ✅ Set bell icon based on taken status
         if (reminder.isTaken()) {
             holder.bellIcon.setImageResource(R.drawable.ic_check_green);
+
         } else {
             holder.bellIcon.setImageResource(R.drawable.ic_bell);
         }

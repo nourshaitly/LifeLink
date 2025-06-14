@@ -18,8 +18,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     public interface OnAppointmentClickListener {
         void onMarkDoneClick(Appointment appointment);  // ✅ Mark as Done
-        void onEditClick(Appointment appointment);      // ✏️ Edit
-        void onDeleteClick(Appointment appointment);    // 🗑️ Delete
+        void onEditClick(Appointment appointment);      // ✏ Edit
+        void onDeleteClick(Appointment appointment);    // 🗑 Delete
     }
 
     private final List<Appointment> appointmentList;

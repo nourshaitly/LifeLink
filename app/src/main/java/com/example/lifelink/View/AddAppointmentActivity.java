@@ -27,6 +27,8 @@ import com.example.lifelink.Model.Appointment;
 import com.example.lifelink.R;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,6 +45,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+
 
 public class AddAppointmentActivity extends AppCompatActivity {
 
@@ -60,13 +67,15 @@ public class AddAppointmentActivity extends AppCompatActivity {
 
     private Appointment existingAppointment;
 
+    // Add this at the top of your class
+    private boolean customRemindersEnabled = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
-            setContentView(R.layout.activity_add_appointment);
+        setContentView(R.layout.activity_add_appointment);
 
 
 
@@ -83,7 +92,7 @@ public class AddAppointmentActivity extends AppCompatActivity {
         selectedDateTimeText = findViewById(R.id.selectedDateTimeText);
         saveAppointmentButton = findViewById(R.id.saveAppointmentButton);
         notificationTimeButton = findViewById(R.id.notificationTimeButton);
-        switchEnableReminder = findViewById(R.id.switchEnableReminder);
+
         reminderTimeSlider = findViewById(R.id.reminderTimeSlider);
         timeUnitChipGroup = findViewById(R.id.timeUnitChipGroup);
         repeatReminderSpinner = findViewById(R.id.repeatReminderSpinner);
@@ -108,12 +117,15 @@ public class AddAppointmentActivity extends AppCompatActivity {
             }
         }
 
+
+
         notificationTimeButton.setOnClickListener(v -> {
             if (notificationCard.getVisibility() == View.GONE) {
                 notificationCard.setVisibility(View.VISIBLE);
                 // When user selects a chip (Minutes, Hours, Days)
                 timeUnitChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
                     if (checkedId != View.NO_ID) {
+                        customRemindersEnabled = true; // ✅ User enabled custom reminders
                         float sliderValue = reminderTimeSlider.getValue();
 
                         if (sliderValue >= 1) {
@@ -133,14 +145,30 @@ public class AddAppointmentActivity extends AppCompatActivity {
             }
         });
 
+
+
+
         dateTimePickerButton.setOnClickListener(v -> {
+            // ✅ Get today's date in UTC
+            long todayUtc = MaterialDatePicker.todayInUtcMilliseconds();
+
+            // ✅ Create constraint that blocks past dates using UTC
+            CalendarConstraints constraints = new CalendarConstraints.Builder()
+                    .setStart(todayUtc)
+                    .setValidator(DateValidatorPointForward.from(todayUtc))
+                    .build();
+
+            // ✅ Build the MaterialDatePicker with future constraint
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
                     .setTitleText("Select Appointment Date")
+                    .setSelection(todayUtc)
+                    .setCalendarConstraints(constraints)
                     .build();
 
             datePicker.addOnPositiveButtonClickListener(selection -> {
                 appointmentCalendar.setTimeInMillis(selection);
 
+                // ✅ Build the time picker
                 MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
                         .setTimeFormat(TimeFormat.CLOCK_12H)
                         .setHour(9)
@@ -148,10 +176,20 @@ public class AddAppointmentActivity extends AppCompatActivity {
                         .setTitleText("Select Appointment Time")
                         .build();
 
+                // ✅ Handle time selection
                 timePicker.addOnPositiveButtonClickListener(dialog -> {
                     appointmentCalendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
                     appointmentCalendar.set(Calendar.MINUTE, timePicker.getMinute());
 
+                    Calendar now = Calendar.getInstance();
+
+                    // ✅ If today, block past times
+                    if (isSameDay(appointmentCalendar, now) && appointmentCalendar.before(now)) {
+                        Toast.makeText(this, "❌ Please select a future time", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // ✅ Display final formatted date & time
                     SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
                     selectedDateTimeText.setText(formatter.format(appointmentCalendar.getTime()));
                 });
@@ -163,25 +201,28 @@ public class AddAppointmentActivity extends AppCompatActivity {
         });
 
         saveAppointmentButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Scheduling test reminder...", Toast.LENGTH_SHORT).show();
-
-            long testTime = System.currentTimeMillis() + 5000;
-            scheduleReminder(testTime, "Test Doctor", 999);
+            requestNotificationPermission();
 
             String doctor = editDoctorName.getText().toString().trim();
             String location = editLocation.getText().toString().trim();
             String dateTimeText = selectedDateTimeText.getText().toString().trim();
 
             if (doctor.isEmpty() || location.isEmpty() || dateTimeText.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "⚠ Please fill in all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (appointmentCalendar == null) {
+                Toast.makeText(this, "⚠ Please select appointment date and time", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             String[] parts = dateTimeText.split(", ");
             if (parts.length < 2) {
-                Toast.makeText(this, "Invalid date/time format", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "❌ Invalid date/time format", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             String date = parts[0];
             String time = parts[1];
 
@@ -189,9 +230,10 @@ public class AddAppointmentActivity extends AppCompatActivity {
             FirebaseAuth auth = FirebaseAuth.getInstance();
 
             if (auth.getCurrentUser() == null) {
-                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "❌ User not logged in", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             String userId = auth.getCurrentUser().getUid();
             CollectionReference appointmentsRef = db.collection("users").document(userId).collection("appointments");
 
@@ -205,47 +247,49 @@ public class AddAppointmentActivity extends AppCompatActivity {
                 appointmentsRef.document(existingAppointment.getId())
                         .set(appointmentData)
                         .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(this, "Appointment updated ✅", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "✅ Appointment updated", Toast.LENGTH_SHORT).show();
                             finish();
                         })
                         .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "❌ Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         });
             } else {
                 appointmentsRef.add(appointmentData)
                         .addOnSuccessListener(documentReference -> {
-                            Toast.makeText(this, "Appointment added ✅", Toast.LENGTH_SHORT).show();
+
                             finish();
                         })
                         .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Failed to add: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "❌ Add failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         });
             }
 
-            if (switchEnableReminder.isChecked()) {
+            // 🔔 Reminder logic
+            long appointmentTimeMillis = appointmentCalendar.getTimeInMillis();
+            int baseRequestCode = NOTIFICATION_PERMISSION_REQUEST_CODE;
+
+            if (!customRemindersEnabled) {
+                // Default: single reminder at appointment time
+                scheduleReminder(appointmentTimeMillis, doctor,location, baseRequestCode);
+            } else {
                 int reminderValue = (int) reminderTimeSlider.getValue();
                 int repeatTimes = repeatReminderSpinner.getSelectedItemPosition() + 1;
 
                 String timeUnit = "minutes";
                 int selectedChipId = timeUnitChipGroup.getCheckedChipId();
-                if (selectedChipId == R.id.chipMinutes) timeUnit = "minutes";
-                else if (selectedChipId == R.id.chipHours) timeUnit = "hours";
-                else if (selectedChipId == R.id.chipDays) timeUnit = "days";
+                if (selectedChipId == R.id.chipHours) timeUnit = "hours";
 
-
-
-                requestNotificationPermission(); // Already in your code
-
+                long offsetMillis = convertToMillis(reminderValue, timeUnit);
                 for (int i = 1; i <= repeatTimes; i++) {
-                    long offsetMillis = convertToMillis(reminderValue * i, timeUnit);
-                    long triggerAt = appointmentCalendar.getTimeInMillis() - offsetMillis;
-
-                    if (triggerAt > System.currentTimeMillis()) {
-                        scheduleReminder(triggerAt, doctor, i);
+                    long triggerTime = appointmentTimeMillis - (offsetMillis * i);
+                    if (triggerTime > System.currentTimeMillis()) {
+                        scheduleReminder(triggerTime, doctor,location, baseRequestCode + i);
                     }
                 }
             }
         });
+
+
         // Handle toolbar back button
         DashboardUtils.init(this,R.id.bottomNavigationView);
     }
@@ -264,7 +308,11 @@ public class AddAppointmentActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    // ✅ Helper method (must be outside the onClick block, inside your class)
+    private boolean isSameDay(Calendar cal1, Calendar cal2) {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
     private void requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -296,12 +344,14 @@ public class AddAppointmentActivity extends AppCompatActivity {
         }
     }
 
-    private void scheduleReminder(long triggerTime, String doctor, int requestCode) {
+    private void scheduleReminder(long triggerTime, String doctor, String location,int requestCode) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        Toast.makeText(this, "⏰ Alarm set for " + sdf.format(new Date(triggerTime)), Toast.LENGTH_LONG).show();
+
 
         Intent intent = new Intent(this, AppointmentNotificationReceiver.class);
         intent.putExtra("doctorName", doctor);
+        intent.putExtra("Location",location);
+
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this,

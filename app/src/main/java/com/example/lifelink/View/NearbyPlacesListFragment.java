@@ -12,11 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.lifelink.Adapter.NearbyPlacesAdapter;
 import com.example.lifelink.Model.NearbyPlace;
 import com.example.lifelink.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

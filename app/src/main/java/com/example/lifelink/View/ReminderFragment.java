@@ -105,16 +105,16 @@ public class ReminderFragment extends Fragment implements ReminderAdapter.OnRemi
                 }
 
                 if (snapshots != null) {
-                    Toast.makeText(getContext(), "Snapshot received: " + snapshots.size() + " reminders", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Snapshot received: " + snapshots.size() + " reminders", Toast.LENGTH_SHORT).show();
                     reminderList.clear();
                     for (DocumentSnapshot doc : snapshots.getDocuments()) {
-                        Toast.makeText(getContext(), "Doc: " + doc.getId(), Toast.LENGTH_SHORT).show();
+                     //   Toast.makeText(getContext(), "Doc: " + doc.getId(), Toast.LENGTH_SHORT).show();
                         Reminder reminder = doc.toObject(Reminder.class);
                         if (reminder != null) {
                             reminder.setId(doc.getId());
                             reminderList.add(reminder);
                         } else {
-                            Toast.makeText(getContext(), "Reminder is null for doc " + doc.getId(), Toast.LENGTH_SHORT).show();
+                         //   Toast.makeText(getContext(), "Reminder is null for doc " + doc.getId(), Toast.LENGTH_SHORT).show();
                         }
                     }
                     reminderAdapter.notifyDataSetChanged();

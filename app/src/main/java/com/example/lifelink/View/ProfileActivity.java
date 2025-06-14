@@ -140,6 +140,11 @@ public class ProfileActivity extends AppCompatActivity {
                         inputLastName.setText(userSnapshot.getString("lastName"));
                     }
 
+                    // Build full name (fallback if fields missing)
+                    String fullName = (userSnapshot.getString("firstName") + " " +
+                            userSnapshot.getString("middleName") + " " +
+                            userSnapshot.getString("lastName")).trim();
+
                     // Load medical profile info after personal info
                     db.collection("users").document(uid).collection("medical_profile").document("profile")
                             .get()
@@ -155,6 +160,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                                     if (gender != null) spinnerGender.setSelection(((ArrayAdapter<String>) spinnerGender.getAdapter()).getPosition(gender));
                                     if (blood != null) spinnerBloodType.setSelection(((ArrayAdapter<String>) spinnerBloodType.getAdapter()).getPosition(blood));
+
                                 }
                             });
                 });

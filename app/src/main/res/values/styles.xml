@@ -84,12 +84,11 @@
             <item name="android:paddingEnd">8dp</item>
         </style>
 
-
-
-
-
-
-
+    <!-- styles.xml -->
+    <style name="AppPopupMenuStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:popupBackground">@color/white</item> <!-- or your custom background -->
+        <item name="android:textColor">@color/black</item> <!-- Set this to any color you want -->
+    </style>
 
 
 

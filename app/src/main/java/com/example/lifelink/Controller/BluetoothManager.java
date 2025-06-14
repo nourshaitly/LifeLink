@@ -62,9 +62,9 @@ public class BluetoothManager {
                     latestHR = heartRate;
                     try {
                         int hr = Integer.parseInt(latestHR);
-                        new Handler(activity.getMainLooper()).post(() ->
-                                Toast.makeText(activity, "❤️ HR updated: " + hr, Toast.LENGTH_SHORT).show()
-                        );
+                      /*  new Handler(activity.getMainLooper()).post(() ->
+                              Toast.makeText(activity, "❤️ HR updated: " + hr, Toast.LENGTH_SHORT).show()
+                        );*/
                     } catch (NumberFormatException e) {
                         latestHR = null;
                     }
@@ -74,9 +74,9 @@ public class BluetoothManager {
                     latestSPO2 = spo2;
                     try {
                         int sp = Integer.parseInt(latestSPO2);
-                        new Handler(activity.getMainLooper()).post(() ->
-                                Toast.makeText(activity, "🩸 SpO₂ updated: " + sp, Toast.LENGTH_SHORT).show()
-                        );
+                      /*  new Handler(activity.getMainLooper()).post(() ->
+                               Toast.makeText(activity, "🩸 SpO₂ updated: " + sp, Toast.LENGTH_SHORT).show()
+                        );*/
                     } catch (NumberFormatException e) {
                         latestSPO2 = null;
                     }
@@ -110,6 +110,7 @@ public class BluetoothManager {
                 Intent intent = new Intent(activity.getApplicationContext(), CallEmergencyActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 activity.startActivity(intent);
+
             }
         });
 

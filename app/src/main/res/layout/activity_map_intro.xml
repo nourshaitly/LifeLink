@@ -87,7 +87,7 @@
                 android:layout_marginBottom="32dp"
                 android:text="Quickly Find Nearby Hospitals and Pharmacies\nEasily Navigate Between Categories\nView Important Details: Addresses, Contacts,  Directions\nAlways Ready to Assist you in Urgent Moments"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
+                android:textSize="12sp"
 
                 android:textStyle="bold" />
 
@@ -136,7 +136,7 @@
             <!-- Emergency “Find Nearest Hospital” button -->
             <Button
                 android:id="@+id/btnNearestHospital"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/LogoBlue"

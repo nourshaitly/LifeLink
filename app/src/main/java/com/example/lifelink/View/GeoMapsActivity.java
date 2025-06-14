@@ -94,7 +94,7 @@ public class GeoMapsActivity extends FragmentActivity implements OnMapReadyCallb
         // --- SeekBar setup ---
         radiusSeekBar.setMax(20);
         radiusSeekBar.setProgress(5);
-        radiusTextView.setText("5 km");
+        radiusTextView.setText("Radius: 5 km");
         radiusSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar sb, int prog, boolean fromUser) {
                 int km = Math.max(prog, 1);
@@ -124,6 +124,7 @@ public class GeoMapsActivity extends FragmentActivity implements OnMapReadyCallb
             if (checkedIds.contains(R.id.chipAll)) {
                 fetchPlaces("hospital");
                 fetchPlaces("pharmacy");
+                fetchPlaces("hospital");
             } else if (checkedIds.contains(R.id.chipHospitals)) {
                 fetchPlaces("hospital");
             } else if (checkedIds.contains(R.id.chipPharmacies)) {
@@ -272,10 +273,7 @@ public class GeoMapsActivity extends FragmentActivity implements OnMapReadyCallb
 
                 handler.post(() -> {
                     if (places.isEmpty()) {
-                        Toast.makeText(this,
-                                "No " + type + "s found within radius",
-                                Toast.LENGTH_SHORT
-                        ).show();
+                       // Toast.makeText(this,"No " + type + "s found within radius",Toast.LENGTH_SHORT).show();
                     } else {
                         float hue = type.equals("pharmacy")
                                 ? BitmapDescriptorFactory.HUE_AZURE
@@ -362,15 +360,14 @@ public class GeoMapsActivity extends FragmentActivity implements OnMapReadyCallb
                                 new LatLng(currentLat, currentLon), 14f
                         )
                 );
-                filterChips.check(R.id.chipAll);
-            } else {
-                Toast.makeText(this,
-                        "Unable to fetch current location",
-                        Toast.LENGTH_SHORT
-                ).show();
+
+                // ✅ Delay chip check after coordinates are set
+                handler.postDelayed(() -> filterChips.check(R.id.chipAll), 200);
             }
         });
+
     }
+
 
     @Override
     public void onRequestPermissionsResult(int code,

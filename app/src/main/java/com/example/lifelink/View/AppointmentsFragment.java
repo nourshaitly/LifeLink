@@ -81,7 +81,7 @@ public class AppointmentsFragment extends Fragment implements AppointmentAdapter
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() == null) {
-            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -94,7 +94,7 @@ public class AppointmentsFragment extends Fragment implements AppointmentAdapter
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
-                    Toast.makeText(getContext(), "Listen failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Listen failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -163,7 +163,7 @@ public class AppointmentsFragment extends Fragment implements AppointmentAdapter
                                 Toast.makeText(getContext(), "Appointment deleted", Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(getContext(), "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getContext(), "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             });
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())

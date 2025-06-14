@@ -1,4 +1,4 @@
-package com.example.lifelink.Adapter;
+package com.example.lifelink.View;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lifelink.Model.NearbyPlace;
-import com.example.lifelink.R;
 
 import java.util.List;
 
